@@ -33,6 +33,7 @@ class Nodo{
                   << (stato == Stato::live ? "live" : "dead") << std::endl;
         std::cout << "Numero di vicini: " << vicini.size() << std::endl;
     }
+		// Metodo per stampare i vicini del nodo
 void stampaVicini() const {
     std::cout << "Vicini del nodo (" << x << ", " << y << "):" << std::endl;
     if (vicini.empty()) {
@@ -48,4 +49,21 @@ void stampaVicini() const {
 }
 
 };
+
+
+int main(){
+	auto nodo1 = std::make_shared<Nodo>(0,0);
+	auto nodo2 = std::make_shared<Nodo>(0,1);
+	auto nodo3 = std::make_shared<Nodo>(0,2);
+
+	nodo1->stampaInfo();
+	nodo1->svegliaNodo();
+	nodo1->stampaInfo();
+	nodo1->addVicino(nodo2);
+	nodo1->addVicino(nodo3);
+	nodo1->stampaInfo();
+	nodo1->stampaVicini();
+
+
+}
 
