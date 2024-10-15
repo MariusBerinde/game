@@ -1,3 +1,6 @@
+/*
+ * versione base 
+ * */
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -5,7 +8,6 @@
 #include <stdlib.h>
 #include <string>
 #include <sstream>
-
 const int MAX_ROW=5;
 const int MAX_COL=5;
 const int MAX_TIME=5;
