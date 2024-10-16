@@ -54,6 +54,27 @@ public:
 
     // Funzione per stampare la mappa
     void printMap() const;
+
+
+  /**
+   * @brief this function returns the active nodes of the map at time
+   * @param time  a int in the interval (0,MAX_TIME]
+   * 
+   * @return a std::vector<Nodo>
+   */
+  std::vector<Nodo> getActiveNodesAtTime(int time) const;
+
+  /**
+   * @brief this function returns the active nodes of the map at actual_time
+   * @param time  a int in the interval (0,MAX_TIME]
+   * 
+   * @return a std::vector<Nodo>
+   */
+  std::vector<Nodo> getActiveNodes() const;
+
+  std::vector<std::vector<Nodo>> getActiveNodesOfAnyTime() const;
+
+    
     /**
  * @brief return a vector<Node> the neighbours of the Node rappresented by x,y at time t 
  * at t time, if t is not specified will be actual_time

@@ -85,38 +85,131 @@ void Simulation::printMap() const {
 
 
 std::vector<Nodo> Simulation::getNeighbours(int x,int y,int time)const{
-  if (time==-1)
+
+    if (time==-1)
     time=actual_time;
   
     std::vector<Nodo> neighbours;
-   // Nodo a={0,0,&map[0][0][time]};
-   // neighbours.push_back(a);
-    /*if(x==0 && (y!=0 && y<MAX_COLS)){
+    if(x==0 && (y<MAX_COLS)){
       //caso della prima riga
+      
+    std::vector<Nodo> neighbours_r;
+    if(y==0){
+      neighbours_r.push_back({0,1,&map[0][1][time]});
+      neighbours_r.push_back({1,0,&map[1][0][time]});
+      neighbours_r.push_back({1,1,&map[1][1][time]});
+      return neighbours_r;
+    }
+    if(y==MAX_COLS-1){
+      neighbours_r.push_back({0,y-1,&map[0][y-1][time]});
+      neighbours_r.push_back({1,y,&map[1][y][time]});
+      neighbours_r.push_back({1,y-1,&map[1][y-1][time]});
+      return neighbours_r;
+    }
+
+      neighbours_r.push_back({0,y-1,&map[0][y-1][time]});
+      neighbours_r.push_back({0,y+1,&map[0][y+1][time]});
+      neighbours_r.push_back({1,y-1,&map[1][y-1][time]});
+      neighbours_r.push_back({1,y+1,&map[1][y+1][time]});
+      neighbours_r.push_back({1,y,&map[1][y][time]});
+      return neighbours_r;
 
     }
-    if(y==0 && (x!=0 && x<MAX_ROWS)){
+    if(x==MAX_ROWS-1 && (y<MAX_COLS)){
+          //caso dell'ultima riga
+      std::vector<Nodo> neighbours_r;
+      if(y==0){
+      neighbours_r.push_back({x-1,0,&map[x-1][0][time]});
+      neighbours_r.push_back({x,1,&map[x][1][time]});
+      neighbours_r.push_back({x-1,1,&map[x-1][1][time]});
+        return neighbours_r;
+      }
+
+    if(y==MAX_COLS-1){
+      neighbours_r.push_back({x,y-1,&map[x][y-1][time]});
+      neighbours_r.push_back({x-1,y-1,&map[x-1][y-1][time]});
+      neighbours_r.push_back({x,y-1,&map[x][y-1][time]});
+      return neighbours_r;
+    }
+
+
+      neighbours_r.push_back({x,y-1,&map[x][y-1][time]});
+      neighbours_r.push_back({x,y+1,&map[x][y+1][time]});
+      neighbours_r.push_back({x-1,y-1,&map[x-1][y-1][time]});
+      neighbours_r.push_back({x-1,y,&map[x-1][y][time]});
+      neighbours_r.push_back({x-1,y+1,&map[x-1][y+1][time]});
+
+      return neighbours_r;
+
+    }
+
+    if((y>0 && y<MAX_COLS-1) && (x>0 && x<MAX_ROWS-1)){
+      //caso centrale con 8 vicini
+
+      std::vector<Nodo> neighbours_r;
+      // da 0,1,2
+      neighbours_r.push_back({x-1,y+1,&map[x-1][y+1][time]});
+      neighbours_r.push_back({x,y+1,&map[x][y+1][time]});
+      neighbours_r.push_back({x+1,y+1,&map[x+1][y+1][time]});
+      // nodi 3-4-5
+      neighbours_r.push_back({x+1,y,&map[x+1][y][time]});
+      neighbours_r.push_back({x+1,y-1,&map[x+1][y-1][time]});
+      neighbours_r.push_back({x,y-1,&map[x][y-1][time]});
+
+      // nodi 6-7
+      neighbours_r.push_back({x-1,y-1,&map[x-1][y-1][time]});
+      neighbours_r.push_back({x-1,y,&map[x-1][y][time]});
+      
+      return neighbours_r;
+
+    }
+
+
+    if(y==0 && (x>0 && x<MAX_ROWS-1)){
 
       //caso della prima colonna
 
+      std::vector<Nodo> neighbours_r;
+
+      neighbours_r.push_back({x-1,y,&map[x-1][y][time]});
+      neighbours_r.push_back({x-1,y+1,&map[x-1][y+1][time]});
+      neighbours_r.push_back({x,y+1,&map[x][y+1][time]});
+      neighbours_r.push_back({x+1,y+1,&map[x+1][y+1][time]});
+      neighbours_r.push_back({x+1,y,&map[x+1][y][time]});
+      return neighbours_r;
     }
 
-    if(x==MAX_ROWS-1 && (y!=0 && y<MAX_COLS)){
-      //caso dell'ultima riga
 
-    }
-
-    if(y==MAX_COLS-1 && (x!=0 && x<MAX_ROWS)){
+    if(y==MAX_COLS-1 && (x>0 && x<MAX_ROWS-1)){
 
       //caso dell'ultima colonna
+      std::cout << "sono nel caso ultima colonna";
 
+      std::vector<Nodo> neighbours_r;
+
+      neighbours_r.push_back({x-1,y,&map[x-1][y][time]});
+      neighbours_r.push_back({x-1,y-1,&map[x-1][y-1][time]});
+      neighbours_r.push_back({x,y-1,&map[x][y-1][time]});
+      neighbours_r.push_back({x+1,y-1,&map[x+1][y-1][time]});
+      neighbours_r.push_back({x+1,y,&map[x+1][y][time]});
+      return neighbours_r;
     }
-    if((y!=0 && y<=MAX_COLS) && (x!=0 && x<MAX_ROWS)){
-      //caso centrale con 8 vicini
-    }*/
+   
 
     return neighbours;
     
-
   }
+
+
+
+  std::vector<Nodo> Simulation::getActiveNodesAtTime(int time) const {
+    return activeNodes[time];
+  }
+
+  std::vector<Nodo> Simulation::getActiveNodes()const{
+    return activeNodes[actual_time];
+  }
+
+
+  std::vector<std::vector<Nodo>> Simulation::getActiveNodesOfAnyTime() const{ return activeNodes;}
 
