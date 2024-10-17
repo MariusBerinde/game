@@ -85,6 +85,16 @@ public:
  * @return La somma dei due numeri.
  */
     std::vector<Nodo> getNeighbours(int x,int y,int time=-1) const;
+
+
+  /**
+   * @brief return the state of the node of position x,y 
+   * @param x : x position of node
+   * @param y : y position of node
+   *
+   * @return state of the node for the next turn
+  */
+  Stato stateNextTurn(int x,int y) ;
 };
 
  
