@@ -1,4 +1,5 @@
 #include "../include/simulation.h"
+#include <iostream>
 //using namespace Simulation; // Implementazione della funzione toString di Nodo
 std::string Nodo::toString() const {
     std::ostringstream oss;
@@ -213,3 +214,16 @@ std::vector<Nodo> Simulation::getNeighbours(int x,int y,int time)const{
 
   std::vector<std::vector<Nodo>> Simulation::getActiveNodesOfAnyTime() const{ return activeNodes;}
 
+
+  Stato Simulation::stateNextTurn(int x,int y) {
+  auto neighbours_nodes= getNeighbours(x, y);
+  Stato ris = dead;
+  int nr_live_nodes=0;
+  for (int i=0;i<neighbours_nodes.size();i++){
+    if ( *neighbours_nodes[i].stato == live)
+      nr_live_nodes++;
+  }
+  ris = (nr_live_nodes == 2 || nr_live_nodes == 3)?live:dead;
+  //std::cout<<"nodo di posizione: ("<<x<<","<<y<<")\t numero di vicini vivi ="<<nr_live_nodes<<"\n";
+  return ris;
+}

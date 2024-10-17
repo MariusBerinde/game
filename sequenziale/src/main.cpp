@@ -1,4 +1,5 @@
 #include "../include/simulation.h"
+#include <iostream>
 
 void test_creation(){
 
@@ -432,9 +433,78 @@ void test_get_vicini(){
       std::cout << "numero di vicini sbagliato per il nodo H\n";
     }
 }
+
+void test_rules_next_turn(){
+    Simulation sim(6, 6, 10);
+    sim.updateNodeState(0, 0, live, 0); //A
+    sim.updateNodeState(0, 1, live, 0); //B
+    sim.updateNodeState(4, 1, live, 0); //C
+    sim.updateNodeState(5, 0, live, 0); //D
+    sim.updateNodeState(5, 2, live, 0); //E
+    sim.updateNodeState(2, 0, live, 0); //F
+    sim.updateNodeState(1, 0, live, 0); //G
+    sim.updateNodeState(1, 1, live, 0); //H
+
+    sim.printMap();
+
+  auto neighBoursA = sim.getNeighbours(0, 0);
+  auto neighBoursB = sim.getNeighbours(0, 1);
+  auto neighBoursC = sim.getNeighbours(4, 1);
+  auto neighBoursD = sim.getNeighbours(5, 0);
+  auto neighBoursE = sim.getNeighbours(5, 2);
+  auto neighBoursF = sim.getNeighbours(2, 0);
+  auto neighBoursG = sim.getNeighbours(1, 0);
+  auto neighBoursH = sim.getNeighbours(1, 1);
+
+  if(sim.stateNextTurn(0,0)==live)
+    std::cout<<"Stato nodo A ok\tnumero vicini="<<neighBoursA.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo A problema\tnumero vicini="<<neighBoursA.size()<<"\n";
+  }
+
+  if(sim.stateNextTurn(0,1)==live)
+    std::cout<<"Stato nodo B ok\tnumero vicini="<<neighBoursB.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo B problema\tnumero vicini="<<neighBoursB.size()<<"\n";
+  }
+
+  if(sim.stateNextTurn(4,1)==live)
+    std::cout<<"Stato nodo C ok\tnumero vicini="<<neighBoursC.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo C problema\tnumero vicini="<<neighBoursC.size()<<"\n";
+  }
+  if(sim.stateNextTurn(5,0)==dead)
+    std::cout<<"Stato nodo D ok\tnumero vicini="<<neighBoursD.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo D problema\tnumero vicini="<<neighBoursD.size()<<"\n";
+  }
+  if(sim.stateNextTurn(5,2)==dead)
+    std::cout<<"Stato nodo E ok\tnumero vicini="<<neighBoursE.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo E problema\tnumero vicini="<<neighBoursE.size()<<"\n";
+  }
+  if(sim.stateNextTurn(2,0)==live)
+    std::cout<<"Stato nodo F ok\tnumero vicini="<<neighBoursF.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo F problema\tnumero vicini="<<neighBoursF.size()<<"\n";
+  }
+  if(sim.stateNextTurn(1,0)==dead)
+    std::cout<<"Stato nodo G ok\tnumero vicini="<<neighBoursG.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo G problema\tnumero vicini="<<neighBoursG.size()<<"\n";
+  }
+  if(sim.stateNextTurn(1,1)==dead)
+    std::cout<<"Stato nodo H ok\tnumero vicini="<<neighBoursH.size()<<"\n";
+  else {
+    std::cout<<"Stato nodo H problema\tnumero vicini="<<neighBoursH.size()<<"\n";
+  }
+
+
+}
 int main() {
 //  test_creation();
-  test_get_vicini();
+//  test_get_vicini();
+  test_rules_next_turn();
     return 0;
 }
 
