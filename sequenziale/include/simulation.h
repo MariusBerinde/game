@@ -2,8 +2,11 @@
 #define SIMULATION_H
 
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <sstream>
+#include <set>
+#include <tuple>
 //namespace Simulation {
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
@@ -21,6 +24,13 @@ struct Nodo {
 
     // Funzione per convertire il Nodo in una stringa
     std::string toString() const;
+};
+
+struct CompareTuples {
+    bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {
+        // Confronta solo x e y (primi due elementi della tupla)
+        return std::tie(std::get<0>(lhs), std::get<1>(lhs)) < std::tie(std::get<0>(rhs), std::get<1>(rhs));
+    }
 };
 
 // Dichiarazione della classe Simulation
@@ -95,6 +105,12 @@ public:
    * @return state of the node for the next turn
   */
   Stato stateNextTurn(int x,int y) ;
+/**
+   * @brief calc the spawn position for the new nodes in the map 
+   *
+   * @return a vector of pairs where the first in the pair is the x, and second is the y
+  */
+  std::vector<std::pair<int, int>> calcSpawnNodes();
 };
 
  

@@ -2,12 +2,12 @@ OUT = out
 SRC = src
 INCLUDE = include
 TEST= test
-FLAGS=-Wall -g
+FLAGS=-Wall -g -I
 
 compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo
 compila:
-	g++ -I ./$(INCLUDE) $(SRC)/main.cpp $(SRC)/simulation.cpp -o $(OUT)/main 
+	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/main.cpp $(SRC)/simulation.cpp -o $(OUT)/main 
 
 esegui:compila
 	./$(OUT)/main 
