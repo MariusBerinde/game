@@ -42,10 +42,9 @@ Simulation::~Simulation() {
 void Simulation::updateNodeState(int x, int y, Stato nuovoStato, int t) {
   if (t < MAX_TIME && x < MAX_ROWS && y < MAX_COLS) {
     map[x][y][t] = nuovoStato;
-    if (t == actual_time) {
       Nodo nodo = {x, y, &map[x][y][t]};
       activeNodes[t].push_back(nodo);
-    }
+    
   } else {
     std::cerr << "Errore: Indici fuori limite o tempo non valido!" << std::endl;
   }
@@ -279,3 +278,30 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
   return result;
 
 }
+
+
+  void Simulation::simulate_turn(){
+  //crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
+  //trova quali nodi del turno attuale sopravivranno 
+  //trova quali saranno i nuovi nodi attivi e inseriscili nella Mappa
+  if(actual_time + 1 < MAX_TIME){
+    int next_time = actual_time+1;
+    printf("SIMULATE TURN: next time =%d\n",next_time);
+    auto activeNodesNow = getActiveNodes();
+    //crate the active node list of the next turn
+    for(int i=0;i<activeNodesNow.size();i++){
+      auto node = activeNodesNow[i];
+      if(stateNextTurn(node.x, node.y) == live ){
+        updateNodeState(node.x, node.y, live, next_time);
+      }
+    }
+    auto nodes_spawned = calcSpawnNodes();
+    for(int i=0;i<nodes_spawned.size();i++){
+
+        updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
+    }
+
+    advanceTime();
+
+  }
+  }

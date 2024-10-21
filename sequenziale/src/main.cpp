@@ -26,6 +26,7 @@ void test_creation(){
   sim.updateNodeState(3, 3, live, 1);
   sim.printMap();
 
+
   std::cout << "verifica getter dei vicini:";
   auto actualN = sim.getActiveNodes();
   auto actualNt = sim.getActiveNodesAtTime(0);
@@ -569,12 +570,40 @@ void test_pair(){
 
 
 }
+
+void test_simulation(){
+  std::cout<<"TEST SIMULATION NODES\n";
+
+  Simulation sim(6, 6, 10);
+  sim.updateNodeState(0, 0, live, 0); //A
+  sim.updateNodeState(0, 1, live, 0); //B
+  sim.updateNodeState(1, 0, live, 0); //G
+  sim.updateNodeState(1, 1, live, 0); //H
+  sim.updateNodeState(2, 0, live, 0); //F
+
+  sim.updateNodeState(4, 1, live, 0); //C
+  sim.updateNodeState(5, 0, live, 0); //D
+  sim.updateNodeState(5, 2, live, 0); //E
+
+  sim.printMap();
+  printf("-------------------------------------------------------------------");
+  sim.simulate_turn();
+
+  sim.printMap();
+  std::cout<<"nodi vicini:\n";
+  auto actualN = sim.getActiveNodes();
+  for(int i=0;i<actualN.size();i++){
+   std::cout<<"nodo attuale = "<<actualN[i].toString()<<"\n";
+  }
+
+}
 int main() {
   //  test_creation();
   //  test_get_vicini();
   // test_rules_next_turn();
-  test_creation_spawn_nodes();
+  //test_creation_spawn_nodes();
   //test_pair();
+  test_simulation();
   return 0;
 }
 

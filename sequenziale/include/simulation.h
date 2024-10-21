@@ -111,6 +111,13 @@ public:
    * @return a vector of pairs where the first in the pair is the x, and second is the y
   */
   std::vector<std::pair<int, int>> calcSpawnNodes();
+
+  /**
+   * @brief Updates the states of the map to the next shift according to the following rules: 
+   * - If a node has 3 or 2 neighbors ; the node will live on the next turn otherwise it will be considered dead 
+   * - If a dead node has exactly 3 live neighbors ; the node will be considered live in the next turn
+   **/
+  void simulate_turn();
 };
 
  
