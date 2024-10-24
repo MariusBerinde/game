@@ -118,6 +118,11 @@ public:
    * - If a dead node has exactly 3 live neighbors ; the node will be considered live in the next turn
    **/
   void simulate_turn();
+
+  /**
+   * @brief run simulate_turn n times
+  */
+  void simulate_n_turns(int n);
 };
 
  

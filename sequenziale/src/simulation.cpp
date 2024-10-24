@@ -305,3 +305,10 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
 
   }
   }
+
+
+void Simulation::simulate_n_turns(int n){ 
+  if(n>0 && n<MAX_TIME){
+    simulate_turn();
+  }
+}
