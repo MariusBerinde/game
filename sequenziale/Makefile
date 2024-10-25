@@ -12,7 +12,11 @@ compila:
 esegui:compila
 	./$(OUT)/main 
 
-disegna_totale:compila_disegno_totale
-	./$(OUT)/disegno_totale
+compila_test_lettura:
+	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/read_file.cpp -o $(TEST)/read
+
+read:compila_test_lettura
+	cd test; ./read 
+
 clean:
 	rm -v $(OUT)/test
