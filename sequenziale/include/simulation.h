@@ -5,9 +5,10 @@
 #include <utility>
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <set>
 #include <tuple>
-//namespace Simulation {
+#include <string>
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
 #define YELLOW_TXT "33"  // Codice ANSI per il colore giallo
@@ -33,12 +34,26 @@ struct CompareTuples {
     }
 };
 
+
+struct Pos {
+  int x,y;
+  std::string nome;
+};
+
+struct Config{
+  int righe,colonne,tempo;
+  std::vector<Pos> nodi;
+};
+
+
+
+
 // Dichiarazione della classe Simulation
 class Simulation {
 private:
-    const int MAX_ROWS;      // Numero massimo di righe
-    const int MAX_COLS;      // Numero massimo di colonne
-    const int MAX_TIME;      // Numero massimo di tempi
+    int MAX_ROWS;      // Numero massimo di righe
+    int MAX_COLS;      // Numero massimo di colonne
+    int MAX_TIME;      // Numero massimo di tempi
     Stato ***map;            // Mappa tridimensionale Stato[MAX_ROWS][MAX_COLS][MAX_TIME]
     int actual_time;         // Tempo corrente della simulazione
     std::vector<std::vector<Nodo>> activeNodes;  // Nodi attivi per ogni tempo
@@ -49,6 +64,10 @@ public:
 
     // Distruttore
     ~Simulation();
+
+    int getMaxRows();
+    int getMaxCols();
+    int getMaxTime();
 
     // Funzione per aggiornare lo stato di un Nodo
     void updateNodeState(int x, int y, Stato nuovoStato, int t);
@@ -123,6 +142,24 @@ public:
    * @brief run simulate_turn n times
   */
   void simulate_n_turns(int n);
+
+
+
+  /**
+   * @brief read the configuration from the file filename
+   *
+  */
+  Config read_file(const std::string& filename);
+  
+
+
+  /**
+   * @brief load the configuration from the filename
+   *
+  */
+  bool load_config(const std::string& filename);
+
+
 };
 
  

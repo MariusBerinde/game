@@ -597,13 +597,138 @@ void test_simulation(){
   }
 
 }
+
+void test_read(){
+  int righe_teo = 5;
+  int col_teo = 5;
+  int tempo_teo = 5;
+  Pos A={0,0,"A"};
+  Pos B={0,1,"B"};
+
+  std::cout<<"TEST READ\n";
+  Simulation sim(6, 6, 10);
+  auto lettura =sim.read_file("src/config.txt");
+
+  if (lettura.righe == righe_teo)
+    std::cout<<"NUMERO RIGHE OK\n";
+  else
+    std::cout<<"NUMERO RIGHE ERROR\n";
+
+
+  if (lettura.colonne == col_teo)
+    std::cout<<"NUMERO COLONNE OK\n";
+  else
+    std::cout<<"NUMERO COLONNE ERROR\n";
+
+
+  if (lettura.tempo == tempo_teo)
+    std::cout<<"NUMERO TEMPO OK\n";
+  else
+    std::cout<<"NUMERO TEMPO ERROR\n";
+
+
+  if(lettura.nodi.size() != 2){
+    std::cout<<"NUMERO NODI ERROR\n";
+  }
+  else{
+    auto nodi_p = lettura.nodi;
+    bool esiti[2] = {false,false};
+    for(size_t i=0;i<nodi_p.size();i++){
+      if(nodi_p[i].nome == A.nome &&  nodi_p[i].x == A.x && nodi_p[i].y == A.y)
+        esiti[0] = true;
+
+      if(nodi_p[i].nome == B.nome &&  nodi_p[i].x == B.x && nodi_p[i].y == B.y)
+        esiti[1] = true;
+    }
+
+    if(esiti[0]){
+      std::cout<<"Punto A trovato\n";
+    }
+    else 
+      std::cout<<"Punto A non trovato\n";
+
+
+    if(esiti[0]){
+      std::cout<<"Punto B trovato\n";
+    }
+    else 
+      std::cout<<"Punto B non trovato\n";
+  }
+
+}
+
+void test_config_from_file(){
+  int righe_teo = 5;
+  int col_teo = 5;
+  int tempo_teo = 5;
+  Pos A={0,0,"A"};
+  Pos B={0,1,"B"};
+  std::cout<<"TEST CONFIG FROM FILE\n";
+
+  Simulation sim(5, 5, 10);
+  sim.load_config("src/config.txt");
+  
+
+  //auto lettura =sim.read_file("./config.txt");
+
+  if (sim.getMaxRows() == righe_teo)
+    std::cout<<"NUMERO RIGHE OK\n";
+  else
+    std::cout<<"NUMERO RIGHE ERROR\n";
+
+
+  if (sim.getMaxCols() == col_teo)
+    std::cout<<"NUMERO COLONNE OK\n";
+  else
+    std::cout<<"NUMERO COLONNE ERROR\n";
+
+
+  if (sim.getMaxTime() == tempo_teo)
+    std::cout<<"NUMERO TEMPO OK\n";
+  else
+    std::cout<<"NUMERO TEMPO ERROR\n";
+
+  auto active_nodes = sim.getActiveNodes();
+
+  if(active_nodes.size() != 2){
+    std::cout<<"NUMERO NODI ERROR\n";
+  }
+  else{
+    bool esiti[2] = {false,false};
+    for(size_t i=0;i<active_nodes.size();i++){
+      if(active_nodes[i].x == A.x && active_nodes[i].y == A.y)
+        esiti[0] = true;
+
+      if(active_nodes[i].x == B.x && active_nodes[i].y == B.y)
+        esiti[1] = true;
+    }
+
+    if(esiti[0]){
+      std::cout<<"Punto A trovato\n";
+    }
+    else 
+      std::cout<<"Punto A non trovato\n";
+
+
+    if(esiti[0]){
+      std::cout<<"Punto B trovato\n";
+    }
+    else 
+      std::cout<<"Punto B non trovato\n";
+  }
+
+}
+
+
 int main() {
   //  test_creation();
   //  test_get_vicini();
   // test_rules_next_turn();
   //test_creation_spawn_nodes();
   //test_pair();
-  test_simulation();
+ // test_simulation();
+ // test_read();
+  test_config_from_file();
   return 0;
 }
 

@@ -42,14 +42,17 @@ Simulation::~Simulation() {
 void Simulation::updateNodeState(int x, int y, Stato nuovoStato, int t) {
   if (t < MAX_TIME && x < MAX_ROWS && y < MAX_COLS) {
     map[x][y][t] = nuovoStato;
-      Nodo nodo = {x, y, &map[x][y][t]};
-      activeNodes[t].push_back(nodo);
-    
+    Nodo nodo = {x, y, &map[x][y][t]};
+    activeNodes[t].push_back(nodo);
+
   } else {
     std::cerr << "Errore: Indici fuori limite o tempo non valido!" << std::endl;
   }
 }
 
+int Simulation::getMaxRows(){return MAX_ROWS;}
+int Simulation::getMaxCols(){return MAX_COLS;}
+int Simulation::getMaxTime(){return MAX_TIME;}
 // Funzione per avanzare il tempo della simulazione
 void Simulation::advanceTime() {
   if (actual_time + 1 < MAX_TIME) {
@@ -244,7 +247,7 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
     auto it = candidates.find(search_tuple);
     if (it == candidates.end()) {
       // Se non esiste, la inseriamo con il valore iniziale di 0
-    //  std::cout << "Inserisco: (" << x << ", " << y << ", 0)\n";
+      //  std::cout << "Inserisco: (" << x << ", " << y << ", 0)\n";
       candidates.emplace(x, y, 1);
     } else {
       // Se esiste, rimuoviamo l'elemento attuale e lo reinseriamo con il valore aggiornato
@@ -268,7 +271,7 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
   for(auto it=candidates.begin();it!= candidates.end();it++){
 
     if(std::get<2>(*it) == 3){
-     // std::cout << "Trovato: (" << std::get<0>(*it) << ", " << std::get<1>(*it) << ", " << std::get<2>(*it) << ")\n";
+      // std::cout << "Trovato: (" << std::get<0>(*it) << ", " << std::get<1>(*it) << ", " << std::get<2>(*it) << ")\n";
       std::pair<int, int> sup (std::get<0>(*it),std::get<1>(*it));
       result.push_back(sup);
     }
@@ -280,7 +283,7 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
 }
 
 
-  void Simulation::simulate_turn(){
+void Simulation::simulate_turn(){
   //crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
   //trova quali nodi del turno attuale sopravivranno 
   //trova quali saranno i nuovi nodi attivi e inseriscili nella Mappa
@@ -298,17 +301,167 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
     auto nodes_spawned = calcSpawnNodes();
     for(int i=0;i<nodes_spawned.size();i++){
 
-        updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
+      updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
     }
 
     advanceTime();
 
   }
-  }
+}
 
 
 void Simulation::simulate_n_turns(int n){ 
   if(n>0 && n<MAX_TIME){
     simulate_turn();
   }
+}
+
+std::string rmSpace(std::string val){
+  int non_space_count = 0;
+  // Traverse a val and if it is non space character then, place it at index non_space_count
+  for (int i = 0; val[i] != '\0'; i++)
+    if (val[i] != ' ')
+    {
+      val[non_space_count] = val[i];
+      non_space_count++; // non_space_count incremented
+    }    
+
+  // Finally placing final character at the val end
+  val[non_space_count] = '\0';
+  return val;
+}
+
+Config Simulation::read_file(const std::string& filename){
+
+  Config ris;
+  std::ifstream file(filename);
+  if (!file.is_open()) {
+        std::cerr << "Errore: Impossibile aprire il file di configurazione: " << filename << std::endl;
+        return ris;
+    }
+    std::cout << "File di configurazione aperto correttamente: " << filename << std::endl;
+  // String to store each line of the file.
+  std::string line;
+
+  if (file.is_open()) {
+    // Read each line from the file and store it in the
+    // 'line' variable.
+    while (getline(file, line)) {
+      if(!line.empty() && line[0] != '/'){
+
+        bool  sup = line.find("righe") != std::string::npos;
+        if(sup){
+
+          auto l = rmSpace(line);
+          auto pos_eq=  l.find("=");
+          auto pos_new_line=  l.find("\n");
+          auto nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
+          //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
+          std:: cout <<"numero trovato ="<<nrs<<"\n" ;
+          int nr = stoi(nrs);
+          // righe = nr;
+          ris.righe= nr;
+        }
+        sup=line.find("colonne") !=std::string::npos;
+        if(sup){
+          std::string l = rmSpace(line);
+          auto pos_eq=  l.find("=");
+          auto pos_new_line=  l.find("\n");
+          std::string nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
+          //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
+          // cout <<"numero trovato ="<<nrs<<"\n" ;
+          int nr = stoi(nrs);
+          //col= nr;
+          ris.colonne=nr;
+
+        }
+        sup=line.find("turni") != std::string::npos;
+        if(sup){
+          std::  string l = rmSpace(line);
+          auto pos_eq=  l.find("=");
+          auto pos_new_line=  l.find("\n");
+          std::string nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
+          //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
+          std::  cout <<"numero trovato ="<<nrs<<"\n" ;
+          int nr = stoi(nrs);
+          //col= nr;
+          ris.tempo=nr;
+
+        }
+        sup=line.find("Attivi") !=std:: string::npos;
+
+        if(sup){
+
+          while (getline(file, line)) {
+
+            if(!line.empty() && line[0] != '/'){
+              int tmp_x=-1,tmp_y=-1;
+              std::   string l = rmSpace(line);
+              size_t pos_1 = l.find("(");
+              size_t pos_2 = l.find(",");
+              size_t pos_3 = l.find(")");
+              std::string nome = l.substr(0,pos_1);
+              std::string sup = l.substr(pos_1+1,pos_2-pos_1);
+              tmp_x = stoi(sup);
+              sup = l.substr(pos_2+1,pos_3-1-pos_2);
+              tmp_y = stoi(sup);
+              ris.nodi.push_back({tmp_x,tmp_y,nome});
+            }
+          }
+
+        }
+
+
+
+      } 
+    }
+
+    file.close();
+    /*
+    ris.righe=righe; ris.colonne=col;
+    ris.tempo=tempo;
+    ris.nodi = nodi;*/
+    return ris;
+  }
+  else {
+    std::cerr << "Unable to open file!" <<std::endl;
+  }
+
+  return ris;
+}
+
+
+bool Simulation::load_config(const std::string& filename){
+  Config config = read_file(filename);  // Usa la funzione read_file() da simulazione.cpp per leggere la configurazione
+std::cout << "Configurazione letta: "
+              << "righe = " << config.righe 
+              << ", colonne = " << config.colonne 
+              << ", tempo = " << config.tempo << std::endl;
+
+  MAX_ROWS = config.righe;
+  MAX_COLS = config.colonne;
+  MAX_TIME = config.tempo;
+  actual_time = 0;
+
+  // Alloca dinamicamente la mappa tridimensionale
+  map = new Stato**[MAX_ROWS];
+  for (int i = 0; i < MAX_ROWS; ++i) {
+    map[i] = new Stato*[MAX_COLS];
+    for (int j = 0; j < MAX_COLS; ++j) {
+      map[i][j] = new Stato[MAX_TIME];
+      for (int t = 0; t < MAX_TIME; ++t) {
+        map[i][j][t] = dead;  // Inizializza a "dead"
+      }
+    }
+  }
+
+  // Imposta i nodi attivi specificati nel file di configurazione
+  for (const auto& nodo : config.nodi) {
+    if (nodo.x < MAX_ROWS && nodo.y < MAX_COLS) {
+      updateNodeState(nodo.x, nodo.y, live, 0);  // Stato iniziale come attivo
+    } else {
+      std::cerr << "Errore: Nodo fuori dai limiti della griglia (" << nodo.x << ", " << nodo.y << ")\n";
+    }
+  }
+  return true;
 }
