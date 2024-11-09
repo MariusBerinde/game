@@ -14,6 +14,8 @@ class Nodo{
 				vicini.reserve(8);
 
 			}
+		int getX(){return x;}
+		int getY(){return y;}
 		void uccidiNodo(){
 			stato = Stato::dead;
 		}
@@ -29,24 +31,27 @@ class Nodo{
 			}
 		} 
 		void stampaInfo() const {
-        std::cout << "Nodo(" << x << ", " << y << ") - Stato: "
-                  << (stato == Stato::live ? "live" : "dead") << std::endl;
-        std::cout << "Numero di vicini: " << vicini.size() << std::endl;
-    }
+			std::cout << "Nodo(" << x << ", " << y << ") - Stato: "
+				<< (stato == Stato::live ? "live" : "dead") << std::endl;
+			std::cout << "Numero di vicini: " << vicini.size() << std::endl;
+		}
 		// Metodo per stampare i vicini del nodo
-void stampaVicini() const {
-    std::cout << "Vicini del nodo (" << x << ", " << y << "):" << std::endl;
-    if (vicini.empty()) {
-        std::cout << "Nessun vicino." << std::endl;
-    } else {
-        for (const auto& vicino : vicini) {
-            if (vicino) {
-                std::cout << "  Nodo(" << vicino->x << ", " << vicino->y << ") - Stato: "
-                          << (vicino->stato == Stato::live ? "live" : "dead") << std::endl;
-            }
-        }
-    }
-}
+		void stampaVicini() const {
+			std::cout << "Vicini del nodo (" << x << ", " << y << "):" << std::endl;
+			if (vicini.empty()) {
+				std::cout << "Nessun vicino." << std::endl;
+			} else {
+				for (const auto& vicino : vicini) {
+					if (vicino) {
+						std::cout << "  Nodo(" << vicino->x << ", " << vicino->y << ") - Stato: "
+							<< (vicino->stato == Stato::live ? "live" : "dead") << std::endl;
+					}
+				}
+			}
+		}
+
+		std::vector<std::shared_ptr<Nodo>>& getVicini(){	return vicini;}
+
 
 };
 
@@ -63,6 +68,15 @@ int main(){
 	nodo1->addVicino(nodo3);
 	nodo1->stampaInfo();
 	nodo1->stampaVicini();
+
+	auto& vicini_n1 = nodo1->getVicini();
+	if(!vicini_n1.empty()){
+		for (const auto& v : vicini_n1) {
+				std::cout<<"nodo="<<v->getX()<<","<<v->getY()<<"\n"<<std::endl;
+				}
+	}
+	else
+		std::cout<<"nessun vicino"<<std::endl;
 
 
 }

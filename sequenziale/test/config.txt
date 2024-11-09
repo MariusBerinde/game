@@ -1,0 +1,8 @@
+Numero righe = 5
+Numero colonne = 5 
+Numero turni = 5
+Nodi  Attivi 
+// A(x,y)
+A(0,0)
+B(0,1)
+
