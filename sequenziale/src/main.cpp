@@ -1,8 +1,14 @@
 #include "../include/simulation.h"
+#include <bits/types/struct_timeval.h>
 #include <cstdio>
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <sys/time.h>
+
+float tdiff(struct timeval *start,struct timeval *end){
+  return (end->tv_sec-start->tv_sec) + 1e-6 * (end->tv_usec-start->tv_usec);
+}
 
 void test_creation(){
 
@@ -666,10 +672,12 @@ void test_config_from_file(){
   std::cout<<"TEST CONFIG FROM FILE\n";
 
   Simulation sim(5, 5, 10);
+  struct timeval start,end;
+  gettimeofday(&start, NULL);
   sim.load_config("src/config.txt");
-  
-
-  //auto lettura =sim.read_file("./config.txt");
+  gettimeofday(&end, NULL);
+  printf("tempo inizializzazione da file in  millisec %0.6f\n",tdiff(&start, &end));
+  sim.printMap();
 
   if (sim.getMaxRows() == righe_teo)
     std::cout<<"NUMERO RIGHE OK\n";
@@ -716,6 +724,14 @@ void test_config_from_file(){
     else 
       std::cout<<"Punto B non trovato\n";
   }
+
+
+//  printf("-------------------------------------------------------------------");
+  gettimeofday(&start, NULL);
+  sim.simulate_turn();
+  gettimeofday(&end, NULL);
+  printf("tempo esecuzione di un turno in millisec %0.6f\n",tdiff(&start, &end));
+  sim.printMap();
 
 }
 
