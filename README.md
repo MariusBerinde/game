@@ -21,4 +21,8 @@ per lo sviluppo avrò bisogno di :
 - per il gioco in generale devo avere il numero di turni 
 - devo disegnare la mappa 
 - leggo la configurazione iniziale da file 
-
+## confronto tempi parall 
+### sequenziale 
+- init :   millisec 0.000035
+## parallelo 
+- init :  0.031805

@@ -60,7 +60,8 @@ private:
 
 public:
     // Costruttore
-    Simulation(int rows, int cols, int time);
+    Simulation( const int rows, const int cols,const  int time);
+
 
     // Distruttore
     ~Simulation();
@@ -70,7 +71,7 @@ public:
     int getMaxTime();
 
     // Funzione per aggiornare lo stato di un Nodo
-    void updateNodeState(int x, int y, Stato nuovoStato, int t);
+    void updateNodeState(const int x, const int y,const Stato nuovoStato,const int t);
 
     // Funzione per avanzare il tempo della simulazione
     void advanceTime();
@@ -123,7 +124,7 @@ public:
    *
    * @return state of the node for the next turn
   */
-  Stato stateNextTurn(int x,int y) ;
+  Stato stateNextTurn(const int x,const int y) ;
 /**
    * @brief calc the spawn position for the new nodes in the map 
    *
@@ -159,8 +160,7 @@ public:
   */
   bool load_config(const std::string& filename);
 
-
-};
+  };
 
  
 

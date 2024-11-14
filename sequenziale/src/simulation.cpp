@@ -12,7 +12,7 @@ std::string Nodo::toString() const {
 }
 
 // Costruttore della classe Simulation
-Simulation::Simulation(int rows, int cols, int time)
+Simulation::Simulation( const int rows, const int cols, const int time)
   : MAX_ROWS(rows), MAX_COLS(cols), MAX_TIME(time), actual_time(0), activeNodes(time) {
   // Allocazione dinamica della mappa tridimensionale
   map = new Stato**[MAX_ROWS];
@@ -27,6 +27,7 @@ Simulation::Simulation(int rows, int cols, int time)
   }
 }
 
+
 // Distruttore della classe Simulation
 Simulation::~Simulation() {
   for (int i = 0; i < MAX_ROWS; ++i) {
@@ -39,7 +40,7 @@ Simulation::~Simulation() {
 }
 
 // Funzione per aggiornare lo stato di un Nodo
-void Simulation::updateNodeState(int x, int y, Stato nuovoStato, int t) {
+void Simulation::updateNodeState(const int x, const int y,const Stato nuovoStato,const int t){
   if (t < MAX_TIME && x < MAX_ROWS && y < MAX_COLS) {
     map[x][y][t] = nuovoStato;
     Nodo nodo = {x, y, &map[x][y][t]};
@@ -222,11 +223,11 @@ std::vector<Nodo> Simulation::getActiveNodes()const{
 std::vector<std::vector<Nodo>> Simulation::getActiveNodesOfAnyTime() const{ return activeNodes;}
 
 
-Stato Simulation::stateNextTurn(int x,int y) {
+Stato Simulation::stateNextTurn(const int x,const int y) {
   auto neighbours_nodes= getNeighbours(x, y);
   Stato ris = dead;
   int nr_live_nodes=0;
-  for (int i=0;i<neighbours_nodes.size();i++){
+  for (size_t i=0;i<neighbours_nodes.size();i++){
     if ( *neighbours_nodes[i].stato == live)
       nr_live_nodes++;
   }
@@ -258,9 +259,9 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
     }
   };
 
-  for(int i=0;i<lActiveNodes.size();i++){
+  for(size_t i=0;i<lActiveNodes.size();i++){
     auto neighbours = getNeighbours(lActiveNodes[i].x,lActiveNodes[i].y);
-    for(int j=0;j<neighbours.size();j++){
+    for(size_t j=0;j<neighbours.size();j++){
       if( *neighbours[j].stato==dead){
 
         add_or_update_candidate(neighbours[j].x, neighbours[j].y);
@@ -292,14 +293,14 @@ void Simulation::simulate_turn(){
     printf("SIMULATE TURN: next time =%d\n",next_time);
     auto activeNodesNow = getActiveNodes();
     //crate the active node list of the next turn
-    for(int i=0;i<activeNodesNow.size();i++){
+    for(size_t i=0;i<activeNodesNow.size();i++){
       auto node = activeNodesNow[i];
       if(stateNextTurn(node.x, node.y) == live ){
         updateNodeState(node.x, node.y, live, next_time);
       }
     }
     auto nodes_spawned = calcSpawnNodes();
-    for(int i=0;i<nodes_spawned.size();i++){
+    for(size_t i=0;i<nodes_spawned.size();i++){
 
       updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
     }
@@ -465,3 +466,4 @@ std::cout << "Configurazione letta: "
   }
   return true;
 }
+

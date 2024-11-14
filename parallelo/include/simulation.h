@@ -9,7 +9,9 @@
 #include <set>
 #include <tuple>
 #include <string>
-#include <mpi.h>
+//#include <mpi.h>
+#include <omp.h>
+
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
 #define YELLOW_TXT "33"  // Codice ANSI per il colore giallo
