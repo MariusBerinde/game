@@ -30,39 +30,6 @@ Simulation::Simulation(int rows, int cols, int time)
   }
 }
 
-Simulation::Simulation(){
-  Simulation(1,1,1);
-}
-
-Simulation::Simulation(const std::string& filename){
- Config config = read_file(filename);
-  
-  MAX_ROWS = config.righe;
-  MAX_COLS = config.colonne;
-  MAX_TIME = config.tempo;
-  actual_time = 0;
-
-  // Alloca dinamicamente la mappa tridimensionale
-  map = new Stato**[MAX_ROWS];
-  for (int i = 0; i < MAX_ROWS; ++i) {
-    map[i] = new Stato*[MAX_COLS];
-    for (int j = 0; j < MAX_COLS; ++j) {
-      map[i][j] = new Stato[MAX_TIME];
-      for (int t = 0; t < MAX_TIME; ++t) {
-        map[i][j][t] = dead;  // Inizializza a "dead"
-      }
-    }
-  }
-
-  // Imposta i nodi attivi specificati nel file di configurazione
-  for (const auto& nodo : config.nodi) {
-    if (nodo.x < MAX_ROWS && nodo.y < MAX_COLS) {
-      updateNodeState(nodo.x, nodo.y, live, 0);  // Stato iniziale come attivo
-    } else {
-      std::cerr << "Errore: Nodo fuori dai limiti della griglia (" << nodo.x << ", " << nodo.y << ")\n";
-    }
-  }
-}
 
 // Distruttore della classe Simulation
 Simulation::~Simulation() {
@@ -263,7 +230,7 @@ Stato Simulation::stateNextTurn(int x,int y) {
   auto neighbours_nodes= getNeighbours(x, y);
   Stato ris = dead;
   int nr_live_nodes=0;
-  for (int i=0;i<neighbours_nodes.size();i++){
+  for (size_t i=0;i<neighbours_nodes.size();i++){
     if ( *neighbours_nodes[i].stato == live)
       nr_live_nodes++;
   }
@@ -295,9 +262,9 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
     }
   };
 
-  for(int i=0;i<lActiveNodes.size();i++){
+  for ( size_t i=0;i<lActiveNodes.size();i++){
     auto neighbours = getNeighbours(lActiveNodes[i].x,lActiveNodes[i].y);
-    for(int j=0;j<neighbours.size();j++){
+    for ( size_t j=0;j<neighbours.size();j++){
       if( *neighbours[j].stato==dead){
 
         add_or_update_candidate(neighbours[j].x, neighbours[j].y);
@@ -329,14 +296,14 @@ void Simulation::simulate_turn(){
     printf("SIMULATE TURN: next time =%d\n",next_time);
     auto activeNodesNow = getActiveNodes();
     //crate the active node list of the next turn
-    for(int i=0;i<activeNodesNow.size();i++){
+    for ( size_t i=0;i<activeNodesNow.size();i++){
       auto node = activeNodesNow[i];
       if(stateNextTurn(node.x, node.y) == live ){
         updateNodeState(node.x, node.y, live, next_time);
       }
     }
     auto nodes_spawned = calcSpawnNodes();
-    for(int i=0;i<nodes_spawned.size();i++){
+    for ( size_t i=0;i<nodes_spawned.size();i++){
 
       updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
     }

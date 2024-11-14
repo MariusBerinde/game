@@ -13,7 +13,7 @@ float tdiff(struct timeval *start,struct timeval *end){
 void test_creation(){
 
   // Creazione di un'istanza di Simulation con 5 righe, 5 colonne e 10 unità di tempo
-   int rows=40,lines=40;
+   size_t rows=40,lines=40;
   struct timeval start,end;
   gettimeofday(&start, NULL);
   Simulation sim(rows, lines, 2);
@@ -22,8 +22,8 @@ void test_creation(){
   std::cout << "Test creation\n";
   printf("velocità di init senza parallizzazione  millisec %0.6f\n",tdiff(&start, &end));
   // Aggiornamento di alcuni nodi al tempo 0
-  for(int i=0;i<rows;i++){
-    for (int j=0; j<lines; j++) {
+  for ( size_t i=0;i<rows;i++){
+    for (size_t j=0; j<lines; j++) {
         sim.updateNodeState(i, j, live, 0);
     }
 
@@ -46,11 +46,11 @@ void test_creation(){
   auto actualNt = sim.getActiveNodesAtTime(0);
   std::cout << "test dimensione = "<<actualN.size()<<"\n";
   std::cout << "test dimensione con la get at time = "<<actualNt.size()<<"\n";
-  for(int i=0;i<actualN.size();i++){
+  for ( size_t i=0;i<actualN.size();i++){
     std::cout<<"x="<<actualN[i].x<<"\ty="<<actualN[i].y<<"\n";
   }
 
-  for(int i=0;i<actualNt.size();i++){
+  for ( size_t i=0;i<actualNt.size();i++){
     std::cout<<"x="<<actualNt[i].x<<"\ty="<<actualN[i].y<<"\n";
   }
 */
@@ -65,7 +65,7 @@ void test_get_vicini(){
   if(viciniA.size()==3){
     std::cout << "Numero di vicini di A ok\n";
     bool esiti[3]={false,false,false};
-    for(int i=0;i<viciniA.size();i++){
+    for ( size_t i=0;i<viciniA.size();i++){
       if(viciniA.at(i).x== 0 && viciniA.at(i).y == 1)
         esiti[0] = true;
       if(viciniA.at(i).x== 1 && viciniA.at(i).y == 0)
@@ -103,7 +103,7 @@ void test_get_vicini(){
   if(viciniB.size()==3){
     std::cout << "Numero dei di B vicini ok\n";
     bool esiti[3]={false,false,false};
-    for(int i=0;i<viciniB.size();i++){
+    for ( size_t i=0;i<viciniB.size();i++){
       if(viciniB.at(i).x== 0 && viciniB.at(i).y == 4)
         esiti[0] = true;
       if(viciniB.at(i).x== 1 && viciniB.at(i).y == 4)
@@ -141,7 +141,7 @@ void test_get_vicini(){
   if(viciniD.size()==3){
     std::cout << "Numero dei vicini di D ok\n\n";
     bool esiti[3]={false,false,false};
-    for(int i=0;i<viciniD.size();i++){
+    for ( size_t i=0;i<viciniD.size();i++){
       if(viciniD.at(i).x== 4 && viciniD.at(i).y == 0)
         esiti[0] = true;
       if(viciniD.at(i).x== 4 && viciniD.at(i).y == 1)
@@ -178,7 +178,7 @@ void test_get_vicini(){
   if(viciniF.size()==3){
     std::cout << "Numero di vicini di F ok\n";
     bool esiti[3]={false,false,false};
-    for(int i=0;i<viciniF.size();i++){
+    for ( size_t i=0;i<viciniF.size();i++){
       if(viciniF.at(i).x== 4 && viciniF.at(i).y == 5)
         esiti[0] = true;
       if(viciniF.at(i).x== 4 && viciniF.at(i).y == 4)
@@ -216,7 +216,7 @@ void test_get_vicini(){
   if(viciniE.size()==5){
     std::cout << "Numero di vicini di E ok\n";
     bool esiti[5]={false,false,false,false,false};
-    for(int i=0;i<viciniE.size();i++){
+    for ( size_t i=0;i<viciniE.size();i++){
       if(viciniE.at(i).x== 5 && viciniE.at(i).y == 2)
         esiti[0] = true;
       if(viciniE.at(i).x== 4 && viciniE.at(i).y == 2)
@@ -271,7 +271,7 @@ void test_get_vicini(){
   if(viciniC.size()==8){
     std::cout << "Numero di vicini di C ok\n";
     bool esiti[8]={false,false,false,false,false,false,false,false};
-    for(int i=0;i<viciniC.size();i++){
+    for ( size_t i=0;i<viciniC.size();i++){
       if(viciniC.at(i).x== 2 && viciniC.at(i).y == 2)
         esiti[0] = true;
 
@@ -351,7 +351,7 @@ void test_get_vicini(){
   if(viciniG.size()==5){
     std::cout << "Numero di vicini di G ok\n";
     bool esiti[5]={false,false,false,false,false};
-    for(int i=0;i<viciniG.size();i++){
+    for ( size_t i=0;i<viciniG.size();i++){
       if(viciniG.at(i).x== 1 && viciniG.at(i).y == 0)
         esiti[0] = true;
       if(viciniG.at(i).x== 2 && viciniG.at(i).y == 1)
@@ -404,7 +404,7 @@ void test_get_vicini(){
   if(viciniH.size()==5){
     std::cout << "Numero di vicini di H ok\n";
     bool esiti[5]={false,false,false,false,false};
-    for(int i=0;i<viciniH.size();i++){
+    for ( size_t i=0;i<viciniH.size();i++){
       if(viciniH.at(i).x== 1 && viciniH.at(i).y == 5)
         esiti[0] = true;
       if(viciniH.at(i).x== 1 && viciniH.at(i).y == 4)
@@ -539,7 +539,7 @@ void test_creation_spawn_nodes(){
   sim.printMap();
   auto active_nodes = sim.getActiveNodes();
  puts("nodi attivi:\n");
-  for(int i=0;i<active_nodes.size();i++){
+  for ( size_t i=0;i<active_nodes.size();i++){
     std::cout<<"n="<<active_nodes[i].toString()<<"\n";
 
   }
@@ -547,7 +547,7 @@ void test_creation_spawn_nodes(){
   auto new_nodes=sim.calcSpawnNodes();
   bool ris[2]={false,false};
   if(new_nodes.size()==2){
-    for(int i=0;i<new_nodes.size();i++){
+    for ( size_t i=0;i<new_nodes.size();i++){
       if(new_nodes[i].first == 2 && new_nodes[i].second == 1)
         ris[0]=true;
       if(new_nodes[i].first == 5 && new_nodes[i].second == 1)
@@ -561,8 +561,8 @@ void test_creation_spawn_nodes(){
 
   }else{
     std::cout<<"non è stato calcoltato il numero di nodi corretto\n";
-    for(int i=0;i<new_nodes.size();i++){
-      printf("Nodo[%d]=%d,%d\n",i,new_nodes[i].first,new_nodes[i].second);
+    for ( size_t i=0;i<new_nodes.size();i++){
+      printf("Nodo[%ld]=%d,%d\n",i,new_nodes[i].first,new_nodes[i].second);
     }
 
   }
@@ -578,8 +578,8 @@ void test_pair(){
   posizioni.push_back(a);
   posizioni.push_back(b);
 
-  for(int i=0;i<posizioni.size();i++){
-    printf("pos[%d]=%d,%d\n",i,posizioni[i].first,posizioni[i].second);
+  for ( size_t i=0;i<posizioni.size();i++){
+    printf("pos[%ld]=%d,%d\n",i,posizioni[i].first,posizioni[i].second);
   }
 
 
@@ -606,7 +606,7 @@ void test_simulation(){
   sim.printMap();
   std::cout<<"nodi vicini:\n";
   auto actualN = sim.getActiveNodes();
-  for(int i=0;i<actualN.size();i++){
+  for ( size_t i=0;i<actualN.size();i++){
    std::cout<<"nodo attuale = "<<actualN[i].toString()<<"\n";
   }
 
