@@ -76,6 +76,8 @@ public:
     int getMaxCols();
     int getMaxTime();
 
+    Stato*** getMap();
+
     // Funzione per aggiornare lo stato di un Nodo
     void updateNodeState(int x, int y, Stato nuovoStato, int t);
 

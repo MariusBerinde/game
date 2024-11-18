@@ -1,22 +1,16 @@
 #include "../include/simulation.h"
-/*
-#include <iostream>
-#include <set>
-#include <tuple>
-#include <utility>
-#include <vector>
-*/
-//using namespace Simulation; // Implementazione della funzione toString di Nodo
+
 std::string Nodo::toString() const {
   std::ostringstream oss;
   oss << "Nodo (" << x << ", " << y << ") stato: " << (*stato == live ? "live" : "dead");
   return oss.str();
 }
 
+    Stato*** Simulation::getMap(){return map;}
+
 // Costruttore della classe Simulation
 Simulation::Simulation(int rows, int cols, int time)
-  : MAX_ROWS(rows), MAX_COLS(cols), MAX_TIME(time), actual_time(0), activeNodes(time) {
-  // Allocazione dinamica della mappa tridimensionale
+  : MAX_ROWS(rows), MAX_COLS(cols), MAX_TIME(time), actual_time(0), activeNodes(time) { // Allocazione dinamica della mappa tridimensionale
   map = new Stato**[MAX_ROWS];
     #pragma omp parallel for 
   for (int i = 0; i < MAX_ROWS; ++i) {
