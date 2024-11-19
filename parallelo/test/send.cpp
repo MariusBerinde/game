@@ -150,10 +150,54 @@ void send_matrix() {
     }
 }
 
+/*test condivisione */
+void test_share(){
+    int my_rank,size;
+   MPI_Comm_size(MPI_COMM_WORLD,&size);
+    if(size!=3){
+        printf("Errore: il numero di processi deve essere 3");
+    		MPI_Abort(MPI_COMM_WORLD,EXIT_FAILURE);
+	 }
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);      
 
+        Simulation sim(6, 6, 2);
+        sim.updateNodeState(0, 0, live, 0); // A
+        sim.updateNodeState(0, 1, live, 0); // B
+        sim.updateNodeState(1, 0, live, 0); // G
+    if (my_rank == 0) {
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+      sim.simulate_turn();
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+    }
+
+    if (my_rank == 1) {
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+    }
+
+    if (my_rank == 2) {
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+    }
+
+
+      sim.simulate_turn();
+
+    if (my_rank == 0) {
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+    }
+
+    if (my_rank == 1) {
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+    }
+
+    if (my_rank == 2) {
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+    }
+
+}
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);
 	//test_send();
-  send_matrix();
+  //send_matrix();
+  test_share();
 }
 
