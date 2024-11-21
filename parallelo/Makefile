@@ -9,7 +9,12 @@ compila:
 	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/main.cpp $(SRC)/simulation.cpp -o $(OUT)/main 
 compila_matrice:
 	mpic++ $(TEST)/matrix.cpp   -o  $(OUT)/matrix
-	#-I ./$(INCLUDE) $(SRC)/simulation.cpp
+
+compila_send:
+	mpic++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
+#	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
+
+
 
 esegui:compila
 	./$(OUT)/main 
@@ -22,6 +27,11 @@ read:compila_test_lettura
 
 matrice:compila_matrice 
 	mpirun -np 4 $(OUT)/matrix	
+
+
+send:compila_send 
+	mpirun -np 3 $(OUT)/send	
+#	./$(OUT)/main 
 
 clean:
 	rm -v $(OUT)/test

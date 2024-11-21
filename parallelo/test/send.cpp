@@ -165,24 +165,34 @@ void test_share(){
         sim.updateNodeState(0, 1, live, 0); // B
         sim.updateNodeState(1, 0, live, 0); // G
     if (my_rank == 0) {
-      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+      printf("Processo[%d](%d)\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
       sim.simulate_turn();
-      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+      sim.printMap(my_rank);
+      printf("Processo[%d](%d)\t ho eseguito un tunrno e adesso numero di nodi attivi %d\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
+      sim.printMap(my_rank);
     }
 
     if (my_rank == 1) {
-      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+
+      auto nodi_attivi = sim.getActiveNodes();
+      printf("Processo[%d](%d)\tnumero di nodi attivi %ld\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
+      printf("Processo[%d] stampo mappa\n",my_rank);
+      sim.printMap(my_rank);
     }
 
     if (my_rank == 2) {
-      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+      auto nodi_attivi = sim.getActiveNodes();
+      printf("Processo[%d](%d)\tnumero di nodi attivi %ld\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
+      sim.printMap(my_rank);
     }
 
 
-      sim.simulate_turn();
-
+      // sim.simulate_turn();
+/*
     if (my_rank == 0) {
       printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
+      sim.simulate_turn();
+      printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
     }
 
     if (my_rank == 1) {
@@ -193,6 +203,7 @@ void test_share(){
       printf("Processo[%d]\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime());
     }
 
+    */
 }
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);

@@ -743,17 +743,51 @@ void test_config_from_file(){
 
 }
 
+void seq(){ 
+  int my_rank = 0;
+  Simulation sim(6, 6, 2);
+  sim.updateNodeState(0, 0, live, 0); // A
+  sim.updateNodeState(0, 1, live, 0); // B
+  sim.updateNodeState(1, 0, live, 0); // G
+  auto nodi_attivi = sim.getActiveNodes();
+  printf("Processo[%d](%d)\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime(),nodi_attivi.size());
+  sim.printMap();
+  sim.simulate_turn();
+  nodi_attivi = sim.getActiveNodes();
+  printf("Processo[%d](%d)\tnumero di nodi attivi %ld\n",my_rank,sim.getActualTime(),nodi_attivi.size());
+  sim.printMap();
+}
 
+void test_eu_dist(){
+
+  Simulation sim(6, 6, 2);
+  sim.updateNodeState(0, 0, live, 0); // A
+  sim.updateNodeState(0, 1, live, 0); // B
+  sim.updateNodeState(1, 0, live, 0); // G
+  sim.updateNodeState(4, 0, live, 0); 
+  auto nodi_attivi = sim.getActiveNodes();
+
+  std::cout<<"TEST DISTANZA EUCLIDEA\n";
+  sim.printMap();
+  Nodo b = {5, 5, NULL};
+  for (size_t i = 0; i < nodi_attivi.size(); i++) {
+    auto nodo_attuale = nodi_attivi[i];
+    printf("differenza tra (%d,%d) e (%d,%d) = %lf\n",nodo_attuale.x,nodo_attuale.y,b.x,b.y,sim.eu_distance_node(nodo_attuale,b));
+  }
+
+
+}
 int main() {
-    test_creation();
-  //  test_get_vicini();
-  // test_rules_next_turn();
-  //test_creation_spawn_nodes();
-  //test_pair();
- // test_simulation();
- // test_read();
-  //test_config_from_file();
-
+//  test_creation();
+//  test_get_vicini();
+//  test_rules_next_turn();
+//  test_creation_spawn_nodes();
+//  test_pair();
+//  test_simulation();
+//  test_read();
+//  test_config_from_file();
+//  seq();
+test_eu_dist();
   return 0;
 }
 

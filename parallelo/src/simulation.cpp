@@ -75,14 +75,18 @@ void Simulation::printActiveNodes() const {
 }
 
 // Funzione per stampare la mappa
-void Simulation::printMap() const {
-  std::cout << "Mappa al tempo " << actual_time << ":\n";
+void Simulation::printMap(int p) const {
+  if (p> -1)
+    std::cout <<"Processo["<<p<< "] mappa al tempo " << actual_time << ":\n";
+  else
+    std::cout <<"Mappa al tempo " << actual_time << ":\n";
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
       if (map[i][j][actual_time] == live) {
-        std::cout << YELLOW_TEXT("O") << " ";  // Nodo vivo ('O') in giallo
+        //std::cout << YELLOW_TEXT("O") << " ";  // Nodo vivo ('O') in giallo
+        std::cout << YELLOW_TEXT("O"); 
       } else {
-        std::cout << " ";  // Nodo morto (spazio vuoto)
+        std::cout << "X";  // Nodo morto (spazio vuoto)
       }
     }
     std::cout << std::endl;
@@ -301,6 +305,7 @@ void Simulation::simulate_turn(){
 
       updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
     }
+    //std::cout<<"simula turno numero di nodi attivi="<<activeNodesNow.size()<<"\t valore par :"<<activeNodes[next_time].size()<<"\n";
 
     advanceTime();
 
@@ -464,3 +469,10 @@ std::cout << "Configurazione letta: "
   return true;
 }
 
+ 
+double Simulation::eu_distance_node(Nodo a,Nodo b){
+  int diff_x=a.x - b.x;
+  int diff_y=a.y - b.y;
+
+  return sqrt(pow(diff_x,2)+pow(diff_y,2));
+}

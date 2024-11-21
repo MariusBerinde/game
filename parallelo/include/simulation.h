@@ -11,6 +11,7 @@
 #include <string>
 //#include <mpi.h>
 #include <omp.h>
+#include <cmath>
 
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
@@ -90,8 +91,8 @@ public:
     // Funzione per stampare tutti i nodi attivi al tempo attuale
     void printActiveNodes() const;
 
-    // Funzione per stampare la mappa
-    void printMap() const;
+    // Funzione per stampare la mappa p indica il processo 
+    void printMap(int p=-1) const;
 
 
   /**
@@ -167,6 +168,12 @@ public:
    *
   */
   bool load_config(const std::string& filename);
+
+  /**
+   * @brief calc the euclidean distance between a and b
+   * */
+  double eu_distance_node(Nodo a,Nodo b);
+
 
   };
 
