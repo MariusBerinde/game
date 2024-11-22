@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include <sys/time.h>
+#include <algorithm>
 
 float tdiff(struct timeval *start,struct timeval *end){
   return (end->tv_sec-start->tv_sec) + 1e-6 * (end->tv_usec-start->tv_usec);
@@ -775,6 +776,52 @@ void test_eu_dist(){
     printf("differenza tra (%d,%d) e (%d,%d) = %lf\n",nodo_attuale.x,nodo_attuale.y,b.x,b.y,sim.eu_distance_node(nodo_attuale,b));
   }
 
+}
+
+void test_mh_dist(){
+  Simulation sim(6, 6, 2);
+  sim.updateNodeState(0, 0, live, 0); // A
+  sim.updateNodeState(0, 1, live, 0); // B
+  sim.updateNodeState(1, 0, live, 0); // G
+  sim.updateNodeState(4, 0, live, 0); 
+  auto nodi_attivi = sim.getActiveNodes();
+
+  std::cout<<"TEST DISTANZA DI MANHATTAN \n";
+  sim.printMap();
+  Nodo b = {5, 5, NULL};
+  for (size_t i = 0; i < nodi_attivi.size(); i++) {
+    auto nodo_attuale = nodi_attivi[i];
+    printf("differenza tra (%d,%d) e (%d,%d) = %d\n",nodo_attuale.x,nodo_attuale.y,b.x,b.y,sim.mh_distance_node(nodo_attuale,b));
+  }
+
+}
+bool customCompare(Nodo a, Nodo b) {
+  
+       return (a.x<b.x) && (a.y<b.y);
+     }
+void test_order_node_vector(){
+
+  Nodo b = {5, 5, NULL};
+  Nodo a = {0, 0, NULL};
+  Nodo c = {1, 3, NULL};
+  Nodo d = {4, 2, NULL};
+
+  std::vector<Nodo> l={a,b,c,d};
+  std::cout << "TEST ORDER VECTOR\n vettore originale\n:";
+
+  for(Nodo n:l){
+    printf("(%d,%d)\t",n.x,n.y);
+  }
+  printf("\n vettore ordinato");
+
+ // sort(l.begin(),l.end());
+  sort(l.begin(),l.end(),customCompare);
+
+  for(Nodo n:l){
+    printf("(%d,%d)\t",n.x,n.y);
+  }
+  printf("\n");
+
 
 }
 int main() {
@@ -787,7 +834,9 @@ int main() {
 //  test_read();
 //  test_config_from_file();
 //  seq();
-test_eu_dist();
+//    test_eu_dist();
+//    test_mh_dist();
+    test_order_node_vector();
   return 0;
 }
 

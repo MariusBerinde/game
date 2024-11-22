@@ -174,6 +174,11 @@ public:
    * */
   double eu_distance_node(Nodo a,Nodo b);
 
+  /**
+   * @brief calc the manhattan distance between a and b
+   * */
+  int mh_distance_node(Nodo a,Nodo b);
+
 
   };
 

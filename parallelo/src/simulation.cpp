@@ -476,3 +476,10 @@ double Simulation::eu_distance_node(Nodo a,Nodo b){
 
   return sqrt(pow(diff_x,2)+pow(diff_y,2));
 }
+
+
+  int Simulation::mh_distance_node(Nodo a,Nodo b){
+    int diff_x=a.x - b.x;
+    int diff_y=a.y - b.y;
+    return abs(diff_x)+abs(diff_y);
+  }
