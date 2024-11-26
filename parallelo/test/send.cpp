@@ -205,10 +205,140 @@ void test_share(){
 
     */
 }
+void test_scheduler(){
+
+  Nodo b = {5, 5, NULL};
+  Nodo a = {0, 0, NULL};
+  Nodo c = {1, 3, NULL};
+  Nodo d = {3, 2, NULL};
+  Nodo e = {0, 2, NULL};
+  Nodo f = {4, 2, NULL};
+
+  vector<Nodo> l={a,b,c,d,e,f};
+
+    int my_rank,size,TAG=0;
+   MPI_Comm_size(MPI_COMM_WORLD,&size);
+    if(size!=3){
+        printf("Errore: il numero di processi deve essere 3");
+    		MPI_Abort(MPI_COMM_WORLD,EXIT_FAILURE);
+	 }
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);      
+    if(my_rank==0){
+      int start_1=0, start_2=3, end_1=2, end_2=5,d1=1,d2=2;
+    std::cout << "Nodi all'inizio\n";
+    for(Nodo n:l){
+      printf("(%d,%d)\t",n.x,n.y);
+    }
+    std::cout << "\n";
+      MPI_Send(&start_1,1,MPI_INT,d1,TAG,MPI_COMM_WORLD);
+      MPI_Send(&end_1,1,MPI_INT,d1,TAG,MPI_COMM_WORLD);
+      MPI_Send(&start_2,1,MPI_INT,d2,TAG,MPI_COMM_WORLD);
+      MPI_Send(&end_2,1,MPI_INT,d2,TAG,MPI_COMM_WORLD);
+
+        MPI_Recv(&start_1, 1, MPI_INT, 1, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&start_2, 1, MPI_INT, 2, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        if(start_1==42 && start_2==42)
+          cout<<"Sincronizzazione\n";
+
+        std::cout << "Nodi dopo il lavoro";
+        for(Nodo n:l){
+          printf("(%d,%d)\t",n.x,n.y);
+        }
+
+        std::cout << "\n";
+    }
+    else{
+      int start=0,end=0;
+
+        MPI_Recv(&start, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&end, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        printf("Nodo[%d] start=%d\tend=%d\n",my_rank,start,end);
+        for (size_t i = start; i <= end ; i++) {
+          l[i].x++;
+          l[i].y++;
+        }
+       start=42;
+
+      MPI_Send(&start,1,MPI_INT,0,TAG,MPI_COMM_WORLD);
+
+    }
+}
+
+
+void test_scheduler_2() {
+    Nodo b = {5, 5, NULL};
+    Nodo a = {0, 0, NULL};
+    Nodo c = {1, 3, NULL};
+    Nodo d = {3, 2, NULL};
+    Nodo e = {0, 2, NULL};
+    Nodo f = {4, 2, NULL};
+
+    std::vector<Nodo> l = {a, b, c, d, e, f};
+
+    int my_rank, size, TAG = 0;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    if (size != 3) {
+        printf("Errore: il numero di processi deve essere 3");
+        MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+    }
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+    if (my_rank == 0) {
+        // Processo master
+        int start_1 = 0, start_2 = 3, end_1 = 2, end_2 = 5, d1 = 1, d2 = 2;
+
+        // Mostra lo stato iniziale dei nodi
+        std::cout << "Nodi all'inizio\n";
+        for (Nodo n : l) {
+            printf("(%d,%d)\t", n.x, n.y);
+        }
+        std::cout << "\n";
+
+        // Invia intervalli ai figli
+        MPI_Send(&start_1, 1, MPI_INT, d1, TAG, MPI_COMM_WORLD);
+        MPI_Send(&end_1, 1, MPI_INT, d1, TAG, MPI_COMM_WORLD);
+        MPI_Send(&start_2, 1, MPI_INT, d2, TAG, MPI_COMM_WORLD);
+        MPI_Send(&end_2, 1, MPI_INT, d2, TAG, MPI_COMM_WORLD);
+
+        // Ricevi i nodi aggiornati dai figli
+        MPI_Recv(&l[start_1], (end_1 - start_1 + 1) * sizeof(Nodo), MPI_BYTE, d1, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&l[start_2], (end_2 - start_2 + 1) * sizeof(Nodo), MPI_BYTE, d2, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        std::cout << "Nodi dopo il lavoro\n";
+        for (Nodo n : l) {
+            printf("(%d,%d)\t", n.x, n.y);
+        }
+        std::cout << "\n";
+
+    } else {
+        // Processi figli
+        int start = 0, end = 0;
+
+        // Ricevi intervallo dal master
+        MPI_Recv(&start, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&end, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        printf("Nodo[%d] start=%d\tend=%d\n", my_rank, start, end);
+
+        // Modifica i nodi assegnati
+        for (size_t i = start; i <= end; i++) {
+            l[i].x++;
+            l[i].y++;
+        }
+
+        // Invia i nodi aggiornati al master
+        MPI_Send(&l[start], (end - start + 1) * sizeof(Nodo), MPI_BYTE, 0, TAG, MPI_COMM_WORLD);
+    }
+}
+
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);
 	//test_send();
   //send_matrix();
-  test_share();
+  //test_share();
+//  test_scheduler();
+  test_scheduler_2();
 }
 
