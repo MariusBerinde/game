@@ -7,6 +7,9 @@ compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo
 compila:
 	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/main.cpp $(SRC)/simulation.cpp -o $(OUT)/main 
+
+compila_p:
+	mpic++ $(FLAGS) ./$(INCLUDE) $(SRC)/main.cpp $(SRC)/simulation.cpp -o $(OUT)/main 
 compila_matrice:
 	mpic++ $(TEST)/matrix.cpp   -o  $(OUT)/matrix
 
@@ -18,6 +21,10 @@ compila_send:
 
 esegui:compila
 	./$(OUT)/main 
+
+
+esegui_p:compila_p
+	mpirun -np 1 ./$(OUT)/main 
 
 compila_test_lettura:
 	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/read_file.cpp -o $(TEST)/read

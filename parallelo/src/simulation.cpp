@@ -284,32 +284,96 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
 
 }
 
+bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
 
-void Simulation::simulate_turn(){
-  //crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
-  //trova quali nodi del turno attuale sopravivranno 
-  //trova quali saranno i nuovi nodi attivi e inseriscili nella Mappa
-  if(actual_time + 1 < MAX_TIME){
-    int next_time = actual_time+1;
-    printf("SIMULATE TURN: next time =%d\n",next_time);
-    auto activeNodesNow = getActiveNodes();
-    //crate the active node list of the next turn
-    for ( size_t i=0;i<activeNodesNow.size();i++){
-      auto node = activeNodesNow[i];
-      if(stateNextTurn(node.x, node.y) == live ){
-        updateNodeState(node.x, node.y, live, next_time);
+/*
+ * strategia di parallelizzazione :
+ * il nodo con rank == 0 distribuisce il lavoro restanti nodi per cui nella fase iniziale ci devono essere almeno 3 nodi per poter lavorare 
+ * TODO: capire come parallelizzare le operazioni di regola 1,2 e 3
+ * avendo size nodi ci saranno size-1 nodi figli che verificheranno 
+ * */
+  void Simulation::simulate_turn_p(){
+    int my_rank,size,TAG;
+    MPI_Comm_size(MPI_COMM_WORLD,&size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);   
+
+    size--; // diminuisco il totale perc
+    if(my_rank==0){
+
+      /*
+      - nodo scheduler 
+      - ordina i nodi attivi 
+      -  lo scheduler ordina la lista dei nodi attivi e distriubisce gli elenchi gli intervalli ai nodi figli dopo di che si mette in attesa del done dei nodi figli per poter attivare la fase di spawn nodes e far avanzare il tempo totale della simulazione 
+      */
+
+       
+      auto activeNodesNow = getActiveNodes();
+      sort(activeNodesNow.begin(),activeNodesNow.end(),customCompare);
+      //TODO: selezionare i vari indici e inviarli ai nodi giusti
+    }
+    else {
+      //nodo figli
+
+    }
+
+      int next_time = actual_time+1;
+      printf("SIMULATE TURN: next time =%d\n",next_time);
+      auto activeNodesNow = getActiveNodes();
+      //crate the active node list of the next turn
+      for ( size_t i=0;i<activeNodesNow.size();i++){
+        auto node = activeNodesNow[i];
+        if(stateNextTurn(node.x, node.y) == live ){
+          updateNodeState(node.x, node.y, live, next_time);
+        }
       }
-    }
-    auto nodes_spawned = calcSpawnNodes();
-    for ( size_t i=0;i<nodes_spawned.size();i++){
+      auto nodes_spawned = calcSpawnNodes();
+      for ( size_t i=0;i<nodes_spawned.size();i++){
 
-      updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
-    }
-    //std::cout<<"simula turno numero di nodi attivi="<<activeNodesNow.size()<<"\t valore par :"<<activeNodes[next_time].size()<<"\n";
+        updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
+      }
+      //std::cout<<"simula turno numero di nodi attivi="<<activeNodesNow.size()<<"\t valore par :"<<activeNodes[next_time].size()<<"\n";
 
-    advanceTime();
+      advanceTime();
+    
+  }
+
+/*
+ * crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
+ * trova quali nodi del turno attuale sopravivranno 
+ * trova quali saranno i nuovi nodi attivi e inseriscili nella Mappa
+ */
+void Simulation::simulate_turn(){
+  if(actual_time + 1 < MAX_TIME){
+
+    int size;
+    MPI_Comm_size(MPI_COMM_WORLD,&size);
+
+    if(size>=2){
+      simulate_turn_p();
+    } else{
+
+      int next_time = actual_time+1;
+      printf("SIMULATE TURN: next time =%d\n",next_time);
+      auto activeNodesNow = getActiveNodes();
+      //create the active node list of the next turn
+      for ( size_t i=0;i<activeNodesNow.size();i++){
+        auto node = activeNodesNow[i];
+        if(stateNextTurn(node.x, node.y) == live ){
+          updateNodeState(node.x, node.y, live, next_time);
+        }
+      }
+      auto nodes_spawned = calcSpawnNodes();
+      for ( size_t i=0;i<nodes_spawned.size();i++){
+
+        updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
+      }
+      //std::cout<<"simula turno numero di nodi attivi="<<activeNodesNow.size()<<"\t valore par :"<<activeNodes[next_time].size()<<"\n";
+
+      advanceTime();
+    }
 
   }
+
 }
 
 

@@ -6,6 +6,8 @@
 #include <vector>
 #include <sys/time.h>
 #include <algorithm>
+#include <random>
+using namespace std;
 
 float tdiff(struct timeval *start,struct timeval *end){
   return (end->tv_sec-start->tv_sec) + 1e-6 * (end->tv_usec-start->tv_usec);
@@ -795,7 +797,7 @@ void test_mh_dist(){
   }
 
 }
-bool customCompare(Nodo a, Nodo b) {
+bool customCompare_l(Nodo a, Nodo b) {
   
        return (a.x<b.x) && (a.y<b.y);
      }
@@ -815,19 +817,63 @@ void test_order_node_vector(){
   printf("\n vettore ordinato");
 
  // sort(l.begin(),l.end());
-  sort(l.begin(),l.end(),customCompare);
+  sort(l.begin(),l.end(),customCompare_l);
 
   for(Nodo n:l){
     printf("(%d,%d)\t",n.x,n.y);
   }
   printf("\n");
 
+}
+vector<pair<int,int>> gen_random_pos(int nr,int max){
+  vector<pair<int,int>> ris;
 
+    int min = 0;
+
+    // Initialize a random number generator
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(min, max);
+
+    // Generate random number in the range [min, max]
+    int x = distrib(gen);
+  for(size_t i=0;i<nr;i++){
+
+    int x = distrib(gen);
+    int y = distrib(gen);
+    pair<int,int> tmp={x,y};
+    if(i==0){
+      ris.push_back(tmp);
+    }
+    else{
+      pair<int,int> tmp2= {x,y};
+      auto it1 = find(ris.begin(),ris.end(),tmp2);
+      bool is_in = (it1!= ris.end());
+      while(is_in){
+        x = distrib(gen);
+        y = distrib(gen);
+        tmp2={x,y};
+      }
+      ris.push_back(tmp2);
+    }
+
+  }
+  
+  return ris;
+
+}
+void test_gen_random_pos(){
+//  Simulation sim(6, 6, 2);
+  int number_pos=10;
+  auto position_list = gen_random_pos(number_pos,5);
+  for(auto var : position_list) {
+    printf("(%d,%d)\n",var.first,var.second);
+  }
 }
 int main() {
 //  test_creation();
 //  test_get_vicini();
-//  test_rules_next_turn();
+  test_rules_next_turn();
 //  test_creation_spawn_nodes();
 //  test_pair();
 //  test_simulation();
@@ -836,7 +882,8 @@ int main() {
 //  seq();
 //    test_eu_dist();
 //    test_mh_dist();
-    test_order_node_vector();
+    //test_order_node_vector();
+  //  test_gen_random_pos();
   return 0;
 }
 

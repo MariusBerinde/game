@@ -1,6 +1,8 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <bits/types/struct_timeval.h>
+#include <cstdio>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -9,9 +11,12 @@
 #include <set>
 #include <tuple>
 #include <string>
-//#include <mpi.h>
+#include <mpi.h>
 #include <omp.h>
 #include <cmath>
+#include <sys/time.h>
+#include <algorithm>
+#include <random>
 
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
@@ -147,6 +152,11 @@ public:
    * - If a dead node has exactly 3 live neighbors ; the node will be considered live in the next turn
    **/
   void simulate_turn();
+
+  /*
+   * @brief parallel version of sumulate turn
+   * */
+  void simulate_turn_p();
 
   /**
    * @brief run simulate_turn n times
