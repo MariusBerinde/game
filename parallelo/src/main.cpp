@@ -1,4 +1,5 @@
 #include "../include/simulation.h"
+/*
 #include <bits/types/struct_timeval.h>
 #include <cstdio>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include <sys/time.h>
 #include <algorithm>
 #include <random>
+*/
 using namespace std;
 
 float tdiff(struct timeval *start,struct timeval *end){
@@ -798,25 +800,21 @@ void test_mh_dist(){
 
 }
 bool customCompare_l(Nodo a, Nodo b) {
-  
        return (a.x<b.x) && (a.y<b.y);
      }
-void test_order_node_vector(){
 
+void test_order_node_vector(){
   Nodo b = {5, 5, NULL};
   Nodo a = {0, 0, NULL};
   Nodo c = {1, 3, NULL};
   Nodo d = {4, 2, NULL};
-
   std::vector<Nodo> l={a,b,c,d};
   std::cout << "TEST ORDER VECTOR\n vettore originale\n:";
-
   for(Nodo n:l){
     printf("(%d,%d)\t",n.x,n.y);
   }
   printf("\n vettore ordinato");
 
- // sort(l.begin(),l.end());
   sort(l.begin(),l.end(),customCompare_l);
 
   for(Nodo n:l){
@@ -870,20 +868,75 @@ void test_gen_random_pos(){
     printf("(%d,%d)\n",var.first,var.second);
   }
 }
+
+Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){
+  Simulation sim(righe,colonne,turni);
+  auto position_list = gen_random_pos(numero_nodi,righe);
+  if(numero_nodi == position_list.size())
+    std::cout << "[make random] sim ok\n";
+  else 
+    std::cout << "[make random]sim errato\n";
+  for(auto p:position_list){
+    sim.updateNodeState(p.first, p.second, live, 0);
+  }
+  return sim;
+}
+
+void test_random_sim(){
+  int righe_teo =10,colonne_teo = 10,turni_teo = 5,max_nodi_teo = 13;
+  Simulation sim = make_random_sim(righe_teo,colonne_teo,turni_teo,max_nodi_teo);
+  int righe_gen = sim.getMaxRows();
+  int colonne_gen = sim.getMaxCols();
+  int turni_gen = sim.getMaxTime();
+  auto nodi_attivi = sim.getActiveNodes();
+  if( righe_teo == righe_gen )
+    std::cout << "Numero righe ok\n";
+  else 
+    std::cout << "Numero righe errato\n";
+
+
+  if( colonne_teo == colonne_gen )
+    std::cout << "Numero colonne ok\n";
+  else 
+    std::cout << "Numero colonne errato\n";
+
+  if( turni_teo == turni_gen )
+        std::cout << "Numero turni ok\n";
+    else 
+          std::cout << "Numero turni errato\n";
+
+  if( nodi_attivi.size() == max_nodi_teo ){
+        std::cout << "Numero nodi attivi ok\n nodi attivi generati:\n";
+        for(Nodo n:nodi_attivi){
+          printf("Nodo(%d,%d)\n",n.x,n.y);
+        }
+  }
+    else {
+
+        std::cout << "Numero nodi attivi errati\n nodi attivi generati:\n";
+        for(Nodo n:nodi_attivi){
+          printf("Nodo(%d,%d)\n",n.x,n.y);
+        }
+    }
+
+  
+
+}
 int main() {
 //  test_creation();
 //  test_get_vicini();
-  test_rules_next_turn();
+//  test_rules_next_turn();
 //  test_creation_spawn_nodes();
 //  test_pair();
 //  test_simulation();
 //  test_read();
 //  test_config_from_file();
 //  seq();
-//    test_eu_dist();
-//    test_mh_dist();
-    //test_order_node_vector();
-  //  test_gen_random_pos();
+//  test_eu_dist();
+//  test_mh_dist();
+//  test_order_node_vector();
+//  test_gen_random_pos();
+  test_random_sim();
   return 0;
 }
 

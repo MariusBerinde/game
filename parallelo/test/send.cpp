@@ -1,10 +1,12 @@
 #include "../include/simulation.h"
+/*
 #include <algorithm>
 #include <cstddef>
 #include <stdio.h>
 #include <mpi.h>
 #include <stdlib.h>
 #include <vector>
+*/
 using namespace std;
 void test_send(){
   int my_rank,size;
