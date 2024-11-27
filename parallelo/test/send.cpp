@@ -205,69 +205,10 @@ void test_share(){
 
     */
 }
-void test_scheduler(){
-
-  Nodo b = {5, 5, NULL};
-  Nodo a = {0, 0, NULL};
-  Nodo c = {1, 3, NULL};
-  Nodo d = {3, 2, NULL};
-  Nodo e = {0, 2, NULL};
-  Nodo f = {4, 2, NULL};
-
-  vector<Nodo> l={a,b,c,d,e,f};
-
-    int my_rank,size,TAG=0;
-   MPI_Comm_size(MPI_COMM_WORLD,&size);
-    if(size!=3){
-        printf("Errore: il numero di processi deve essere 3");
-    		MPI_Abort(MPI_COMM_WORLD,EXIT_FAILURE);
-	 }
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);      
-    if(my_rank==0){
-      int start_1=0, start_2=3, end_1=2, end_2=5,d1=1,d2=2;
-    std::cout << "Nodi all'inizio\n";
-    for(Nodo n:l){
-      printf("(%d,%d)\t",n.x,n.y);
-    }
-    std::cout << "\n";
-      MPI_Send(&start_1,1,MPI_INT,d1,TAG,MPI_COMM_WORLD);
-      MPI_Send(&end_1,1,MPI_INT,d1,TAG,MPI_COMM_WORLD);
-      MPI_Send(&start_2,1,MPI_INT,d2,TAG,MPI_COMM_WORLD);
-      MPI_Send(&end_2,1,MPI_INT,d2,TAG,MPI_COMM_WORLD);
-
-        MPI_Recv(&start_1, 1, MPI_INT, 1, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Recv(&start_2, 1, MPI_INT, 2, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-        if(start_1==42 && start_2==42)
-          cout<<"Sincronizzazione\n";
-
-        std::cout << "Nodi dopo il lavoro";
-        for(Nodo n:l){
-          printf("(%d,%d)\t",n.x,n.y);
-        }
-
-        std::cout << "\n";
-    }
-    else{
-      int start=0,end=0;
-
-        MPI_Recv(&start, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Recv(&end, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-        printf("Nodo[%d] start=%d\tend=%d\n",my_rank,start,end);
-        for (size_t i = start; i <= end ; i++) {
-          l[i].x++;
-          l[i].y++;
-        }
-       start=42;
-
-      MPI_Send(&start,1,MPI_INT,0,TAG,MPI_COMM_WORLD);
-
-    }
-}
 
 
-void test_scheduler_2() {
+
+void test_scheduler() {
     Nodo b = {5, 5, NULL};
     Nodo a = {0, 0, NULL};
     Nodo c = {1, 3, NULL};
@@ -333,12 +274,180 @@ void test_scheduler_2() {
     }
 }
 
+void test_scheduler_b() {
+    Nodo b = {5, 5, NULL};
+    Nodo a = {0, 0, NULL};
+    Nodo c = {1, 3, NULL};
+    Nodo d = {3, 2, NULL};
+    Nodo e = {0, 2, NULL};
+    Nodo f = {4, 2, NULL};
+
+    std::vector<Nodo> l = {a, b, c, d, e, f};
+
+    int my_rank, size, TAG = 0;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    if (size != 3) {
+        printf("Errore: il numero di processi deve essere 3");
+        MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+    }
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+    if (my_rank == 0) {
+        // Processo master
+        int start_1 = 0, start_2 = 3, end_1 = 2, end_2 = 5, d1 = 1, d2 = 2;
+
+        // Mostra lo stato iniziale dei nodi
+        std::cout << "Master:nodi all'inizio\n";
+        for (Nodo n : l) {
+            printf("(%d,%d)\t", n.x, n.y);
+        }
+        std::cout << "\n";
+
+        // Invia intervalli ai figli
+        MPI_Send(&start_1, 1, MPI_INT, d1, TAG, MPI_COMM_WORLD);
+        MPI_Send(&end_1, 1, MPI_INT, d1, TAG, MPI_COMM_WORLD);
+        MPI_Send(&start_2, 1, MPI_INT, d2, TAG, MPI_COMM_WORLD);
+        MPI_Send(&end_2, 1, MPI_INT, d2, TAG, MPI_COMM_WORLD);
+
+        // Ricevi i nodi aggiornati dai figli
+        MPI_Recv(&l[start_1], (end_1 - start_1 + 1) * sizeof(Nodo), MPI_BYTE, d1, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&l[start_2], (end_2 - start_2 + 1) * sizeof(Nodo), MPI_BYTE, d2, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        // Propaga la lista aggiornata a tutti i processi
+        MPI_Bcast(&l[0], l.size() * sizeof(Nodo), MPI_BYTE, 0, MPI_COMM_WORLD);
+
+        std::cout << "Master:nodi dopo il lavoro:\n";
+        for (Nodo n : l) {
+            printf("Master:(%d,%d)\t", n.x, n.y);
+        }
+        std::cout << "\n";
+
+    } else {
+        // Processi figli
+        int start = 0, end = 0;
+
+        // Ricevi intervallo dal master
+        MPI_Recv(&start, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&end, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+       // printf("Nodo[%d] start=%d\tend=%d\n", my_rank, start, end);
+
+        // Modifica i nodi assegnati
+        for (size_t i = start; i <= end; i++) {
+            l[i].x++;
+            l[i].y++;
+        }
+
+        // Invia i nodi aggiornati al master
+        MPI_Send(&l[start], (end - start + 1) * sizeof(Nodo), MPI_BYTE, 0, TAG, MPI_COMM_WORLD);
+
+        // Propaga la lista aggiornata dal master
+        MPI_Bcast(&l[0], l.size() * sizeof(Nodo), MPI_BYTE, 0, MPI_COMM_WORLD);
+
+        // Mostra i nodi aggiornati
+        std::cout << "Nodi dopo la propagazione (figlio " << my_rank << ")\n";
+        for (Nodo n : l) {
+            printf("Processo[%d]:(%d,%d)\t",my_rank,n.x, n.y);
+        }
+        std::cout << "\n";
+    }
+}
+
+void test_scheduler_b_2() {
+    Nodo b = {5, 5, NULL};
+    Nodo a = {0, 0, NULL};
+    Nodo c = {1, 3, NULL};
+    Nodo d = {3, 2, NULL};
+    Nodo e = {0, 2, NULL};
+    Nodo f = {4, 2, NULL};
+
+    std::vector<Nodo> l = {a, b, c, d, e, f};
+
+    int my_rank, size;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+    if (size != 3) {
+        printf("Errore: il numero di processi deve essere 3\n");
+        MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+    }
+
+    int total_nodes = l.size();
+    int nodes_per_process = total_nodes / (size - 1); // Numero di nodi per figlio
+    int remainder = total_nodes % (size - 1);        // Restanti nodi non divisibili
+
+    if (my_rank == 0) {
+        // MASTER
+        std::cout << "Master: nodi all'inizio\n";
+        for (Nodo n : l) {
+            printf("(%d,%d)\t", n.x, n.y);
+        }
+        std::cout << "\n";
+
+        // Notifica ai figli di iniziare il calcolo
+        for (int i = 1; i < size; i++) {
+            int start = (i - 1) * nodes_per_process;
+            int end = start + nodes_per_process - 1;
+            if (i == size - 1) {
+                end += remainder; // L'ultimo figlio gestisce i nodi rimanenti
+            }
+
+            MPI_Send(&start, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Send(&end, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+
+        // Il master attende notifiche di completamento da tutti i figli
+        for (int i = 1; i < size; i++) {
+            int done;
+            MPI_Recv(&done, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        // Notifica che i dati sono stati aggiornati
+        std::cout << "Master: tutti i dati sono stati aggiornati\n";
+
+        // Mostra lo stato finale dei nodi
+        std::cout << "Master: nodi dopo l'aggiornamento\n";
+        for (Nodo n : l) {
+            printf("Master:(%d,%d)\t", n.x, n.y);
+        }
+        std::cout << "\n";
+
+    } else {
+        // FIGLI
+        int start, end;
+
+        // Riceve i limiti del lavoro
+        MPI_Recv(&start, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&end, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        // Aggiorna la porzione assegnata
+        for (int i = start; i <= end; i++) {
+            l[i].x += my_rank; // Simula un aggiornamento dipendente dal rank
+            l[i].y += my_rank;
+        }
+
+        // Propaga i dati aggiornati
+        MPI_Bcast(&l[0], total_nodes * sizeof(Nodo), MPI_BYTE, my_rank, MPI_COMM_WORLD);
+
+        // Notifica al master che ha terminato
+        int done = 1;
+        MPI_Send(&done, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+
+        // Mostra i nodi aggiornati localmente
+        std::cout << "Processo[" << my_rank << "]: nodi dopo l'aggiornamento\n";
+        for (Nodo n : l) {
+            printf("Processo[%d]:(%d,%d)\t", my_rank, n.x, n.y);
+        }
+        std::cout << "\n";
+    }
+}
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);
 	//test_send();
   //send_matrix();
   //test_share();
-//  test_scheduler();
-  test_scheduler_2();
+  //test_scheduler();
+  //test_scheduler_b();
+  test_scheduler_b_2();
 }
 

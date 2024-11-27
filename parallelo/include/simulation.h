@@ -23,7 +23,8 @@
 #define YELLOW_TXT "33"  // Codice ANSI per il colore giallo
 #define RESET ESC << "0m"  // Reset del colore
 #define YELLOW_TEXT(ARG) ESC << YELLOW_TXT << "m" << ARG << RESET
-
+#define TAN 2 // threshold active nodes nodi attivi nella simulazione 
+#define TSN 10 // threshold system nodes (soglia minima di nodi in MPI per l'attivazione della parallelizzazione)
 // Enum per lo stato delle celle
 enum Stato { live, dead };
 
