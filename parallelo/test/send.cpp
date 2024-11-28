@@ -1,12 +1,6 @@
 #include "../include/simulation.h"
-/*
-#include <algorithm>
-#include <cstddef>
-#include <stdio.h>
 #include <mpi.h>
-#include <stdlib.h>
-#include <vector>
-*/
+
 using namespace std;
 void test_send(){
   int my_rank,size;
@@ -62,8 +56,6 @@ void test_send(){
 
 	MPI_Finalize();
 }
-
-
 
 // Funzione per inviare e ricevere la matrice
 void send_matrix() {
@@ -443,6 +435,170 @@ void test_scheduler_b_2() {
         std::cout << "\n";
     }
 }
+
+void Simulation::simulate_turn_p() {
+    int my_rank, size;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+    int next_time = actual_time + 1;
+
+    // Calcolo locale degli aggiornamenti
+    std::vector<Nodo> activeNodesNow = getActiveNodes();
+    std::vector<std::tuple<int, int, Stato>> local_updates;
+
+    for (size_t i = my_rank; i < activeNodesNow.size(); i += size) {
+        Nodo node = activeNodesNow[i];
+        Stato next_state = stateNextTurn(node.x, node.y);
+        if (next_state == live) {
+            local_updates.emplace_back(node.x, node.y, next_state);
+        }
+    }
+
+    // Il processo root raccoglie gli aggiornamenti e li distribuisce
+    if (my_rank == 0) {
+        // Lista globale di aggiornamenti
+        std::vector<std::tuple<int, int, Stato>> global_updates;
+
+        // Raccoglie gli aggiornamenti dagli altri processi
+        for (int i = 1; i < size; ++i) {
+            int count;
+            MPI_Status status;
+
+            // Riceve il numero di aggiornamenti
+            MPI_Recv(&count, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &status);
+
+            // Riceve gli aggiornamenti
+            std::vector<std::tuple<int, int, Stato>> process_updates(count);
+            MPI_Recv(process_updates.data(), count * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, i, 0, MPI_COMM_WORLD, &status);
+
+            // Unisce gli aggiornamenti
+            global_updates.insert(global_updates.end(), process_updates.begin(), process_updates.end());
+        }
+
+        // Aggiunge gli aggiornamenti locali del root
+        global_updates.insert(global_updates.end(), local_updates.begin(), local_updates.end());
+
+        // Distribuisce gli aggiornamenti a tutti i processi
+        int total_updates = global_updates.size();
+        MPI_Bcast(&total_updates, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Bcast(global_updates.data(), total_updates * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, 0, MPI_COMM_WORLD);
+
+        // Aggiorna lo stato locale del root
+        for (const auto& update : global_updates) {
+            int x, y;
+            Stato s;
+            std::tie(x, y, s) = update;
+            updateNodeState(x, y, s, next_time);
+        }
+    } else {
+        // Invio aggiornamenti locali al root
+        int count = local_updates.size();
+        MPI_Send(&count, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        MPI_Send(local_updates.data(), count * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, 0, 0, MPI_COMM_WORLD);
+
+        // Riceve il numero totale di aggiornamenti
+        int total_updates;
+        MPI_Bcast(&total_updates, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+        // Riceve gli aggiornamenti globali
+        std::vector<std::tuple<int, int, Stato>> global_updates(total_updates);
+        MPI_Bcast(global_updates.data(), total_updates * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, 0, MPI_COMM_WORLD);
+
+        // Aggiorna lo stato locale
+        for (const auto& update : global_updates) {
+            int x, y;
+            Stato s;
+            std::tie(x, y, s) = update;
+            updateNodeState(x, y, s, next_time);
+        }
+    }
+
+    // Avanzamento del tempo
+    advanceTime();
+}
+
+
+void test_rules_next_turn(){
+
+    Simulation sim(6, 6, 10);
+    sim.updateNodeState(0, 0, live, 0); //A0 
+    sim.updateNodeState(0, 1, live, 0); //B1
+    sim.updateNodeState(4, 1, live, 0); //C2
+    sim.updateNodeState(5, 0, live, 0); //D3
+    sim.updateNodeState(5, 2, live, 0); //E4
+    sim.updateNodeState(2, 0, live, 0); //F5
+    sim.updateNodeState(1, 0, live, 0); //G6
+    sim.updateNodeState(1, 1, live, 0); //H7
+    std::cout<<"TEST RULES NEXT TURN\n";
+
+    //sim.printMap();
+
+    auto neighBoursA = sim.getNeighbours(0, 0);
+    auto neighBoursB = sim.getNeighbours(0, 1);
+    auto neighBoursC = sim.getNeighbours(4, 1);
+    auto neighBoursD = sim.getNeighbours(5, 0);
+    auto neighBoursE = sim.getNeighbours(5, 2);
+    auto neighBoursF = sim.getNeighbours(2, 0);
+    auto neighBoursG = sim.getNeighbours(1, 0);
+    auto neighBoursH = sim.getNeighbours(1, 1);
+
+    sim.simulate_turn_p();
+    vector<Nodo> listaNodiAttivi=sim.getActiveNodes();
+    //if(sim.stateNextTurn(0,0)==live)
+    if(*listaNodiAttivi[0].stato==live)
+      std::cout<<"Stato nodo A ok\tnumero vicini="<<neighBoursA.size()<<"\n";
+    else {
+      std::cout<<"Stato nodo A problema\tnumero vicini="<<neighBoursA.size()<<"\n";
+    }
+
+    //if(sim.stateNextTurn(0,0)==live)
+    if(*listaNodiAttivi[1].stato==live)
+      std::cout<<"Stato nodo B ok\tnumero vicini="<<neighBoursB.size()<<"\n";
+    else {
+      std::cout<<"Stato nodo B problema\tnumero vicini="<<neighBoursB.size()<<"\n";
+    }
+
+    //if(sim.stateNextTurn(0,0)==live)
+    if(*listaNodiAttivi[2].stato==live)
+      std::cout<<"Stato nodo C ok\tnumero vicini="<<neighBoursC.size()<<"\n";
+    else {
+      std::cout<<"Stato nodo C problema\tnumero vicini="<<neighBoursC.size()<<"\n";
+    }
+    /*
+       if(sim.stateNextTurn(5,0)==dead)
+       std::cout<<"Stato nodo D ok\tnumero vicini="<<neighBoursD.size()<<"\n";
+       else {
+       std::cout<<"Stato nodo D problema\tnumero vicini="<<neighBoursD.size()<<"\n";
+       }
+       if(sim.stateNextTurn(5,2)==dead)
+       std::cout<<"Stato nodo E ok\tnumero vicini="<<neighBoursE.size()<<"\n";
+       else {
+       std::cout<<"Stato nodo E problema\tnumero vicini="<<neighBoursE.size()<<"\n";
+       }
+       */
+    //if(sim.stateNextTurn(0,0)==live)
+    if(*listaNodiAttivi[3].stato==live)
+      std::cout<<"Stato nodo F ok\tnumero vicini="<<neighBoursF.size()<<"\n";
+    else {
+      std::cout<<"Stato nodo F problema\tnumero vicini="<<neighBoursF.size()<<"\n";
+    }
+    /*
+       if(sim.stateNextTurn(1,0)==dead)
+       std::cout<<"Stato nodo G ok\tnumero vicini="<<neighBoursG.size()<<"\n";
+       else {
+       std::cout<<"Stato nodo G problema\tnumero vicini="<<neighBoursG.size()<<"\n";
+       }
+       if(sim.stateNextTurn(1,1)==dead)
+       std::cout<<"Stato nodo H ok\tnumero vicini="<<neighBoursH.size()<<"\n";
+       else {
+       std::cout<<"Stato nodo H problema\tnumero vicini="<<neighBoursH.size()<<"\n";
+       }*/
+
+  
+    MPI_Finalize();
+
+}
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);
 	//test_send();
@@ -450,6 +606,7 @@ int main(int argc,char *argv[]){
   //test_share();
   //test_scheduler();
   //test_scheduler_b();
-  test_scheduler_b_2();
+  //test_scheduler_b_2();
+  test_rules_next_turn();
 }
 
