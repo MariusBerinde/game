@@ -292,6 +292,7 @@ bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
  * TODO: capire come parallelizzare le operazioni di regola 1,2 e 3
  * avendo size nodi ci saranno size-1 nodi figli che verificheranno 
  * */
+/*
   void Simulation::simulate_turn_p(){
     int my_rank,size,TAG;
     MPI_Comm_size(MPI_COMM_WORLD,&size);
@@ -300,11 +301,11 @@ bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
     size--; // diminuisco il totale perc
     if(my_rank==0){
 
-      /*
+      //
       - nodo scheduler 
       - ordina i nodi attivi 
       -  lo scheduler ordina la lista dei nodi attivi e distriubisce gli elenchi gli intervalli ai nodi figli dopo di che si mette in attesa del done dei nodi figli per poter attivare la fase di spawn nodes e far avanzare il tempo totale della simulazione 
-      */
+      //
 
        
       auto activeNodesNow = getActiveNodes();
@@ -336,6 +337,7 @@ bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
       advanceTime();
     
   }
+*/
 
 /*
  * crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
@@ -346,12 +348,14 @@ void Simulation::simulate_turn(){
   if(actual_time + 1 < MAX_TIME){
 
     int size;
-    MPI_Comm_size(MPI_COMM_WORLD,&size);
+    /*MPI_Comm_size(MPI_COMM_WORLD,&size);
 
     if(size>=2){
       simulate_turn_p();
     } else{
 
+    }
+    */
       int next_time = actual_time+1;
       printf("SIMULATE TURN: next time =%d\n",next_time);
       auto activeNodesNow = getActiveNodes();
@@ -370,8 +374,6 @@ void Simulation::simulate_turn(){
       //std::cout<<"simula turno numero di nodi attivi="<<activeNodesNow.size()<<"\t valore par :"<<activeNodes[next_time].size()<<"\n";
 
       advanceTime();
-    }
-
   }
 
 }

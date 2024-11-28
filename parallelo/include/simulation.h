@@ -11,7 +11,7 @@
 #include <set>
 #include <tuple>
 #include <string>
-#include <mpi.h>
+//#include <mpi.h>
 #include <omp.h>
 #include <cmath>
 #include <sys/time.h>

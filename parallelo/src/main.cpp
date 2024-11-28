@@ -872,10 +872,6 @@ void test_gen_random_pos(){
 Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){
   Simulation sim(righe,colonne,turni);
   auto position_list = gen_random_pos(numero_nodi,righe);
-  if(numero_nodi == position_list.size())
-    std::cout << "[make random] sim ok\n";
-  else 
-    std::cout << "[make random]sim errato\n";
   for(auto p:position_list){
     sim.updateNodeState(p.first, p.second, live, 0);
   }
