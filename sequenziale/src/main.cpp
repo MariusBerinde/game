@@ -1,10 +1,15 @@
 #include "../include/simulation.h"
+/*
 #include <bits/types/struct_timeval.h>
 #include <cstdio>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include <sys/time.h>
+#include <algorithm>
+#include <random>
+*/
+using namespace std;
 
 float tdiff(struct timeval *start,struct timeval *end){
   return (end->tv_sec-start->tv_sec) + 1e-6 * (end->tv_usec-start->tv_usec);
@@ -14,9 +19,13 @@ void test_creation(){
 
   // Creazione di un'istanza di Simulation con 5 righe, 5 colonne e 10 unità di tempo
    size_t rows=40,lines=40;
+  struct timeval start,end;
+  gettimeofday(&start, NULL);
   Simulation sim(rows, lines, 2);
+  gettimeofday(&end, NULL);
 
   std::cout << "Test creation\n";
+  printf("velocità di init senza parallizzazione  millisec %0.6f\n",tdiff(&start, &end));
   // Aggiornamento di alcuni nodi al tempo 0
   for ( size_t i=0;i<rows;i++){
     for (size_t j=0; j<lines; j++) {
@@ -739,17 +748,191 @@ void test_config_from_file(){
 
 }
 
+void seq(){ 
+  int my_rank = 0;
+  Simulation sim(6, 6, 2);
+  sim.updateNodeState(0, 0, live, 0); // A
+  sim.updateNodeState(0, 1, live, 0); // B
+  sim.updateNodeState(1, 0, live, 0); // G
+  auto nodi_attivi = sim.getActiveNodes();
+  printf("Processo[%d](%d)\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime(),nodi_attivi.size());
+  sim.printMap();
+  sim.simulate_turn();
+  nodi_attivi = sim.getActiveNodes();
+  printf("Processo[%d](%d)\tnumero di nodi attivi %ld\n",my_rank,sim.getActualTime(),nodi_attivi.size());
+  sim.printMap();
+}
 
+void test_eu_dist(){
+
+  Simulation sim(6, 6, 2);
+  sim.updateNodeState(0, 0, live, 0); // A
+  sim.updateNodeState(0, 1, live, 0); // B
+  sim.updateNodeState(1, 0, live, 0); // G
+  sim.updateNodeState(4, 0, live, 0); 
+  auto nodi_attivi = sim.getActiveNodes();
+
+  std::cout<<"TEST DISTANZA EUCLIDEA\n";
+  sim.printMap();
+  Nodo b = {5, 5, NULL};
+  for (size_t i = 0; i < nodi_attivi.size(); i++) {
+    auto nodo_attuale = nodi_attivi[i];
+    printf("differenza tra (%d,%d) e (%d,%d) = %lf\n",nodo_attuale.x,nodo_attuale.y,b.x,b.y,sim.eu_distance_node(nodo_attuale,b));
+  }
+
+}
+
+void test_mh_dist(){
+  Simulation sim(6, 6, 2);
+  sim.updateNodeState(0, 0, live, 0); // A
+  sim.updateNodeState(0, 1, live, 0); // B
+  sim.updateNodeState(1, 0, live, 0); // G
+  sim.updateNodeState(4, 0, live, 0); 
+  auto nodi_attivi = sim.getActiveNodes();
+
+  std::cout<<"TEST DISTANZA DI MANHATTAN \n";
+  sim.printMap();
+  Nodo b = {5, 5, NULL};
+  for (size_t i = 0; i < nodi_attivi.size(); i++) {
+    auto nodo_attuale = nodi_attivi[i];
+    printf("differenza tra (%d,%d) e (%d,%d) = %d\n",nodo_attuale.x,nodo_attuale.y,b.x,b.y,sim.mh_distance_node(nodo_attuale,b));
+  }
+
+}
+bool customCompare_l(Nodo a, Nodo b) {
+       return (a.x<b.x) && (a.y<b.y);
+     }
+
+void test_order_node_vector(){
+  Nodo b = {5, 5, NULL};
+  Nodo a = {0, 0, NULL};
+  Nodo c = {1, 3, NULL};
+  Nodo d = {4, 2, NULL};
+  std::vector<Nodo> l={a,b,c,d};
+  std::cout << "TEST ORDER VECTOR\n vettore originale\n:";
+  for(Nodo n:l){
+    printf("(%d,%d)\t",n.x,n.y);
+  }
+  printf("\n vettore ordinato");
+
+  sort(l.begin(),l.end(),customCompare_l);
+
+  for(Nodo n:l){
+    printf("(%d,%d)\t",n.x,n.y);
+  }
+  printf("\n");
+
+}
+vector<pair<int,int>> gen_random_pos(int nr,int max){
+  vector<pair<int,int>> ris;
+
+    int min = 0;
+
+    // Initialize a random number generator
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(min, max);
+
+    // Generate random number in the range [min, max]
+    int x = distrib(gen);
+  for(size_t i=0;i<nr;i++){
+
+    int x = distrib(gen);
+    int y = distrib(gen);
+    pair<int,int> tmp={x,y};
+    if(i==0){
+      ris.push_back(tmp);
+    }
+    else{
+      pair<int,int> tmp2= {x,y};
+      auto it1 = find(ris.begin(),ris.end(),tmp2);
+      bool is_in = (it1!= ris.end());
+      while(is_in){
+        x = distrib(gen);
+        y = distrib(gen);
+        tmp2={x,y};
+      }
+      ris.push_back(tmp2);
+    }
+
+  }
+  
+  return ris;
+
+}
+void test_gen_random_pos(){
+//  Simulation sim(6, 6, 2);
+  int number_pos=10;
+  auto position_list = gen_random_pos(number_pos,5);
+  for(auto var : position_list) {
+    printf("(%d,%d)\n",var.first,var.second);
+  }
+}
+
+Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){
+  Simulation sim(righe,colonne,turni);
+  auto position_list = gen_random_pos(numero_nodi,righe);
+  for(auto p:position_list){
+    sim.updateNodeState(p.first, p.second, live, 0);
+  }
+  return sim;
+}
+
+void test_random_sim(){
+  int righe_teo =10,colonne_teo = 10,turni_teo = 5,max_nodi_teo = 13;
+  Simulation sim = make_random_sim(righe_teo,colonne_teo,turni_teo,max_nodi_teo);
+  int righe_gen = sim.getMaxRows();
+  int colonne_gen = sim.getMaxCols();
+  int turni_gen = sim.getMaxTime();
+  auto nodi_attivi = sim.getActiveNodes();
+  if( righe_teo == righe_gen )
+    std::cout << "Numero righe ok\n";
+  else 
+    std::cout << "Numero righe errato\n";
+
+
+  if( colonne_teo == colonne_gen )
+    std::cout << "Numero colonne ok\n";
+  else 
+    std::cout << "Numero colonne errato\n";
+
+  if( turni_teo == turni_gen )
+        std::cout << "Numero turni ok\n";
+    else 
+          std::cout << "Numero turni errato\n";
+
+  if( nodi_attivi.size() == max_nodi_teo ){
+        std::cout << "Numero nodi attivi ok\n nodi attivi generati:\n";
+        for(Nodo n:nodi_attivi){
+          printf("Nodo(%d,%d)\n",n.x,n.y);
+        }
+  }
+    else {
+
+        std::cout << "Numero nodi attivi errati\n nodi attivi generati:\n";
+        for(Nodo n:nodi_attivi){
+          printf("Nodo(%d,%d)\n",n.x,n.y);
+        }
+    }
+
+  
+
+}
 int main() {
-    test_creation();
-  //  test_get_vicini();
-  // test_rules_next_turn();
-  //test_creation_spawn_nodes();
-  //test_pair();
- // test_simulation();
- // test_read();
-  //test_config_from_file();
-
+//  test_creation();
+//  test_get_vicini();
+//  test_rules_next_turn();
+//  test_creation_spawn_nodes();
+//  test_pair();
+//  test_simulation();
+//  test_read();
+//  test_config_from_file();
+//  seq();
+//  test_eu_dist();
+//  test_mh_dist();
+//  test_order_node_vector();
+//  test_gen_random_pos();
+  test_random_sim();
   return 0;
 }
 

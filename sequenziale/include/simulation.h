@@ -1,6 +1,8 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <bits/types/struct_timeval.h>
+#include <cstdio>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -9,12 +11,18 @@
 #include <set>
 #include <tuple>
 #include <string>
+#include <omp.h>
+#include <cmath>
+#include <sys/time.h>
+#include <algorithm>
+#include <random>
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
 #define YELLOW_TXT "33"  // Codice ANSI per il colore giallo
 #define RESET ESC << "0m"  // Reset del colore
 #define YELLOW_TEXT(ARG) ESC << YELLOW_TXT << "m" << ARG << RESET
-
+#define TAN 2 // threshold active nodes nodi attivi nella simulazione 
+#define TSN 10 // threshold system nodes (soglia minima di nodi in MPI per l'attivazione della parallelizzazione)
 // Enum per lo stato delle celle
 enum Stato { live, dead };
 
@@ -61,8 +69,6 @@ private:
 public:
     // Costruttore
     Simulation( const int rows, const int cols,const  int time);
-
-
     // Distruttore
     ~Simulation();
 
@@ -70,6 +76,7 @@ public:
     int getMaxCols();
     int getMaxTime();
 
+    Stato*** getMap();
     // Funzione per aggiornare lo stato di un Nodo
     void updateNodeState(const int x, const int y,const Stato nuovoStato,const int t);
 
@@ -83,7 +90,7 @@ public:
     void printActiveNodes() const;
 
     // Funzione per stampare la mappa
-    void printMap() const;
+    void printMap(int p=-1) const;
 
 
   /**
@@ -159,6 +166,16 @@ public:
    *
   */
   bool load_config(const std::string& filename);
+
+  /**
+   * @brief calc the euclidean distance between a and b
+   * */
+  double eu_distance_node(Nodo a,Nodo b);
+
+  /**
+   * @brief calc the manhattan distance between a and b
+   * */
+  int mh_distance_node(Nodo a,Nodo b);
 
   };
 

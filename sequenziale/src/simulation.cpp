@@ -1,9 +1,5 @@
 #include "../include/simulation.h"
-#include <iostream>
-#include <set>
-#include <tuple>
-#include <utility>
-#include <vector>
+
 //using namespace Simulation; // Implementazione della funzione toString di Nodo
 std::string Nodo::toString() const {
   std::ostringstream oss;
@@ -11,6 +7,7 @@ std::string Nodo::toString() const {
   return oss.str();
 }
 
+    Stato*** Simulation::getMap(){return map;}
 // Costruttore della classe Simulation
 Simulation::Simulation( const int rows, const int cols, const int time)
   : MAX_ROWS(rows), MAX_COLS(cols), MAX_TIME(time), actual_time(0), activeNodes(time) {
@@ -78,14 +75,19 @@ void Simulation::printActiveNodes() const {
 }
 
 // Funzione per stampare la mappa
-void Simulation::printMap() const {
+void Simulation::printMap(int p) const {
   std::cout << "Mappa al tempo " << actual_time << ":\n";
+  if (p> -1)
+    std::cout <<"Processo["<<p<< "] mappa al tempo " << actual_time << ":\n";
+  else
+    std::cout <<"Mappa al tempo " << actual_time << ":\n";
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
       if (map[i][j][actual_time] == live) {
-        std::cout << YELLOW_TEXT("O") << " ";  // Nodo vivo ('O') in giallo
+        //std::cout << YELLOW_TEXT("O") << " ";  // Nodo vivo ('O') in giallo
+        std::cout << YELLOW_TEXT("O"); 
       } else {
-        std::cout << " ";  // Nodo morto (spazio vuoto)
+        std::cout << "X";  // Nodo morto (spazio vuoto)
       }
     }
     std::cout << std::endl;
@@ -223,7 +225,7 @@ std::vector<Nodo> Simulation::getActiveNodes()const{
 std::vector<std::vector<Nodo>> Simulation::getActiveNodesOfAnyTime() const{ return activeNodes;}
 
 
-Stato Simulation::stateNextTurn(const int x,const int y) {
+Stato Simulation::stateNextTurn(const int x,int y) {
   auto neighbours_nodes= getNeighbours(x, y);
   Stato ris = dead;
   int nr_live_nodes=0;
@@ -283,6 +285,7 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
 
 }
 
+bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
 
 void Simulation::simulate_turn(){
   //crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
@@ -467,3 +470,16 @@ std::cout << "Configurazione letta: "
   return true;
 }
 
+double Simulation::eu_distance_node(Nodo a,Nodo b){
+  int diff_x=a.x - b.x;
+  int diff_y=a.y - b.y;
+
+  return sqrt(pow(diff_x,2)+pow(diff_y,2));
+}
+
+
+int Simulation::mh_distance_node(Nodo a,Nodo b){
+    int diff_x=a.x - b.x;
+    int diff_y=a.y - b.y;
+    return abs(diff_x)+abs(diff_y);
+  }
