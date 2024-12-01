@@ -1,14 +1,14 @@
 #include "../include/simulation.h"
 #include <mpi.h>
-
 using namespace std;
+float tdiff(struct timeval *start,struct timeval *end){
+  return (end->tv_sec-start->tv_sec) + 1e-6 * (end->tv_usec-start->tv_usec);
+}
 void test_send(){
+
+  MPI_Init(NULL, NULL);
   int my_rank,size;
    MPI_Comm_size(MPI_COMM_WORLD,&size);
-    if(size!=2){
-        printf("Errore: il numero di processi deve essere 3");
-    		MPI_Abort(MPI_COMM_WORLD,EXIT_FAILURE);
-	 }
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);   
   int TAG=0;
   
@@ -31,28 +31,6 @@ void test_send(){
     cout<<"processo "<< my_rank <<"ha inviato i nodi\n";
     
   }
-  else{
-        Simulation sim(6, 6, 10);
-        int count;
-        MPI_Recv(&count, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-        std::vector<int> buffer(3 * count);
-        MPI_Recv(buffer.data(), buffer.size(), MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-        int time_received = 0;
-        for (int i = 0; i < count; ++i) {
-            int x = buffer[3 * i];
-            int y = buffer[3 * i + 1];
-            Stato stato = static_cast<Stato>(buffer[3 * i + 2]);
-            sim.updateNodeState(x, y,stato ,  time_received);
-        }
-
-        const auto nodes = sim.getActiveNodes();
-        std::cout << "Processo " << my_rank << ": Tempo " << time_received << " ricevuto con " << nodes.size() << " nodi.\n";
-        for (const auto& nodo : nodes) {
-            std::cout << "  " << nodo.toString() << "\n";
-        }
-  }
 
 	MPI_Finalize();
 }
@@ -60,6 +38,7 @@ void test_send(){
 // Funzione per inviare e ricevere la matrice
 void send_matrix() {
 
+    MPI_Init(NULL, NULL);
     int my_rank,size;
    MPI_Comm_size(MPI_COMM_WORLD,&size);
     if(size!=3){
@@ -142,10 +121,12 @@ void send_matrix() {
         }
         delete[] local_map;
     }
+    MPI_Finalize();
 }
 
 /*test condivisione */
 void test_share(){
+   MPI_Init(NULL, NULL);
     int my_rank,size;
    MPI_Comm_size(MPI_COMM_WORLD,&size);
     if(size!=3){
@@ -153,21 +134,19 @@ void test_share(){
     		MPI_Abort(MPI_COMM_WORLD,EXIT_FAILURE);
 	 }
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);      
-
         Simulation sim(6, 6, 2);
         sim.updateNodeState(0, 0, live, 0); // A
         sim.updateNodeState(0, 1, live, 0); // B
         sim.updateNodeState(1, 0, live, 0); // G
     if (my_rank == 0) {
-      printf("Processo[%d](%d)\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
+      printf("Processo[%d](%d)\tnumero di nodi attivi %ld\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
       sim.simulate_turn();
       sim.printMap(my_rank);
-      printf("Processo[%d](%d)\t ho eseguito un tunrno e adesso numero di nodi attivi %d\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
+      printf("Processo[%d](%d)\t ho eseguito un tunrno e adesso numero di nodi attivi %ld\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
       sim.printMap(my_rank);
     }
 
     if (my_rank == 1) {
-
       auto nodi_attivi = sim.getActiveNodes();
       printf("Processo[%d](%d)\tnumero di nodi attivi %ld\n",my_rank,sim.getActualTime(),sim.getActiveNodes().size());
       printf("Processo[%d] stampo mappa\n",my_rank);
@@ -198,6 +177,8 @@ void test_share(){
     }
 
     */
+
+    MPI_Finalize();
 }
 
 
@@ -209,9 +190,8 @@ void test_scheduler() {
     Nodo d = {3, 2, NULL};
     Nodo e = {0, 2, NULL};
     Nodo f = {4, 2, NULL};
-
     std::vector<Nodo> l = {a, b, c, d, e, f};
-
+    MPI_Init(NULL, NULL);
     int my_rank, size, TAG = 0;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     if (size != 3) {
@@ -219,12 +199,10 @@ void test_scheduler() {
         MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
     }
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-
     if (my_rank == 0) {
         // Processo master
         int start_1 = 0, start_2 = 3, end_1 = 2, end_2 = 5, d1 = 1, d2 = 2;
 
-        // Mostra lo stato iniziale dei nodi
         std::cout << "Nodi all'inizio\n";
         for (Nodo n : l) {
             printf("(%d,%d)\t", n.x, n.y);
@@ -250,22 +228,19 @@ void test_scheduler() {
     } else {
         // Processi figli
         int start = 0, end = 0;
-
         // Ricevi intervallo dal master
         MPI_Recv(&start, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         MPI_Recv(&end, 1, MPI_INT, 0, TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
         printf("Nodo[%d] start=%d\tend=%d\n", my_rank, start, end);
-
         // Modifica i nodi assegnati
-        for (size_t i = start; i <= end; i++) {
+        for (int i = start; i <= end; i++) {
             l[i].x++;
             l[i].y++;
         }
-
         // Invia i nodi aggiornati al master
         MPI_Send(&l[start], (end - start + 1) * sizeof(Nodo), MPI_BYTE, 0, TAG, MPI_COMM_WORLD);
     }
+    MPI_Finalize();
 }
 
 void test_scheduler_b() {
@@ -275,9 +250,8 @@ void test_scheduler_b() {
     Nodo d = {3, 2, NULL};
     Nodo e = {0, 2, NULL};
     Nodo f = {4, 2, NULL};
-
+    MPI_Init(NULL, NULL);
     std::vector<Nodo> l = {a, b, c, d, e, f};
-
     int my_rank, size, TAG = 0;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     if (size != 3) {
@@ -285,7 +259,6 @@ void test_scheduler_b() {
         MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
     }
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-
     if (my_rank == 0) {
         // Processo master
         int start_1 = 0, start_2 = 3, end_1 = 2, end_2 = 5, d1 = 1, d2 = 2;
@@ -327,17 +300,14 @@ void test_scheduler_b() {
        // printf("Nodo[%d] start=%d\tend=%d\n", my_rank, start, end);
 
         // Modifica i nodi assegnati
-        for (size_t i = start; i <= end; i++) {
+        for (int i = start; i <= end; i++) {
             l[i].x++;
             l[i].y++;
         }
-
         // Invia i nodi aggiornati al master
         MPI_Send(&l[start], (end - start + 1) * sizeof(Nodo), MPI_BYTE, 0, TAG, MPI_COMM_WORLD);
-
         // Propaga la lista aggiornata dal master
         MPI_Bcast(&l[0], l.size() * sizeof(Nodo), MPI_BYTE, 0, MPI_COMM_WORLD);
-
         // Mostra i nodi aggiornati
         std::cout << "Nodi dopo la propagazione (figlio " << my_rank << ")\n";
         for (Nodo n : l) {
@@ -345,6 +315,7 @@ void test_scheduler_b() {
         }
         std::cout << "\n";
     }
+    MPI_Finalize();
 }
 
 void test_scheduler_b_2() {
@@ -354,9 +325,8 @@ void test_scheduler_b_2() {
     Nodo d = {3, 2, NULL};
     Nodo e = {0, 2, NULL};
     Nodo f = {4, 2, NULL};
-
+    MPI_Init(NULL, NULL);
     std::vector<Nodo> l = {a, b, c, d, e, f};
-
     int my_rank, size;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
@@ -365,13 +335,10 @@ void test_scheduler_b_2() {
         printf("Errore: il numero di processi deve essere 3\n");
         MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
     }
-
     int total_nodes = l.size();
     int nodes_per_process = total_nodes / (size - 1); // Numero di nodi per figlio
     int remainder = total_nodes % (size - 1);        // Restanti nodi non divisibili
-
     if (my_rank == 0) {
-        // MASTER
         std::cout << "Master: nodi all'inizio\n";
         for (Nodo n : l) {
             printf("(%d,%d)\t", n.x, n.y);
@@ -398,18 +365,15 @@ void test_scheduler_b_2() {
 
         // Notifica che i dati sono stati aggiornati
         std::cout << "Master: tutti i dati sono stati aggiornati\n";
-
         // Mostra lo stato finale dei nodi
         std::cout << "Master: nodi dopo l'aggiornamento\n";
         for (Nodo n : l) {
             printf("Master:(%d,%d)\t", n.x, n.y);
         }
         std::cout << "\n";
-
     } else {
         // FIGLI
         int start, end;
-
         // Riceve i limiti del lavoro
         MPI_Recv(&start, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         MPI_Recv(&end, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
@@ -419,7 +383,6 @@ void test_scheduler_b_2() {
             l[i].x += my_rank; // Simula un aggiornamento dipendente dal rank
             l[i].y += my_rank;
         }
-
         // Propaga i dati aggiornati
         MPI_Bcast(&l[0], total_nodes * sizeof(Nodo), MPI_BYTE, my_rank, MPI_COMM_WORLD);
 
@@ -434,15 +397,16 @@ void test_scheduler_b_2() {
         }
         std::cout << "\n";
     }
+
+    MPI_Finalize();
 }
 
 void Simulation::simulate_turn_p() {
+    MPI_Init(NULL, NULL);
     int my_rank, size;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-
     int next_time = actual_time + 1;
-
     // Calcolo locale degli aggiornamenti
     std::vector<Nodo> activeNodesNow = getActiveNodes();
     std::vector<std::tuple<int, int, Stato>> local_updates;
@@ -513,8 +477,7 @@ void Simulation::simulate_turn_p() {
             updateNodeState(x, y, s, next_time);
         }
     }
-
-    // Avanzamento del tempo
+    MPI_Finalize();
     advanceTime();
 }
 
@@ -531,19 +494,23 @@ void test_rules_next_turn(){
     sim.updateNodeState(1, 0, live, 0); //G6
     sim.updateNodeState(1, 1, live, 0); //H7
     std::cout<<"TEST RULES NEXT TURN\n";
-
     //sim.printMap();
-
     auto neighBoursA = sim.getNeighbours(0, 0);
     auto neighBoursB = sim.getNeighbours(0, 1);
     auto neighBoursC = sim.getNeighbours(4, 1);
     auto neighBoursD = sim.getNeighbours(5, 0);
     auto neighBoursE = sim.getNeighbours(5, 2);
-    auto neighBoursF = sim.getNeighbours(2, 0);
+    auto neighBoursF = sim.getNeighbours(1, 0);
     auto neighBoursG = sim.getNeighbours(1, 0);
     auto neighBoursH = sim.getNeighbours(1, 1);
 
-    sim.simulate_turn_p();
+    struct timeval start,end;
+    gettimeofday(&start, NULL);
+    sim.simulate_turn();
+    gettimeofday(&end, NULL);
+
+  std::cout << "Test creation\n";
+  printf("velocità di init con parallizzazione  millisec %0.6f\n",tdiff(&start, &end));
     vector<Nodo> listaNodiAttivi=sim.getActiveNodes();
     //if(sim.stateNextTurn(0,0)==live)
     if(*listaNodiAttivi[0].stato==live)
@@ -595,14 +562,11 @@ void test_rules_next_turn(){
        std::cout<<"Stato nodo H problema\tnumero vicini="<<neighBoursH.size()<<"\n";
        }*/
 
-  
-    MPI_Finalize();
-
 }
 int main(int argc,char *argv[]){
-  MPI_Init(&argc, &argv);
-	//test_send();
-  //send_matrix();
+ // MPI_Init(&argc, &argv);
+//	test_send();
+  send_matrix();
   //test_share();
   //test_scheduler();
   //test_scheduler_b();

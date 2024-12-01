@@ -13,20 +13,36 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +231 test/send.cpp
+badd +232 test/send.cpp
 badd +335 src/simulation.cpp
 badd +806 src/main.cpp
-badd +1 ./
 badd +1 include/simulation.h
-badd +1 send
 badd +27 Makefile
-badd +291 term:///mnt/c/Users/Utente/Desktop/test_cpp/game/parallelo//474:/bin/bash
+badd +1 ../README.md
 argglobal
 %argdel
 $argadd ./
 edit test/send.cpp
+let s:save_splitbelow = &splitbelow
+let s:save_splitright = &splitright
+set splitbelow splitright
+wincmd _ | wincmd |
+split
+1wincmd k
+wincmd w
+let &splitbelow = s:save_splitbelow
+let &splitright = s:save_splitright
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe '1resize ' . ((&lines * 33 + 26) / 52)
+exe '2resize ' . ((&lines * 15 + 26) / 52)
 argglobal
-balt src/main.cpp
+balt Makefile
 setlocal foldmethod=syntax
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -35,42 +51,59 @@ setlocal foldlevel=0
 setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldenable
-9
+7
 normal! zo
 19
 normal! zo
-67
+65
 normal! zo
-71
+70
 normal! zo
-77
+76
 normal! zo
-98
+97
 normal! zo
 154
-normal! zo
-157
 normal! zo
 154
 normal! zc
-210
+212
 normal! zo
-221
+223
 normal! zo
-226
+228
 normal! zo
-246
-normal! zo
-252
-normal! zo
-260
-normal! zo
-let s:l = 231 - ((80 * winheight(0) + 24) / 49)
+let s:l = 232 - ((16 * winheight(0) + 16) / 33)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 231
-normal! 029|
+keepjumps 232
+normal! 0
+wincmd w
+argglobal
+if bufexists(fnamemodify("term:///mnt/c/Users/Utente/Desktop/test_cpp/game/parallelo//71:/bin/bash", ":p")) | buffer term:///mnt/c/Users/Utente/Desktop/test_cpp/game/parallelo//71:/bin/bash | else | edit term:///mnt/c/Users/Utente/Desktop/test_cpp/game/parallelo//71:/bin/bash | endif
+if &buftype ==# 'terminal'
+  silent file term:///mnt/c/Users/Utente/Desktop/test_cpp/game/parallelo//71:/bin/bash
+endif
+balt test/send.cpp
+setlocal foldmethod=manual
+setlocal foldexpr=0
+setlocal foldmarker={{{,}}}
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldenable
+let s:l = 39 - ((0 * winheight(0) + 7) / 15)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 39
+normal! 064|
+wincmd w
+2wincmd w
+exe '1resize ' . ((&lines * 33 + 26) / 52)
+exe '2resize ' . ((&lines * 15 + 26) / 52)
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -78,6 +111,8 @@ endif
 unlet! s:wipebuf
 set winheight=1 winwidth=20
 let &shortmess = s:shortmess_save
+let &winminheight = s:save_winminheight
+let &winminwidth = s:save_winminwidth
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
