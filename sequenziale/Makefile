@@ -8,6 +8,10 @@ compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo
 compila:
 	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/main.cpp $(SRC)/simulation.cpp -o $(OUT)/main 
+compila_ns:
+	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/ns.cpp  -o $(OUT)/ns 
+ns:compila_ns
+	./$(OUT)/ns 
 
 esegui:compila
 	./$(OUT)/main 

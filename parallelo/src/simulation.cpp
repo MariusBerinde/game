@@ -346,9 +346,9 @@ bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
  */
 void Simulation::simulate_turn(){
   if(actual_time + 1 < MAX_TIME){
-
+    /*
     int size;
-    /*MPI_Comm_size(MPI_COMM_WORLD,&size);
+    MPI_Comm_size(MPI_COMM_WORLD,&size);
 
     if(size>=2){
       simulate_turn_p();
@@ -366,11 +366,13 @@ void Simulation::simulate_turn(){
           updateNodeState(node.x, node.y, live, next_time);
         }
       }
+      /*
       auto nodes_spawned = calcSpawnNodes();
       for ( size_t i=0;i<nodes_spawned.size();i++){
 
         updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
       }
+      */
       //std::cout<<"simula turno numero di nodi attivi="<<activeNodesNow.size()<<"\t valore par :"<<activeNodes[next_time].size()<<"\n";
 
       advanceTime();

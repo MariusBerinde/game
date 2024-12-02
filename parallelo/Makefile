@@ -24,7 +24,7 @@ esegui:compila
 
 
 esegui_p:compila_p
-	mpirun -np 2 ./$(OUT)/main 
+	mpirun -np 3 ./$(OUT)/main 
 
 compila_test_lettura:
 	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/read_file.cpp -o $(TEST)/read
@@ -41,4 +41,4 @@ send:compila_send
 #	./$(OUT)/main 
 
 clean:
-	rm -v $(OUT)/test
+	rm -v $(OUT)/*
