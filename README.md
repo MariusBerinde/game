@@ -25,8 +25,10 @@ per lo sviluppo avrò bisogno di :
 ### sequenziale 
 - init :   millisec 0.000035
 - controllo regole 1,2 : 0.000008
+- controllo regole 1,2 : 0.000023(con pc vecchio)
 ## parallelo 
 - init :  0.031805
 - controllo regole 1,2 :0.041979
+- controllo regole 1,2 :0.112164(con pc vecchio)
 
 è normale avere delle prestazioni peggiori per numero così piccoli
