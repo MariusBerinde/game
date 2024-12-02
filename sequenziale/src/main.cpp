@@ -13,9 +13,15 @@ float tdiff(struct timeval *start,struct timeval *end){
 void test_creation(){
 
   // Creazione di un'istanza di Simulation con 5 righe, 5 colonne e 10 unità di tempo
-   size_t rows=40,lines=40;
-  Simulation sim(rows, lines, 2);
 
+   size_t rows=40,lines=40;
+  struct timeval start,end;
+  gettimeofday(&start, NULL);
+  Simulation sim(rows, lines, 2);
+  gettimeofday(&end, NULL);
+
+  std::cout << "Test creation\n";
+  printf("velocità di init senza parallizzazione  millisec %0.6f\n",tdiff(&start, &end));
   std::cout << "Test creation\n";
   // Aggiornamento di alcuni nodi al tempo 0
   for ( size_t i=0;i<rows;i++){

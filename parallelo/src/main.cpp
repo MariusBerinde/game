@@ -919,7 +919,7 @@ void test_random_sim(){
 
 }
 int main() {
-//  test_creation();
+	 test_creation();
 //  test_get_vicini();
 //  test_rules_next_turn();
 //  test_creation_spawn_nodes();
@@ -932,7 +932,7 @@ int main() {
 //  test_mh_dist();
 //  test_order_node_vector();
 //  test_gen_random_pos();
-  test_random_sim();
+//  test_random_sim();
   return 0;
 }
 
