@@ -284,7 +284,7 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
 
 }
 
-bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
+//bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
 
 /*
  * strategia di parallelizzazione :

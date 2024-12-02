@@ -401,86 +401,112 @@ void test_scheduler_b_2() {
     MPI_Finalize();
 }
 
+
 void Simulation::simulate_turn_p() {
-    MPI_Init(NULL, NULL);
     int my_rank, size;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
     int next_time = actual_time + 1;
-    // Calcolo locale degli aggiornamenti
-    std::vector<Nodo> activeNodesNow = getActiveNodes();
-    std::vector<std::tuple<int, int, Stato>> local_updates;
 
-    for (size_t i = my_rank; i < activeNodesNow.size(); i += size) {
-        Nodo node = activeNodesNow[i];
-        Stato next_state = stateNextTurn(node.x, node.y);
-        if (next_state == live) {
-            local_updates.emplace_back(node.x, node.y, next_state);
-        }
-    }
-
-    // Il processo root raccoglie gli aggiornamenti e li distribuisce
+    // Parte del processo principale (rank 0)
     if (my_rank == 0) {
-        // Lista globale di aggiornamenti
-        std::vector<std::tuple<int, int, Stato>> global_updates;
+        std::vector<Nodo> activeNodesNow = getActiveNodes();
+        // Ordinare e dividere i nodi tra i processi
+        sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
 
-        // Raccoglie gli aggiornamenti dagli altri processi
+        int chunk_size = activeNodesNow.size() / (size - 1);
         for (int i = 1; i < size; ++i) {
-            int count;
-            MPI_Status status;
+            int start = (i - 1) * chunk_size;
+            int end = (i == size - 1) ? activeNodesNow.size() - 1 : start + chunk_size - 1;
 
-            // Riceve il numero di aggiornamenti
-            MPI_Recv(&count, 1, MPI_INT, i, 0, MPI_COMM_WORLD, &status);
+            // Inviare gli intervalli a ogni processo
+            MPI_Send(&start, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Send(&end, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
 
-            // Riceve gli aggiornamenti
-            std::vector<std::tuple<int, int, Stato>> process_updates(count);
-            MPI_Recv(process_updates.data(), count * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, i, 0, MPI_COMM_WORLD, &status);
-
-            // Unisce gli aggiornamenti
-            global_updates.insert(global_updates.end(), process_updates.begin(), process_updates.end());
+            // Inviare i dati dei nodi dell'intervallo
+            for (int j = start; j <= end; ++j) {
+                Nodo& node = activeNodesNow[j];
+                MPI_Send(&node.x, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+                MPI_Send(&node.y, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            }
         }
 
-        // Aggiunge gli aggiornamenti locali del root
-        global_updates.insert(global_updates.end(), local_updates.begin(), local_updates.end());
+        // Raccogliere gli aggiornamenti dagli altri processi
+        std::vector<std::tuple<int, int, Stato>> updates;
+        for (int i = 1; i < size; ++i) {
+            int num_updates;
+            MPI_Recv(&num_updates, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-        // Distribuisce gli aggiornamenti a tutti i processi
-        int total_updates = global_updates.size();
+            for (int j = 0; j < num_updates; ++j) {
+                int x, y;
+                Stato updated_state;
+                MPI_Recv(&x, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(&y, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(&updated_state, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                updates.emplace_back(x, y, updated_state);
+            }
+        }
+
+        // Inviare gli aggiornamenti a tutti i processi
+        int total_updates = updates.size();
         MPI_Bcast(&total_updates, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        MPI_Bcast(global_updates.data(), total_updates * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, 0, MPI_COMM_WORLD);
+        for (auto& [x, y, updated_state] : updates) {
+            MPI_Bcast(&x, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&y, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&updated_state, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        }
 
-        // Aggiorna lo stato locale del root
-        for (const auto& update : global_updates) {
-            int x, y;
-            Stato s;
-            std::tie(x, y, s) = update;
-            updateNodeState(x, y, s, next_time);
+        // Applicare gli aggiornamenti localmente
+        for (const auto& [x, y, updated_state] : updates) {
+            updateNodeState(x, y, updated_state, next_time);
         }
     } else {
-        // Invio aggiornamenti locali al root
-        int count = local_updates.size();
-        MPI_Send(&count, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-        MPI_Send(local_updates.data(), count * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, 0, 0, MPI_COMM_WORLD);
+        // Parte degli altri processi
+        std::vector<Nodo> activeNodesNow = getActiveNodes();
+        int start, end;
+        MPI_Recv(&start, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&end, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-        // Riceve il numero totale di aggiornamenti
+        std::vector<std::tuple<int, int, Stato>> local_updates;
+
+        for (int i = start; i <= end; ++i) {
+            Nodo node = activeNodesNow[i];
+            if (stateNextTurn(node.x, node.y) == live) {
+                updateNodeState(node.x, node.y, live, next_time);
+                local_updates.emplace_back(node.x, node.y, live);
+            }
+        }
+
+        // Inviare gli aggiornamenti al processo principale
+        int num_updates = local_updates.size();
+        MPI_Send(&num_updates, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        for (const auto& [x, y, updated_state] : local_updates) {
+            MPI_Send(&x, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+            MPI_Send(&y, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+            MPI_Send(&updated_state, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        }
+
+        // Ricevere la lista globale degli aggiornamenti
         int total_updates;
         MPI_Bcast(&total_updates, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-        // Riceve gli aggiornamenti globali
-        std::vector<std::tuple<int, int, Stato>> global_updates(total_updates);
-        MPI_Bcast(global_updates.data(), total_updates * sizeof(std::tuple<int, int, Stato>), MPI_BYTE, 0, MPI_COMM_WORLD);
-
-        // Aggiorna lo stato locale
-        for (const auto& update : global_updates) {
+        for (int i = 0; i < total_updates; ++i) {
             int x, y;
-            Stato s;
-            std::tie(x, y, s) = update;
-            updateNodeState(x, y, s, next_time);
+            Stato updated_state;
+            MPI_Bcast(&x, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&y, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&updated_state, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            updateNodeState(x, y, updated_state, next_time);
         }
     }
-    MPI_Finalize();
-    advanceTime();
-}
 
+    // Avanzare al tempo successivo
+    if (my_rank == 0) {
+        advanceTime();
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+}
 
 void test_rules_next_turn(){
 
@@ -563,14 +589,74 @@ void test_rules_next_turn(){
        }*/
 
 }
+
+void test_rules_next_turn_2() {
+    int my_rank;
+  MPI_Init(NULL, NULL);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+    // Inizializzazione della simulazione
+    Simulation sim(6, 6, 10);
+    sim.updateNodeState(0, 0, live, 0); // A
+    sim.updateNodeState(0, 1, live, 0); // B
+    sim.updateNodeState(4, 1, live, 0); // C
+    sim.updateNodeState(5, 0, live, 0); // D
+    sim.updateNodeState(5, 2, live, 0); // E
+    sim.updateNodeState(2, 0, live, 0); // F
+    sim.updateNodeState(1, 0, live, 0); // G
+    sim.updateNodeState(1, 1, live, 0); // H
+
+    if (my_rank == 0) {
+        std::cout << "TEST RULES NEXT TURN\n";
+    }
+
+    // Misurazione del tempo (solo processo master)
+    struct timeval start, end;
+    if (my_rank == 0) {
+        gettimeofday(&start, NULL);
+    }
+
+    // Esegui la simulazione parallela
+    sim.simulate_turn_p();
+
+    // Misurazione del tempo (solo processo master)
+    if (my_rank == 0) {
+        gettimeofday(&end, NULL);
+        printf("Tempo di esecuzione con parallelismo: %0.6f ms\n", tdiff(&start, &end));
+    }
+
+    // Controllo del risultato (solo processo master)
+    if (my_rank == 0) {
+        auto listaNodiAttivi = sim.getActiveNodes();
+
+        // Test dei nodi
+        auto check_node = [](const Nodo& nodo, const std::string& nome, size_t vicini, bool stato_atteso) {
+            std::cout << "Stato nodo " << nome << (stato_atteso == (*nodo.stato == live) ? " OK" : " Problema")
+                      << "\tNumero vicini=" << vicini << "\n";
+        };
+
+        auto neighBoursA = sim.getNeighbours(0, 0);
+        auto neighBoursB = sim.getNeighbours(0, 1);
+        auto neighBoursC = sim.getNeighbours(4, 1);
+        auto neighBoursF = sim.getNeighbours(2, 0);
+
+        check_node(listaNodiAttivi[0], "A", neighBoursA.size(), true);
+        check_node(listaNodiAttivi[1], "B", neighBoursB.size(), true);
+        check_node(listaNodiAttivi[2], "C", neighBoursC.size(), true);
+        check_node(listaNodiAttivi[3], "F", neighBoursF.size(), true);
+    }
+
+    MPI_Finalize();
+}
 int main(int argc,char *argv[]){
  // MPI_Init(&argc, &argv);
 //	test_send();
-  send_matrix();
+ // send_matrix();
   //test_share();
   //test_scheduler();
   //test_scheduler_b();
   //test_scheduler_b_2();
-  test_rules_next_turn();
+  //test_rules_next_turn();
+  test_rules_next_turn_2();
 }
 

@@ -131,7 +131,7 @@ public:
  */
     std::vector<Nodo> getNeighbours(int x,int y,int time=-1) const;
 
-
+static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
   /**
    * @brief return the state of the node of position x,y 
    * @param x : x position of node
