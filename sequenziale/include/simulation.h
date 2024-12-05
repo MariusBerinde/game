@@ -9,6 +9,8 @@
 #include <set>
 #include <tuple>
 #include <string>
+#include <unordered_map>
+#include <map>
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
 #define YELLOW_TXT "33"  // Codice ANSI per il colore giallo
@@ -45,7 +47,13 @@ struct Config{
   std::vector<Pos> nodi;
 };
 
+struct Point{
+  int x,y;
 
+  bool operator<(const Point& a) const {
+    return ((this->x<a.x) || (this->y<a.y));
+  }
+};
 
 
 // Dichiarazione della classe Simulation
@@ -131,6 +139,11 @@ public:
    * @return a vector of pairs where the first in the pair is the x, and second is the y
   */
   std::vector<std::pair<int, int>> calcSpawnNodes();
+
+/**
+ * @brief version of calcSpawnNodes where is used a hashmap for the candidate nodes
+ */
+  std::vector<std::pair<int, int>> calcSpawnNodes2();
 
   /**
    * @brief Updates the states of the map to the next shift according to the following rules: 

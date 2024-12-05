@@ -747,14 +747,14 @@ void test_config_from_file(){
 
 
 int main() {
-    test_creation();
-  //  test_get_vicini();
-  // test_rules_next_turn();
-  //test_creation_spawn_nodes();
-  //test_pair();
- // test_simulation();
- // test_read();
-  //test_config_from_file();
+//  test_creation();
+//  test_get_vicini();
+//  test_rules_next_turn();
+//  test_creation_spawn_nodes();
+//  test_pair();
+  test_simulation();
+//  test_read();
+//  test_config_from_file();
 
   return 0;
 }

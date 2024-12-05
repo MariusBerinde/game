@@ -277,13 +277,36 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
       result.push_back(sup);
     }
   }
-
-  //std::pair<int, int> a (1,1);
+//std::pair<int, int> a (1,1);
   return result;
 
 }
 
 
+std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
+    std::vector<std::pair<int, int>> result;
+    std::map<Point,int> map;
+    auto lActiveNodes = activeNodes[actual_time];
+    for(auto nodo:lActiveNodes){
+      auto neighbours = getNeighbours(nodo.x,nodo.y);
+      for(auto vicino:neighbours){
+        if(*vicino.stato == dead){
+          Point tmp_pos={vicino.x,vicino.y};
+          if(map.count(tmp_pos))
+            map[tmp_pos]++;
+          else 
+            map[tmp_pos]=1;
+        }
+      }
+    }
+    for(auto e:map){
+      if(e.second==3){
+        std::pair<int, int> sup (e.first.x,e.first.y);
+        result.push_back(sup);
+      }
+    }
+  return result;
+  }
 void Simulation::simulate_turn(){
   //crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
   //trova quali nodi del turno attuale sopravivranno 
@@ -299,7 +322,7 @@ void Simulation::simulate_turn(){
         updateNodeState(node.x, node.y, live, next_time);
       }
     }
-    auto nodes_spawned = calcSpawnNodes();
+    auto nodes_spawned = calcSpawnNodes2();
     for(size_t i=0;i<nodes_spawned.size();i++){
 
       updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
