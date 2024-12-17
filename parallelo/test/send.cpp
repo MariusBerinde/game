@@ -403,7 +403,7 @@ void test_scheduler_b_2() {
 
 
 void Simulation::simulate_turn_p() {
-    int my_rank, size;
+    int my_rank, size,i=0;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
@@ -411,6 +411,9 @@ void Simulation::simulate_turn_p() {
 
     // Parte del processo principale (rank 0)
     if (my_rank == 0) {
+      i++;
+
+      std::cout << "["<<my_rank<<"] e i vale ="<<i<<"\n";
         std::vector<Nodo> activeNodesNow = getActiveNodes();
         // Ordinare e dividere i nodi tra i processi
         sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
@@ -463,6 +466,8 @@ void Simulation::simulate_turn_p() {
             updateNodeState(x, y, updated_state, next_time);
         }
     } else {
+
+      std::cout << "["<<my_rank<<"] e i vale ="<<i<<"\n";
         // Parte degli altri processi
         std::vector<Nodo> activeNodesNow = getActiveNodes();
         int start, end;
@@ -501,9 +506,17 @@ void Simulation::simulate_turn_p() {
         }
     }
 
+    MPI_Barrier(MPI_COMM_WORLD);
     // Avanzare al tempo successivo
     if (my_rank == 0) {
-        advanceTime();
+      i++;
+      std::cout << "["<<my_rank<<"] e i vale ="<<i<<"\n";
+
+       // advanceTime();
+    }
+    else{
+      i++;
+      std::cout << "["<<my_rank<<"] e i vale ="<<i<<"\n";
     }
     MPI_Barrier(MPI_COMM_WORLD);
 }

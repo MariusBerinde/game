@@ -917,20 +917,20 @@ void test_random_sim(){
 
 }
 int main() {
-//  test_creation();
-//  test_get_vicini();
-//  test_rules_next_turn();
-//  test_creation_spawn_nodes();
-//  test_pair();
-//  test_simulation();
-//  test_read();
-//  test_config_from_file();
+    test_random_sim();
 //  seq();
+//  test_config_from_file();
+//  test_creation();
+//  test_creation_spawn_nodes();
 //  test_eu_dist();
+//  test_gen_random_pos();
+//  test_get_vicini();
 //  test_mh_dist();
 //  test_order_node_vector();
-//  test_gen_random_pos();
-  test_random_sim();
+//  test_pair();
+//  test_read();
+//  test_rules_next_turn();
+//  test_simulation();
   return 0;
 }
 

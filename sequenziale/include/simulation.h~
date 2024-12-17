@@ -11,13 +11,16 @@
 #include <set>
 #include <tuple>
 #include <string>
+<<<<<<< HEAD
 #include <unordered_map>
 #include <map>
+=======
 #include <omp.h>
 #include <cmath>
 #include <sys/time.h>
 #include <algorithm>
 #include <random>
+>>>>>>> main
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
 #define YELLOW_TXT "33"  // Codice ANSI per il colore giallo
