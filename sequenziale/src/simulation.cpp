@@ -83,7 +83,7 @@ void Simulation::printMap() const {
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
       if (map[i][j][actual_time] == live) {
-        std::cout << YELLOW_TEXT("O") << " ";  // Nodo vivo ('O') in giallo
+        std::cout << YELLOW_TEXT("O");  // Nodo vivo ('O') in giallo
       } else {
         std::cout << " ";  // Nodo morto (spazio vuoto)
       }
@@ -292,13 +292,14 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
       for(auto vicino:neighbours){
         if(*vicino.stato == dead){
           Point tmp_pos={vicino.x,vicino.y};
-          if(map.count(tmp_pos))
+          if(map.count(tmp_pos)==1)
             map[tmp_pos]++;
           else 
             map[tmp_pos]=1;
         }
       }
     }
+
     for(auto e:map){
       if(e.second==3){
         std::pair<int, int> sup (e.first.x,e.first.y);
@@ -307,15 +308,14 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
     }
   return result;
   }
-void Simulation::simulate_turn(){
-  //crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
+void Simulation::simulate_turn(){ //crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi 
   //trova quali nodi del turno attuale sopravivranno 
   //trova quali saranno i nuovi nodi attivi e inseriscili nella Mappa
   if(actual_time + 1 < MAX_TIME){
     int next_time = actual_time+1;
-    printf("SIMULATE TURN: next time =%d\n",next_time);
+  //  printf("SIMULATE TURN: next time =%d\n",next_time);
     auto activeNodesNow = getActiveNodes();
-    //crate the active node list of the next turn
+    //create the active node list of the next turn
     for(size_t i=0;i<activeNodesNow.size();i++){
       auto node = activeNodesNow[i];
       if(stateNextTurn(node.x, node.y) == live ){
@@ -323,10 +323,12 @@ void Simulation::simulate_turn(){
       }
     }
     auto nodes_spawned = calcSpawnNodes2();
+
     for(size_t i=0;i<nodes_spawned.size();i++){
 
       updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
     }
+
 
     advanceTime();
 
@@ -363,7 +365,7 @@ Config Simulation::read_file(const std::string& filename){
         std::cerr << "Errore: Impossibile aprire il file di configurazione: " << filename << std::endl;
         return ris;
     }
-    std::cout << "File di configurazione aperto correttamente: " << filename << std::endl;
+   // std::cout << "File di configurazione aperto correttamente: " << filename << std::endl;
   // String to store each line of the file.
   std::string line;
 
@@ -381,7 +383,7 @@ Config Simulation::read_file(const std::string& filename){
           auto pos_new_line=  l.find("\n");
           auto nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
           //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
-          std:: cout <<"numero trovato ="<<nrs<<"\n" ;
+    //      std:: cout <<"numero trovato ="<<nrs<<"\n" ;
           int nr = stoi(nrs);
           // righe = nr;
           ris.righe= nr;

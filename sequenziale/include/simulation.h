@@ -49,10 +49,16 @@ struct Config{
 
 struct Point{
   int x,y;
-
+/*
   bool operator<(const Point& a) const {
     return ((this->x<a.x) || (this->y<a.y));
   }
+  */
+  bool operator<(const Point& a) const {
+        if (this->x == a.x)
+            return this->y < a.y;  // Se x Š uguale, confronta y
+        return this->x < a.x;      // Confronta x
+    }
 };
 
 
