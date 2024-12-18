@@ -18,6 +18,13 @@ compila_send:
 #	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
 
 
+compila_test:
+	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/test_config.cpp $(SRC)/simulation.cpp -o $(OUT)/test_config 
+
+
+U ?= 0
+test:compila_test 
+	./$(OUT)/test_config $(U)
 
 esegui:compila
 	./$(OUT)/main 

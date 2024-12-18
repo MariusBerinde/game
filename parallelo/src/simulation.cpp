@@ -83,7 +83,6 @@ void Simulation::printMap(int p) const {
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
       if (map[i][j][actual_time] == live) {
-        //std::cout << YELLOW_TEXT("O") << " ";  // Nodo vivo ('O') in giallo
         std::cout << YELLOW_TEXT("O"); 
       } else {
         std::cout << "X";  // Nodo morto (spazio vuoto)
@@ -286,6 +285,33 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
 
 //bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
 
+std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
+    std::vector<std::pair<int, int>> result;
+    std::map<Point,int> map;
+    auto lActiveNodes = activeNodes[actual_time];
+    for(auto nodo:lActiveNodes){
+      auto neighbours = getNeighbours(nodo.x,nodo.y);
+      for(auto vicino:neighbours){
+        if(*vicino.stato == dead){
+          Point tmp_pos={vicino.x,vicino.y};
+          if(map.count(tmp_pos)==1)
+            map[tmp_pos]++;
+          else 
+            map[tmp_pos]=1;
+        }
+      }
+    }
+
+    for(auto e:map){
+
+      //std::cout<<"calcSpawnNodes2["<<actual_time<<"]=("<<e.first.x<<","<<e.first.y<<")="<<e.second<<"\n";
+      if(e.second==3){
+        std::pair<int, int> sup (e.first.x,e.first.y);
+        result.push_back(sup);
+      }
+    }
+  return result;
+  }
 /*
  * strategia di parallelizzazione :
  * il nodo con rank == 0 distribuisce il lavoro restanti nodi per cui nella fase iniziale ci devono essere almeno 3 nodi per poter lavorare 
@@ -366,13 +392,13 @@ void Simulation::simulate_turn(){
           updateNodeState(node.x, node.y, live, next_time);
         }
       }
-      /*
-      auto nodes_spawned = calcSpawnNodes();
+      
+      auto nodes_spawned = calcSpawnNodes2();
       for ( size_t i=0;i<nodes_spawned.size();i++){
 
         updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
       }
-      */
+      
       //std::cout<<"simula turno numero di nodi attivi="<<activeNodesNow.size()<<"\t valore par :"<<activeNodes[next_time].size()<<"\n";
 
       advanceTime();

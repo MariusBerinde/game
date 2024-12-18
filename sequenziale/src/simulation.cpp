@@ -76,7 +76,6 @@ void Simulation::printActiveNodes() const {
 
 // Funzione per stampare la mappa
 void Simulation::printMap(int p) const {
-  std::cout << "Mappa al tempo " << actual_time << ":\n";
   if (p> -1)
     std::cout <<"Processo["<<p<< "] mappa al tempo " << actual_time << ":\n";
   else
@@ -303,6 +302,8 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
     }
 
     for(auto e:map){
+
+      //std::cout<<"calcSpawnNodes2["<<actual_time<<"]=("<<e.first.x<<","<<e.first.y<<")="<<e.second<<"\n";
       if(e.second==3){
         std::pair<int, int> sup (e.first.x,e.first.y);
         result.push_back(sup);
@@ -461,11 +462,12 @@ Config Simulation::read_file(const std::string& filename){
 
 bool Simulation::load_config(const std::string& filename){
   Config config = read_file(filename);  // Usa la funzione read_file() da simulazione.cpp per leggere la configurazione
+  /*
 std::cout << "Configurazione letta: "
               << "righe = " << config.righe 
               << ", colonne = " << config.colonne 
               << ", tempo = " << config.tempo << std::endl;
-
+*/
   MAX_ROWS = config.righe;
   MAX_COLS = config.colonne;
   MAX_TIME = config.tempo;

@@ -12,6 +12,8 @@
 #include <tuple>
 #include <string>
 //#include <mpi.h>
+#include <unordered_map>
+#include <map>
 #include <omp.h>
 #include <cmath>
 #include <sys/time.h>
@@ -55,6 +57,18 @@ struct Config{
   std::vector<Pos> nodi;
 };
 
+
+struct Point{
+  int x,y;
+
+  bool operator<(const Point& a) const {
+        if (this->x == a.x)
+            return this->y < a.y;
+          return this->x < a.x;      // Confronta x
+    }
+    
+
+};
 
 
 
@@ -129,7 +143,7 @@ public:
  * @param b Il secondo numero intero.
  * @return La somma dei due numeri.
  */
-    std::vector<Nodo> getNeighbours(int x,int y,int time=-1) const;
+  std::vector<Nodo> getNeighbours(int x,int y,int time=-1) const;
 
 static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
   /**
@@ -147,6 +161,10 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
   */
   std::vector<std::pair<int, int>> calcSpawnNodes();
 
+/**
+ * @brief version of calcSpawnNodes where is used a hashmap for the candidate nodes
+ */
+  std::vector<std::pair<int, int>> calcSpawnNodes2();
   /**
    * @brief Updates the states of the map to the next shift according to the following rules: 
    * - If a node has 3 or 2 neighbors ; the node will live on the next turn otherwise it will be considered dead 
