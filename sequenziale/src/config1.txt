@@ -1,0 +1,13 @@
+Numero righe = 10
+Numero colonne = 10 
+Numero turni = 10
+Nodi  Attivi 
+// A(x,y)
+A(0,0)
+B(0,2)
+C(1,1)
+D(2,0)
+E(2,2)
+F(3,0)
+G(3,2)
+

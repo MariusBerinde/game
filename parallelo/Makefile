@@ -17,6 +17,8 @@ compila_send:
 	mpic++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
 #	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
 
+compila_hash:
+	mpic++ -Wall  ./$(TEST)/hash.cpp   -o  $(OUT)/hash
 
 compila_test:
 	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/test_config.cpp $(SRC)/simulation.cpp -o $(OUT)/test_config 
@@ -42,6 +44,9 @@ read:compila_test_lettura
 matrice:compila_matrice 
 	mpirun -np 4 $(OUT)/matrix	
 
+
+hash:compila_hash
+	mpirun -np 3 $(OUT)/hash	
 
 send:compila_send 
 	mpirun -np 3 $(OUT)/send	

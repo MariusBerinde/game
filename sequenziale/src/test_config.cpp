@@ -7,6 +7,9 @@
 #include <sys/time.h>
 #include <thread>
 #include <chrono>
+#include <stdio.h>
+#include <stdlib.h>
+
 
 using namespace std;
 float tdiff(struct timeval *start,struct timeval *end){
@@ -105,14 +108,19 @@ void test_config_2(int show_sim=0){
   cout<<"TEST CONFIGURAZINE 2\n";
   if(show_sim==1){
 	  cout<<"Ho attivato la  visione della simulazione\n";
-    for(size_t i=0;i<6;i++){
 
-      cout << "\033[2J\033[H";
-      sim.printMap();
+  struct timeval start,end;
+  gettimeofday(&start, NULL);
+    for(size_t i=0;i<6;i++)
       sim.simulate_turn();
+  gettimeofday(&end, NULL);
+    for(size_t i=0;i<6;i++){
+      cout << "\033[2J\033[H";
+      sim.printMap(i);
       std::this_thread::sleep_for(std::chrono::milliseconds(500*3));
     }
 
+  printf("velocità di esecuzione senza parallizzazione  millisec %0.6f\n",tdiff(&start, &end));
   }else{
   cout<<"Risultati test:\n";
 

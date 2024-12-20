@@ -34,3 +34,9 @@ per lo sviluppo avrò bisogno di :
 - controllo regole 1,2 :0.112164(con pc vecchio)
 
 è normale avere delle prestazioni peggiori per numero così piccoli
+
+
+## test tempi di esecuzione sequenziale con e senza -O2 
+
+velocità di esecuzione senza parallizzazione  millisec 0.000080 (senza)
+velocità di esecuzione senza parallizzazione  millisec 0.000020 (con)
