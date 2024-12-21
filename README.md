@@ -32,6 +32,8 @@ per lo sviluppo avrò bisogno di :
 - init (old):0.000465
 - controllo regole 1,2 :0.041979
 - controllo regole 1,2 :0.112164(con pc vecchio)
+- simula turno con ottimizzazione -o2 0.000795 ms
+                  
 
 è normale avere delle prestazioni peggiori per numero così piccoli
 
