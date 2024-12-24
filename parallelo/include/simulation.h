@@ -208,10 +208,14 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
    * */
   int mh_distance_node(Nodo a,Nodo b);
 
+  /**
+  * @brief the position the active nodes in filename
+  */
+  void write_actual_sim(const std::string& filename="out/simulazione.txt");
 
-  };
+};
 
- 
+
 
 #endif // SIMULATION_H
  

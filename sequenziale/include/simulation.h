@@ -11,6 +11,7 @@
 #include <set>
 #include <tuple>
 #include <string>
+//#include <mpi.h>
 #include <unordered_map>
 #include <map>
 #include <omp.h>
@@ -57,16 +58,14 @@ struct Config{
 
 struct Point{
   int x,y;
-/*
-  bool operator<(const Point& a) const {
-    return ((this->x<a.x) || (this->y<a.y));
-  }
-  */
+
   bool operator<(const Point& a) const {
         if (this->x == a.x)
-            return this->y < a.y;  // Se x Š uguale, confronta y
-        return this->x < a.x;      // Confronta x
+            return this->y < a.y;
+          return this->x < a.x;      // Confronta x
     }
+    
+
 };
 
 
@@ -83,6 +82,7 @@ private:
 public:
     // Costruttore
     Simulation( const int rows, const int cols,const  int time);
+
     // Distruttore
     ~Simulation();
 
@@ -195,6 +195,12 @@ public:
    * @brief calc the manhattan distance between a and b
    * */
   int mh_distance_node(Nodo a,Nodo b);
+
+  /**
+  * @brief the position the active nodes in filename
+  */
+  void write_actual_sim(const std::string& filename="out/simulazione.txt");
+
 
   };
 

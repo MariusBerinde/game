@@ -19,6 +19,7 @@ float tdiff(struct timeval *start,struct timeval *end){
 
 void test_config_1(int show_sim=0){
 
+  string tag="[test_config_1]:";
   Simulation sim(10, 10, 10);
 /*
   sim.updateNodeState(0, 0, live, 0); //A
@@ -30,20 +31,13 @@ void test_config_1(int show_sim=0){
  sim.load_config("src/config1.txt");
 
   cout<<"TEST CONFIGURAZINE 1\n";
-  
   if(show_sim==1) 
 	  cout<<"Ho attivato la  visione della simulazione\n";
 
-for (int turn = 0; turn < 4; ++turn) {
-        // Comando ANSI per riposizionare il cursore in alto a sinistra
-        cout << "\033[2J\033[H";
-
-        // Stampa la mappa
-        sim.printMap();
+for (int turn = 0; turn < 4; ++turn) { // Comando ANSI per riposizionare il cursore in alto a sinistra cout << "\033[2J\033[H"; Stampa la mappa sim.printMap();
 
         // Simula il turno successivo
         sim.simulate_turn();
-
         // Pausa per visualizzare l'evoluzione
         std::this_thread::sleep_for(std::chrono::milliseconds(500*2));
     }
@@ -89,6 +83,8 @@ for (int turn = 0; turn < 4; ++turn) {
 
   }
   */
+  sim.write_actual_sim();
+
 }
 /* showsim = 1 indica che voglio mostrare la simulaizione 
  * showsim = 0 indica che voglio nascondere la simulaizione (default 0)
@@ -153,15 +149,17 @@ void test_config_2(int show_sim=0){
     }
 
   }
+  sim.write_actual_sim();
 }
+
 
 
 int main(int argc,char *argv[]) {
  	if(argc > 1){
-		//test_config_1((int)*argv[1]-48);
+	//	test_config_1((int)*argv[1]-48);
 		test_config_2((int)*argv[1]-48);
 	}else
-		test_config_2();
+		test_config_1();
     
   return 0;
 }

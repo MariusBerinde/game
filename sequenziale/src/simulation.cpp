@@ -507,3 +507,24 @@ int Simulation::mh_distance_node(Nodo a,Nodo b){
     int diff_y=a.y - b.y;
     return abs(diff_x)+abs(diff_y);
   }
+
+
+void Simulation::write_actual_sim(const std::string& filename){
+  std::ofstream out_file;
+  std::string tag="[write_actual_sim]:";
+  //std::cout << "Apertura file "<<filename<<"\n";
+  out_file.open(filename);
+  //std::cout<<tag<< "Apertura file "<<filename<<"\n";
+  std::string intestazione="***Simulazione Game of life***\n";
+  auto nodi_attivi = activeNodes[actual_time-1];
+  //out_file<<intestazione<<"Numero nodi attivi:"<<nodi_attivi.size()<<endl;
+  out_file<<intestazione<<"Numero righe:"<<MAX_ROWS<<"\tNumero colonne:"<<MAX_COLS<<"\t Tempo massimo"<<MAX_TIME<<"\n"<<std::endl;
+  for(int i=0;i<=actual_time;i++){
+    out_file<<"Nodi attivi al tempo "<<i<<":\n"<<std::endl;
+    for(auto nodo:activeNodes[i]){
+      out_file<<"\t("<<nodo.x<<","<<nodo.y<<")\n";
+    }
+  }
+  out_file.close();
+  //std::cout<<tag << "Chiusura file "<<filename<<"\n";
+}

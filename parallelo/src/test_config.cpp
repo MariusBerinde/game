@@ -145,6 +145,7 @@ void test_config_2(int show_sim=0){
     }
 
   }
+  sim.write_actual_sim();
 }
 
 
