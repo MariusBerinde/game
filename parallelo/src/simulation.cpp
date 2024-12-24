@@ -639,8 +639,10 @@ Config Simulation::read_file(const std::string& filename){
   if (!file.is_open()) {
         std::cerr << "Errore: Impossibile aprire il file di configurazione: " << filename << std::endl;
         return ris;
-    }
+    }else {
+      
     std::cout << "File di configurazione aperto correttamente: " << filename << std::endl;
+    }
   // String to store each line of the file.
   std::string line;
 
@@ -658,7 +660,7 @@ Config Simulation::read_file(const std::string& filename){
           auto pos_new_line=  l.find("\n");
           auto nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
           //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
-          std:: cout <<"numero trovato ="<<nrs<<"\n" ;
+          //std:: cout <<"numero trovato ="<<nrs<<"\n" ;
           int nr = stoi(nrs);
           // righe = nr;
           ris.righe= nr;
@@ -734,10 +736,7 @@ Config Simulation::read_file(const std::string& filename){
 
 bool Simulation::load_config(const std::string& filename){
   Config config = read_file(filename);  // Usa la funzione read_file() da simulazione.cpp per leggere la configurazione
-std::cout << "Configurazione letta: "
-              << "righe = " << config.righe 
-              << ", colonne = " << config.colonne 
-              << ", tempo = " << config.tempo << std::endl;
+//std::cout << "Configurazione letta: " << "righe = " << config.righe << ", colonne = " << config.colonne << ", tempo = " << config.tempo << std::endl;
 
   MAX_ROWS = config.righe;
   MAX_COLS = config.colonne;

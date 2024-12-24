@@ -2,7 +2,7 @@ OUT = out
 SRC = src
 INCLUDE = include
 TEST= test
-FLAGS=-Wall -O2 -g -fopenmp -I  
+FLAGS=-Wall  -g -fopenmp -I  
 
 compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo
@@ -18,6 +18,12 @@ compila_send:
 	mpic++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
 #	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
 
+compila_sched:
+	mpic++ $(FLAGS) ./$(INCLUDE) $(TEST)/sched.cpp $(SRC)/simulation.cpp -o $(OUT)/sched	
+	
+
+sched:compila_sched
+	mpirun -np 3 $(OUT)/sched	
 compila_hash:
 	mpic++ -Wall  ./$(TEST)/hash.cpp   -o  $(OUT)/hash
 

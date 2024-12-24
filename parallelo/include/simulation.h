@@ -28,22 +28,23 @@
 #define TAN 2 // threshold active nodes nodi attivi nella simulazione 
 #define TSN 10 // threshold system nodes (soglia minima di nodi in MPI per l'attivazione della parallelizzazione)
 // Enum per lo stato delle celle
+
 enum Stato { live, dead };
 
 // Struttura Nodo
 struct Nodo {
-    int x, y;           // Coordinate (x, y)
-    Stato* stato;       // Puntatore allo stato della cella
+  int x, y;           // Coordinate (x, y)
+  Stato* stato;       // Puntatore allo stato della cella
 
-    // Funzione per convertire il Nodo in una stringa
-    std::string toString() const;
+  // Funzione per convertire il Nodo in una stringa
+  std::string toString() const;
 };
 
 struct CompareTuples {
-    bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {
-        // Confronta solo x e y (primi due elementi della tupla)
-        return std::tie(std::get<0>(lhs), std::get<1>(lhs)) < std::tie(std::get<0>(rhs), std::get<1>(rhs));
-    }
+  bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {
+    // Confronta solo x e y (primi due elementi della tupla)
+    return std::tie(std::get<0>(lhs), std::get<1>(lhs)) < std::tie(std::get<0>(rhs), std::get<1>(rhs));
+  }
 };
 
 
@@ -62,14 +63,13 @@ struct Point{
   int x,y;
 
   bool operator<(const Point& a) const {
-        if (this->x == a.x)
-            return this->y < a.y;
-          return this->x < a.x;      // Confronta x
-    }
-    
+    if (this->x == a.x)
+      return this->y < a.y;
+    return this->x < a.x;      // Confronta x
+  }
+
 
 };
-
 
 
 // Dichiarazione della classe Simulation
@@ -176,6 +176,7 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
    * @brief parallel version of sumulate turn
    * */
   void simulate_turn_p();
+  void simulate_turn_inv();
 
   /**
    * @brief run simulate_turn n times
