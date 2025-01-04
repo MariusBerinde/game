@@ -685,7 +685,7 @@ Config Simulation::read_file(const std::string& filename){
           auto pos_new_line=  l.find("\n");
           std::string nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
           //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
-          std::  cout <<"numero trovato ="<<nrs<<"\n" ;
+          //std::  cout <<"numero trovato ="<<nrs<<"\n" ;
           int nr = stoi(nrs);
           //col= nr;
           ris.tempo=nr;

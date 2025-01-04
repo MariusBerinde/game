@@ -30,7 +30,8 @@ compila_hash:
 compila_test:
 	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/test_config.cpp $(SRC)/simulation.cpp -o $(OUT)/test_config 
 
-
+complila_distr:$(TEST)/distr.cpp
+	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/distr.cpp $(SRC)/simulation.cpp -o $(OUT)/distr
 U ?= 0
 test:compila_test 
 	./$(OUT)/test_config $(U)
@@ -38,6 +39,8 @@ test:compila_test
 esegui:compila
 	./$(OUT)/main 
 
+distr:complila_distr
+	./$(OUT)/distr 
 
 esegui_p:compila_p
 	mpirun -np 3 ./$(OUT)/main 
