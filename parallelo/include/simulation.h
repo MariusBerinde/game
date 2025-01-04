@@ -161,6 +161,22 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
   */
   std::vector<std::pair<int, int>> calcSpawnNodes();
 
+  /*@ brief update the active nodes from the master to the other processes
+   * */
+  void broadcastActiveNodes();
+  
+  /*
+   * @brief calculate witch nodes from the actual_time will live in the next turn
+   * */
+  void calcActualNodesNextTurn();
+
+  /*
+   
+   * @brief Parallel version of calcSpawnNodes2
+   * */
+  void calcSpawnNodesP();
+
+
 /**
  * @brief version of calcSpawnNodes where is used a hashmap for the candidate nodes
  */
@@ -177,6 +193,7 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
    * */
   void simulate_turn_p();
   void simulate_turn_inv();
+  void simulate_turn_inv_2();
 
   /**
    * @brief run simulate_turn n times
@@ -213,6 +230,10 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
   * @brief the position the active nodes in filename
   */
   void write_actual_sim(const std::string& filename="out/simulazione.txt");
+
+
+
+std::vector<std::pair<int,int>> build_intervals(int nr_active_nodes);
 
 };
 
