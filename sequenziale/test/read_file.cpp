@@ -36,7 +36,7 @@ Config read_file(){
  // int col = -1;
  // int tempo = -1;
  // vector<Pos> nodi;
-  ifstream file("./config.txt");
+  ifstream file("./../src/config.txt");
 
   // String to store each line of the file.
   string line;
@@ -54,8 +54,8 @@ Config read_file(){
           auto pos_eq=  l.find("=");
           auto pos_new_line=  l.find("\n");
           string nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
-          //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
-          cout <<"numero trovato ="<<nrs<<"\n" ;
+          printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
+          //cout <<"numero trovato ="<<nrs<<"\n";
           int nr = stoi(nrs);
          // righe = nr;
           ris.righe= nr;
@@ -67,7 +67,7 @@ Config read_file(){
           auto pos_new_line=  l.find("\n");
           string nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
           //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
-          cout <<"numero trovato ="<<nrs<<"\n" ;
+          //cout <<"numero trovato ="<<nrs<<"\n";
           int nr = stoi(nrs);
           //col= nr;
           ris.colonne=nr;
@@ -80,7 +80,7 @@ Config read_file(){
           auto pos_new_line=  l.find("\n");
           string nrs = l.substr(pos_eq+1,pos_new_line-pos_eq-1);
           //printf("\tposizione uguale=%ld\tposzione line=%ld\n\n",pos_eq,pos_new_line);
-          cout <<"numero trovato ="<<nrs<<"\n" ;
+          //cout <<"numero trovato ="<<nrs<<"\n";
           int nr = stoi(nrs);
           //col= nr;
           ris.tempo=nr;
@@ -130,7 +130,7 @@ Config read_file(){
 
 void test_find(){
   string linea = "A ( 5 , 12 )";
-  bool  ris = linea.find("righe") != string::npos;
+  //bool  ris = linea.find("righe") != string::npos;
   int tmp_x,tmp_y=-1;
   string l = rmSpace(linea);
   size_t pos_1 = l.find("(");

@@ -8,17 +8,18 @@ float tdiff(struct timeval *start,struct timeval *end){
 void test_creation(){
 
   // Creazione di un'istanza di Simulation con 5 righe, 5 colonne e 10 unità di tempo
-   size_t rows=40,lines=40;
+  size_t rows=40,lines=40;
   struct timeval start,end;
   gettimeofday(&start, NULL);
   Simulation sim(rows, lines, 2);
   gettimeofday(&end, NULL);
 
-   size_t rows=40,lines=40;
-  struct timeval start,end;
+  /*
+ // struct timeval start,end;
   gettimeofday(&start, NULL);
   Simulation sim(rows, lines, 2);
   gettimeofday(&end, NULL);
+*/
 
   std::cout << "Test creation\n";
   printf("velocità di init senza parallizzazione  millisec %0.6f\n",tdiff(&start, &end));
@@ -753,7 +754,7 @@ void seq(){
   sim.updateNodeState(0, 1, live, 0); // B
   sim.updateNodeState(1, 0, live, 0); // G
   auto nodi_attivi = sim.getActiveNodes();
-  printf("Processo[%d](%d)\tnumero di nodi attivi %d\n",my_rank,sim.getActualTime(),nodi_attivi.size());
+  printf("Processo[%d](%d)\tnumero di nodi attivi %ld\n",my_rank,sim.getActualTime(),nodi_attivi.size());
   sim.printMap();
   sim.simulate_turn();
   nodi_attivi = sim.getActiveNodes();
@@ -832,8 +833,8 @@ vector<pair<int,int>> gen_random_pos(int nr,int max){
     uniform_int_distribution<> distrib(min, max);
 
     // Generate random number in the range [min, max]
-    int x = distrib(gen);
-  for(size_t i=0;i<nr;i++){
+    //int x = distrib(gen);
+  for(int i=0;i<nr;i++){
 
     int x = distrib(gen);
     int y = distrib(gen);
@@ -862,9 +863,6 @@ void test_gen_random_pos(){
 //  Simulation sim(6, 6, 2);
   int number_pos=10;
   auto position_list = gen_random_pos(number_pos,5);
-  for(auto var : position_list) {
-    printf("(%d,%d)\n",var.first,var.second);
-  }
 }
 
 Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){
@@ -899,7 +897,7 @@ void test_random_sim(){
     else 
           std::cout << "Numero turni errato\n";
 
-  if( nodi_attivi.size() == max_nodi_teo ){
+  if( (int)nodi_attivi.size() == max_nodi_teo ){
         std::cout << "Numero nodi attivi ok\n nodi attivi generati:\n";
         for(Nodo n:nodi_attivi){
           printf("Nodo(%d,%d)\n",n.x,n.y);
@@ -924,11 +922,11 @@ int main() {
 //  test_pair();
 //  test_simulation();
 //  test_read();
-//  test_config_from_file();
+// test_config_from_file();
 //  seq();
 //  test_eu_dist();
-//  test_mh_dist();
-//  test_order_node_vector();
+// test_mh_dist();
+// test_order_node_vector();
 //  test_gen_random_pos();
   test_random_sim();
   return 0;

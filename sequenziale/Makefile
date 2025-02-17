@@ -24,7 +24,7 @@ compila_test_lettura:
 
 read:compila_test_lettura
 	cd test; ./read 
-U ?= 0
+#U ?= 0
 test:compila_test 
 	./$(OUT)/test_config $(U)
 
