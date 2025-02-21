@@ -582,7 +582,7 @@ void Simulation::calcActualNodesNextTurn(){
     }
     */
     for(Point p:updates){
-      cout<<"["<<nameFun<<","<<my_rank<<"] al tempo "<<actual_time<<"nodo attivo nel prossimo turno("<<p.x<<","<<p.y<<")\n";
+    //  cout<<"["<<nameFun<<","<<my_rank<<"] al tempo "<<actual_time<<"nodo attivo nel prossimo turno("<<p.x<<","<<p.y<<")\n";
       updateNodeState(p.x, p.y, live, next_time);
     }
 
@@ -593,18 +593,19 @@ void Simulation::calcActualNodesNextTurn(){
     MPI_Recv(&start, 1, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(&end, 1, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     if(my_rank==1){
-
+/*
     for (int i = 0; i <= 3; ++i) {
       Nodo node = activeNodesNow[i];
       cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] nodo in esame con intervallo esplicito: "<< node.x<<","<<node.y<<"\n";
       }
+      */
     }
 
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] intervalli di lavoro:"<< start<<","<<end<<"\n";
+   // cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] intervalli di lavoro:"<< start<<","<<end<<"\n";
     std::vector<Point> local_updates;
     for (int i = start; i <= end; ++i) {
       Nodo node = activeNodesNow[i];
-      cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] nodo in esame "<< node.x<<","<<node.y<<"\n";
+     // cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] nodo in esame "<< node.x<<","<<node.y<<"\n";
       if (stateNextTurn(node.x, node.y) == live) {
         //cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] nodo attivo prossimo turno "<< node.x<<","<<node.y<<"\n";
        // updateNodeState(node.x, node.y, live, next_time);
@@ -631,6 +632,7 @@ void Simulation::calcActualNodesNextTurn(){
     */
   }
 }
+
 void Simulation::calcSpawnNodesP(){
   int my_rank, size;
   string nameFun="calcSpawnNodesP";
@@ -639,25 +641,19 @@ void Simulation::calcSpawnNodesP(){
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   vector<Nodo> activeNodesNow = getActiveNodes();
   sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
-
   if (my_rank == 0 ) {
      // cout<<"["<<nameFun<<","<<my_rank<<"] numero nodi attivi= "<<activeNodesNow.size()<<" al tempo= "<<actual_time<<"\n";
 
     //std::vector<std::pair<int, int>> result;
     std::map<Point,int> map;
-    for (int i = 1; i < size; i++) {
+    for (int i = 1; i < size; i++) { // val originale di i=1
       int total_elements = activeNodesNow.size();
       int start = (i==1)?0:(total_elements / 2);
-      int end =(i==1)?((total_elements / 2) - 1):(total_elements);
+      int end =(i==1)?((total_elements / 2) - 1):(total_elements-1);
       MPI_Send(&start, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       MPI_Send(&end, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
-/*
-      MPI_Send(&start, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-      MPI_Send(&end, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-
-      */
-      if(actual_time>1)
-        cout<<"["<<nameFun<<","<<actual_time<<"] invio estremi("<<start<<","<<end<<") a "<<i<<"\n";
+      //if(actual_time>1)
+       // cout<<"["<<nameFun<<","<<actual_time<<"] invio estremi("<<start<<","<<end<<") a "<<i<<"\n";
 
     }
 
@@ -675,28 +671,13 @@ void Simulation::calcSpawnNodesP(){
           map[pos]+=value;
         else 
           map[pos]=value;
-        //if(actual_time==1)
+        //if(i==2)
          // cout<<"["<<nameFun<<","<<actual_time <<"]Pos("<<pos.x<<","<<pos.y<<")="<<value<<"\tmap="<<map.at(pos)<<"\n";
       }
     }
-/*
-    // aggiornamento globale nodi_spawnati prossimo turno
-    vector<int> buffer;
-    for (const auto& e : map) {
-      //cout<<"["<<my_rank<<"]("<<e.first.x<<","<<e.first.y<<")="<<e.second<<"\n";
-      buffer.push_back(e.first.x);
-      buffer.push_back(e.first.y);
-      buffer.push_back(e.second);
-    }
-    //da togliere dopo
-    int buffer_size = buffer.size();
-    MPI_Bcast(&buffer_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(buffer.data(), buffer_size, MPI_INT, 0, MPI_COMM_WORLD);
-
-*/
     for(auto e:map){
       //std::cout<<"calcSpawnNodes2Unione["<<actual_time<<"]=("<<e.first.x<<","<<e.first.y<<")="<<e.second<<"\n";
-      if(e.second==3){
+      if(e.second==3 ){
         std::pair<int, int> sup (e.first.x,e.first.y);
           //cout<<"["<<nameFun<<","<<actual_time <<"]Pos("<<sup.first<<","<<sup.second<<")\n";
         //result.push_back(sup);
@@ -705,27 +686,26 @@ void Simulation::calcSpawnNodesP(){
     }
 
   }else {
-
-
     int start,end;
-    
     MPI_Recv(&start, 2, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(&end, 2, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-/*
-    MPI_Recv(&start, 2, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    MPI_Recv(&end, 2, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-*/
-    if(actual_time>0)
-      cout<<"["<<nameFun<<","<<actual_time<<"]estremi ricevuti("<<start<<","<<end<<") da "<<my_rank<<"\n";
+    
+   // if(my_rank==2)
+    //  cout<<"["<<nameFun<<","<<actual_time<<"]estremi ricevuti("<<start<<","<<end<<") da "<<my_rank<<"\n";
     std::map<Point,int> map_l;
     for(int i=start;i<=end;i++){
 
-    if(actual_time>0)
-     cout<<"["<<nameFun<<","<<my_rank<<"]("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<"\n";
+    //if(actual_time>0)
+     //cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<"\n";
       auto neighbours = getNeighbours(activeNodesNow[i].x,activeNodesNow[i].y);
       for(auto vicino:neighbours){
+
+     //cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<" VICINO CONSIDERATO("<<(vicino.x)<<","<<(vicino.y)<<")\n";
+
         if(*vicino.stato == dead){
           Point tmp_pos={vicino.x,vicino.y};
+          //if(my_rank==2)
+           // cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<" VICINO CONSIDERATO("<<(vicino.x)<<","<<(vicino.y)<<")\n";
           if(map_l.count(tmp_pos)==1)
             map_l[tmp_pos]++;
           else 
@@ -736,7 +716,7 @@ void Simulation::calcSpawnNodesP(){
     // invia map a master
     vector<int> buffer;
     for (const auto& e : map_l) {
-             //cout<<"["<<nameFun<<","<<my_rank<<"]("<<e.first.x<<","<<e.first.y<<")="<<e.second<<" at time ="<<actual_time<<"\n";
+            //cout<<"["<<nameFun<<","<<my_rank<<"]("<<e.first.x<<","<<e.first.y<<")="<<e.second<<" at time ="<<actual_time<<"\n";
       buffer.push_back(e.first.x);
       buffer.push_back(e.first.y);
       buffer.push_back(e.second);
@@ -745,21 +725,6 @@ void Simulation::calcSpawnNodesP(){
     int buffer_size = buffer.size();
     MPI_Send(&buffer_size, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
     MPI_Send(buffer.data(), buffer_size, MPI_INT, 0, 1, MPI_COMM_WORLD);
-    // da togliere dopo aver creto fun di broadcast
-    /*
-    int total_map;
-    MPI_Bcast(&total_map, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    vector<int> buffer_tmp(total_map);
-    MPI_Bcast(buffer_tmp.data(), total_map, MPI_INT, 0, MPI_COMM_WORLD);
-
-    for (size_t i = 0; i < buffer.size(); i += 3) {
-      Point pos = {buffer[i], buffer[i + 1]};
-      int value = buffer[i + 2];
-      if(value==3){
-        updateNodeState(pos.x,pos.y, live, next_time);
-      }
-    }
-    */
 
   } 
 
@@ -778,9 +743,11 @@ void Simulation::simulate_turn_inv_2(){
     printMap();
   }
   */
-  calcSpawnNodesP();
-  MPI_Barrier(MPI_COMM_WORLD);
   calcActualNodesNextTurn();
+  //calcSpawnNodesP();
+  MPI_Barrier(MPI_COMM_WORLD);
+  //calcActualNodesNextTurn();
+  calcSpawnNodesP();
   MPI_Barrier(MPI_COMM_WORLD);
   advanceTime();
   MPI_Barrier(MPI_COMM_WORLD);
@@ -853,7 +820,7 @@ void test_rules_next_turn_2() {
 void test_multiple_rounds(){
   int my_rank;
   Simulation sim(10, 10, 10);
-  sim.load_config("src/config2.txt");
+  sim.load_config("src/config5.txt");
   MPI_Barrier(MPI_COMM_WORLD);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   if (my_rank == 0) {
@@ -871,12 +838,20 @@ void test_multiple_rounds(){
   sim.simulate_turn_inv_2();
   if(my_rank==0)
     sim.printMap();
+/*
+  if(my_rank==0){
+    sim.write_actual_sim("out/config2_tmp.txt");
+  }
+
+  sim.simulate_turn_inv_2();
+  if(my_rank==0)
+    sim.printMap();
   
 
   if(my_rank==0){
     sim.write_actual_sim("out/config2_parallelo.txt");
   }
-
+*/
   
 }
 void test_spawn_nodes_p(){
@@ -980,87 +955,22 @@ void test_br(){
 }
 
 void debug_calcSpawnNodesP(){
-  //schema eseguo calc spawn nodes faccio la broadcast e faccio avanzare il tempo e verifico la lista dei nodi attivi 
+  //schema eseguo calc spawn nodes faccio la broadcast e faccio avanzare il tempo e verifico la lista dei nodi attivi {}
 
   //carica config
   int my_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   Simulation sim(10, 10, 10);
   
-  sim.load_config("src/config4.txt");
-  string nameFun="DEBUG_CALCSPAWNNODESP";
-  MPI_Barrier(MPI_COMM_WORLD);
-
+  string nameFun="[DEBUG_CALCSPAWNNODESP]";
+  sim.load_config("src/config2_tmp.txt");
   if(my_rank==0){
-    int actual_time=sim.getActualTime();
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] mappa originale\n";
+    cout<<nameFun<<":inizio\n";
     sim.printMap();
   }
-
+  MPI_Barrier(MPI_COMM_WORLD);
   sim.calcSpawnNodesP();
-  MPI_Barrier(MPI_COMM_WORLD);
-  sim.advanceTime();
-  MPI_Barrier(MPI_COMM_WORLD);
-  sim.broadcastActiveNodes();
-  MPI_Barrier(MPI_COMM_WORLD);
 
-  sim.calcSpawnNodesP(); //simulo la seconda volta
-  MPI_Barrier(MPI_COMM_WORLD);
-  sim.advanceTime();
-  MPI_Barrier(MPI_COMM_WORLD);
-  sim.broadcastActiveNodes();
-  MPI_Barrier(MPI_COMM_WORLD);
-  auto nodiAttiviMaster=sim.getActiveNodes();
-  auto nodiAttiviP1=sim.getActiveNodes();
-  auto nodiAttiviP2=sim.getActiveNodes();
-  /*
-  if(my_rank==0)
-    nodiAttiviMaster=sim.getActiveNodes();
-  if(my_rank==1)
-    nodiAttiviP1 = sim.getActiveNodes();
-  if(my_rank==2)
-    nodiAttiviP2 = sim.getActiveNodes();
-  */
-  MPI_Barrier(MPI_COMM_WORLD);
-
-  if(my_rank==0){
-    int actual_time=sim.getActualTime();
-    
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"]  numero nodi attivi:"<< nodiAttiviMaster.size()<<"\n";
-   // sim.printMap();
-    
-    for(Nodo n:nodiAttiviP1){
-      cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] = "<<n.x<<","<< n.y<<"\n";
-    }
-  }
-  
-  
-  if(my_rank==1){
-    int actual_time=sim.getActualTime();
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"]  numero nodi attivi:"<< nodiAttiviP1.size()<<"\n";
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] stampo  nodi attivi \n";
-    /*
-    for(Nodo n:nodiAttiviP1){
-      cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] = "<<n.x<<","<< n.y<<"\n";
-    }
-    
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] stampo  mappa attivi \n";
-  //  sim.printMap();
-  */
-  }
-  /*
- if(my_rank==2){
-    int actual_time=sim.getActualTime();
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"]  numero nodi attivi:"<< nodiAttiviP2.size()<<"\n";
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] stampo  nodi attivi \n";
-    for(Nodo n:nodiAttiviP2){
-      cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] = "<<n.x<<","<< n.y<<"\n";
-    }
-    
-    cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] stampo  mappa attivi \n";
-    sim.printMap();
-  }
-  */
 
 }
 
@@ -1073,7 +983,7 @@ void debug_calcActualNodesNextTurn(){
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   Simulation sim(10, 10, 10);
   
-  sim.load_config("src/config5.txt");
+  sim.load_config("src/config3.txt");
   string nameFun="DEBUG_CALCSPAWNNODESP";
   MPI_Barrier(MPI_COMM_WORLD);
 
@@ -1162,7 +1072,7 @@ int main(int argc,char *argv[]){
     test_multiple_rounds(); 
   //  test_spawn_nodes_p();
   // test_br();
-  // debug_calcSpawnNodesP();
+   //debug_calcSpawnNodesP();
   //debug_calcActualNodesNextTurn();
      MPI_Finalize();
   
