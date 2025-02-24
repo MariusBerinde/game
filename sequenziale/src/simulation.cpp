@@ -76,14 +76,11 @@ void Simulation::printActiveNodes() const {
 
 // Funzione per stampare la mappa
 void Simulation::printMap(int p) const {
-  std::cout << "Mappa al tempo " << actual_time << ":\n";
-  if (p> -1)
-    std::cout <<"Processo["<<p<< "] mappa al tempo " << actual_time << ":\n";
-  else
-    std::cout <<"Mappa al tempo " << actual_time << ":\n";
+  int time=(p==-1)?actual_time:p;
+    std::cout <<"Mappa al tempo " << time<< ":\n";
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
-      if (map[i][j][actual_time] == live) {
+      if (map[i][j][time] == live) {
         std::cout << YELLOW_TEXT("O"); 
       } else {
         std::cout << " ";  // Nodo morto (spazio vuoto)
@@ -303,6 +300,8 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
     }
 
     for(auto e:map){
+
+      //std::cout<<"calcSpawnNodes2["<<actual_time<<"]=("<<e.first.x<<","<<e.first.y<<")="<<e.second<<"\n";
       if(e.second==3){
         std::pair<int, int> sup (e.first.x,e.first.y);
         result.push_back(sup);
@@ -461,11 +460,12 @@ Config Simulation::read_file(const std::string& filename){
 
 bool Simulation::load_config(const std::string& filename){
   Config config = read_file(filename);  // Usa la funzione read_file() da simulazione.cpp per leggere la configurazione
+  /*
 std::cout << "Configurazione letta: "
               << "righe = " << config.righe 
               << ", colonne = " << config.colonne 
               << ", tempo = " << config.tempo << std::endl;
-
+*/
   MAX_ROWS = config.righe;
   MAX_COLS = config.colonne;
   MAX_TIME = config.tempo;
@@ -507,3 +507,24 @@ int Simulation::mh_distance_node(Nodo a,Nodo b){
     int diff_y=a.y - b.y;
     return abs(diff_x)+abs(diff_y);
   }
+
+
+void Simulation::write_actual_sim(const std::string& filename){
+  std::ofstream out_file;
+  std::string tag="[write_actual_sim]:";
+  //std::cout << "Apertura file "<<filename<<"\n";
+  out_file.open(filename);
+  //std::cout<<tag<< "Apertura file "<<filename<<"\n";
+  std::string intestazione="***Simulazione Game of life***\n";
+  auto nodi_attivi = activeNodes[actual_time-1];
+  //out_file<<intestazione<<"Numero nodi attivi:"<<nodi_attivi.size()<<endl;
+  out_file<<intestazione<<"Numero righe:"<<MAX_ROWS<<"\tNumero colonne:"<<MAX_COLS<<"\t Tempo massimo"<<MAX_TIME<<"\n"<<std::endl;
+  for(int i=0;i<=actual_time;i++){
+    out_file<<"Nodi attivi al tempo "<<i<<":\n"<<std::endl;
+    for(auto nodo:activeNodes[i]){
+      out_file<<"\t("<<nodo.x<<","<<nodo.y<<")\n";
+    }
+  }
+  out_file.close();
+  //std::cout<<tag << "Chiusura file "<<filename<<"\n";
+}

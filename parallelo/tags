@@ -4,7 +4,8 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-029|	Session.vim	/^normal! 029|$/;"	m
+0	Session.vim	/^normal! 0$/;"	m
+064|	Session.vim	/^normal! 064|$/;"	m
 CompareTuples	include/simulation.h	/^struct CompareTuples {$/;"	s
 Config	include/simulation.h	/^struct Config{$/;"	s
 ESC	include/simulation.h	22;"	d
@@ -39,7 +40,7 @@ addVicino	include/Nodo.h	/^		void addVicino(const std::shared_ptr<Nodo>& vicino)
 advanceTime	src/simulation.cpp	/^void Simulation::advanceTime() {$/;"	f	class:Simulation
 calcSpawnNodes	src/simulation.cpp	/^std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){$/;"	f	class:Simulation
 colonne	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
-customCompare	src/simulation.cpp	/^bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }$/;"	f
+customCompare	include/simulation.h	/^static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }$/;"	f	class:Simulation
 customCompare_l	src/main.cpp	/^bool customCompare_l(Nodo a, Nodo b) {$/;"	f
 dead	include/Nodo.h	/^enum Stato {live,dead};$/;"	e	enum:Stato
 dead	include/simulation.h	/^enum Stato { live, dead };$/;"	e	enum:Stato
@@ -74,7 +75,12 @@ printMap	src/simulation.cpp	/^void Simulation::printMap(int p) const {$/;"	f	cla
 read_file	src/simulation.cpp	/^Config Simulation::read_file(const std::string& filename){$/;"	f	class:Simulation
 righe	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
 rmSpace	src/simulation.cpp	/^std::string rmSpace(std::string val){$/;"	f
-s:l	Session.vim	/^let s:l = 231 - ((80 * winheight(0) + 24) \/ 49)$/;"	v
+s:l	Session.vim	/^let s:l = 232 - ((16 * winheight(0) + 16) \/ 33)$/;"	v
+s:l	Session.vim	/^let s:l = 39 - ((0 * winheight(0) + 7) \/ 15)$/;"	v
+s:save_splitbelow	Session.vim	/^let s:save_splitbelow = &splitbelow$/;"	v
+s:save_splitright	Session.vim	/^let s:save_splitright = &splitright$/;"	v
+s:save_winminheight	Session.vim	/^let s:save_winminheight = &winminheight$/;"	v
+s:save_winminwidth	Session.vim	/^let s:save_winminwidth = &winminwidth$/;"	v
 s:shortmess_save	Session.vim	/^let s:shortmess_save = &shortmess$/;"	v
 s:so_save	Session.vim	/^let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-1 siso=-1$/;"	v
 s:sx	Session.vim	/^let s:sx = expand("<sfile>:p:r")."x.vim"$/;"	v
@@ -83,7 +89,7 @@ send_matrix	test/send.cpp	/^void send_matrix() {$/;"	f
 seq	src/main.cpp	/^void seq(){ $/;"	f
 simulate_n_turns	src/simulation.cpp	/^void Simulation::simulate_n_turns(int n){ $/;"	f	class:Simulation
 simulate_turn	src/simulation.cpp	/^void Simulation::simulate_turn(){$/;"	f	class:Simulation
-simulate_turn_p	test/send.cpp	/^  void Simulation::simulate_turn_p(){$/;"	f	class:Simulation
+simulate_turn_p	test/send.cpp	/^void Simulation::simulate_turn_p() {$/;"	f	class:Simulation
 stampaInfo	include/Nodo.h	/^		void stampaInfo() const {$/;"	f	class:Nodo
 stampaVicini	include/Nodo.h	/^void stampaVicini() const {$/;"	f	class:Nodo
 stateNextTurn	src/simulation.cpp	/^Stato Simulation::stateNextTurn(int x,int y) {$/;"	f	class:Simulation
@@ -92,6 +98,7 @@ stato	include/simulation.h	/^    Stato* stato;       \/\/ Puntatore allo stato d
 stato	test/matrix.cpp	/^    Stato *stato;       \/\/ Puntatore allo stato della cella$/;"	m	struct:Nodo	file:
 svegliaNodo	include/Nodo.h	/^		void svegliaNodo(){$/;"	f	class:Nodo
 tdiff	src/main.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
+tdiff	test/send.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
 tempo	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
 test_config_from_file	src/main.cpp	/^void test_config_from_file(){$/;"	f
 test_creation	src/main.cpp	/^void test_creation(){$/;"	f
@@ -105,6 +112,8 @@ test_pair	src/main.cpp	/^void test_pair(){$/;"	f
 test_random_sim	src/main.cpp	/^void test_random_sim(){$/;"	f
 test_read	src/main.cpp	/^void test_read(){$/;"	f
 test_rules_next_turn	src/main.cpp	/^void test_rules_next_turn(){$/;"	f
+test_rules_next_turn	test/send.cpp	/^void test_rules_next_turn(){$/;"	f
+test_rules_next_turn_2	test/send.cpp	/^void test_rules_next_turn_2() {$/;"	f
 test_scheduler	test/send.cpp	/^void test_scheduler() {$/;"	f
 test_scheduler_b	test/send.cpp	/^void test_scheduler_b() {$/;"	f
 test_scheduler_b_2	test/send.cpp	/^void test_scheduler_b_2() {$/;"	f

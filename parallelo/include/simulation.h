@@ -11,13 +11,18 @@
 #include <set>
 #include <tuple>
 #include <string>
-//#include <mpi.h>
+#include <mpi.h>
+#include <unordered_map>
+#include <map>
 #include <omp.h>
 #include <cmath>
 #include <sys/time.h>
 #include <algorithm>
 #include <random>
 
+#include <bits/stdc++.h>
+
+//using namespace std;
 // Definizioni per il colore giallo e il reset dei colori nel terminale
 #define ESC "\033["
 #define YELLOW_TXT "33"  // Codice ANSI per il colore giallo
@@ -26,22 +31,23 @@
 #define TAN 2 // threshold active nodes nodi attivi nella simulazione 
 #define TSN 10 // threshold system nodes (soglia minima di nodi in MPI per l'attivazione della parallelizzazione)
 // Enum per lo stato delle celle
+
 enum Stato { live, dead };
 
 // Struttura Nodo
 struct Nodo {
-    int x, y;           // Coordinate (x, y)
-    Stato* stato;       // Puntatore allo stato della cella
+  int x, y;           // Coordinate (x, y)
+  Stato* stato;       // Puntatore allo stato della cella
 
-    // Funzione per convertire il Nodo in una stringa
-    std::string toString() const;
+  // Funzione per convertire il Nodo in una stringa
+  std::string toString() const;
 };
 
 struct CompareTuples {
-    bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {
-        // Confronta solo x e y (primi due elementi della tupla)
-        return std::tie(std::get<0>(lhs), std::get<1>(lhs)) < std::tie(std::get<0>(rhs), std::get<1>(rhs));
-    }
+  bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {
+    // Confronta solo x e y (primi due elementi della tupla)
+    return std::tie(std::get<0>(lhs), std::get<1>(lhs)) < std::tie(std::get<0>(rhs), std::get<1>(rhs));
+  }
 };
 
 
@@ -56,6 +62,17 @@ struct Config{
 };
 
 
+struct Point{
+  int x,y;
+
+  bool operator<(const Point& a) const {
+    if (this->x == a.x)
+      return this->y < a.y;
+    return this->x < a.x;      // Confronta x
+  }
+
+
+};
 
 
 // Dichiarazione della classe Simulation
@@ -129,7 +146,7 @@ public:
  * @param b Il secondo numero intero.
  * @return La somma dei due numeri.
  */
-    std::vector<Nodo> getNeighbours(int x,int y,int time=-1) const;
+  std::vector<Nodo> getNeighbours(int x,int y,int time=-1) const;
 
 static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
   /**
@@ -147,6 +164,26 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
   */
   std::vector<std::pair<int, int>> calcSpawnNodes();
 
+  /*@ brief update the active nodes from the master to the other processes
+   * */
+  void broadcastActiveNodes();
+  
+  /*
+   * @brief calculate witch nodes from the actual_time will live in the next turn
+   * */
+  void calcActualNodesNextTurn();
+
+  /*
+   
+   * @brief Parallel version of calcSpawnNodes2
+   * */
+  void calcSpawnNodesP();
+
+
+/**
+ * @brief version of calcSpawnNodes where is used a hashmap for the candidate nodes
+ */
+  std::vector<std::pair<int, int>> calcSpawnNodes2();
   /**
    * @brief Updates the states of the map to the next shift according to the following rules: 
    * - If a node has 3 or 2 neighbors ; the node will live on the next turn otherwise it will be considered dead 
@@ -158,6 +195,8 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
    * @brief parallel version of sumulate turn
    * */
   void simulate_turn_p();
+  void simulate_turn_inv();
+  void simulate_turn_inv_2();
 
   /**
    * @brief run simulate_turn n times
@@ -190,10 +229,18 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
    * */
   int mh_distance_node(Nodo a,Nodo b);
 
+  /**
+  * @brief the position the active nodes in filename
+  */
+  void write_actual_sim(const std::string& filename="out/simulazione.txt");
 
-  };
 
- 
+
+std::vector<std::pair<int,int>> build_intervals(int nr_active_nodes);
+
+};
+
+
 
 #endif // SIMULATION_H
  

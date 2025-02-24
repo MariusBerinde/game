@@ -2,7 +2,7 @@ OUT = out
 SRC = src
 INCLUDE = include
 TEST= test
-FLAGS=-Wall -g -I
+FLAGS=-O2 -Wall -g -I 
 
 compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo
@@ -24,7 +24,7 @@ compila_test_lettura:
 
 read:compila_test_lettura
 	cd test; ./read 
-U ?= 0
+#U ?= 0
 test:compila_test 
 	./$(OUT)/test_config $(U)
 

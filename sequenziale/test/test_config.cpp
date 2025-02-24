@@ -7,9 +7,6 @@
 #include <sys/time.h>
 #include <thread>
 #include <chrono>
-#include <stdio.h>
-#include <stdlib.h>
-
 
 using namespace std;
 float tdiff(struct timeval *start,struct timeval *end){
@@ -19,7 +16,6 @@ float tdiff(struct timeval *start,struct timeval *end){
 
 void test_config_1(int show_sim=0){
 
-  string tag="[test_config_1]:";
   Simulation sim(10, 10, 10);
 /*
   sim.updateNodeState(0, 0, live, 0); //A
@@ -31,13 +27,20 @@ void test_config_1(int show_sim=0){
  sim.load_config("src/config1.txt");
 
   cout<<"TEST CONFIGURAZINE 1\n";
+  
   if(show_sim==1) 
 	  cout<<"Ho attivato la  visione della simulazione\n";
 
-for (int turn = 0; turn < 4; ++turn) { // Comando ANSI per riposizionare il cursore in alto a sinistra cout << "\033[2J\033[H"; Stampa la mappa sim.printMap();
+for (int turn = 0; turn < 4; ++turn) {
+        // Comando ANSI per riposizionare il cursore in alto a sinistra
+        cout << "\033[2J\033[H";
+
+        // Stampa la mappa
+        sim.printMap();
 
         // Simula il turno successivo
         sim.simulate_turn();
+
         // Pausa per visualizzare l'evoluzione
         std::this_thread::sleep_for(std::chrono::milliseconds(500*2));
     }
@@ -83,8 +86,6 @@ for (int turn = 0; turn < 4; ++turn) { // Comando ANSI per riposizionare il curs
 
   }
   */
-  sim.write_actual_sim();
-
 }
 /* showsim = 1 indica che voglio mostrare la simulaizione 
  * showsim = 0 indica che voglio nascondere la simulaizione (default 0)
@@ -104,19 +105,14 @@ void test_config_2(int show_sim=0){
   cout<<"TEST CONFIGURAZINE 2\n";
   if(show_sim==1){
 	  cout<<"Ho attivato la  visione della simulazione\n";
-
-  struct timeval start,end;
-  gettimeofday(&start, NULL);
-    for(size_t i=0;i<6;i++)
-      sim.simulate_turn();
-  gettimeofday(&end, NULL);
     for(size_t i=0;i<6;i++){
+
       cout << "\033[2J\033[H";
-      sim.printMap(i);
+      sim.printMap();
+      sim.simulate_turn();
       std::this_thread::sleep_for(std::chrono::milliseconds(500*3));
     }
 
-  printf("velocità di esecuzione senza parallizzazione  millisec %0.6f\n",tdiff(&start, &end));
   }else{
   cout<<"Risultati test:\n";
 
@@ -149,17 +145,15 @@ void test_config_2(int show_sim=0){
     }
 
   }
-  sim.write_actual_sim();
 }
-
 
 
 int main(int argc,char *argv[]) {
  	if(argc > 1){
-	//	test_config_1((int)*argv[1]-48);
+		//test_config_1((int)*argv[1]-48);
 		test_config_2((int)*argv[1]-48);
 	}else
-		test_config_1();
+		test_config_2();
     
   return 0;
 }
