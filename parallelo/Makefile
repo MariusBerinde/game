@@ -2,7 +2,7 @@ OUT = out
 SRC = src
 INCLUDE = include
 TEST= test
-FLAGS=-Wall  -g -fopenmp -I  
+FLAGS=-Wall -O2 -g -fopenmp -I  
 
 compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo

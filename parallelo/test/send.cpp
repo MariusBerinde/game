@@ -772,6 +772,41 @@ void test_multiple_rounds(){
 */
   
 }
+
+
+void test_big_sim2(){
+
+  int my_rank, righe_teo =17,colonne_teo = 17,turni_teo = 10;
+  struct timeval start,end;
+  cout<<"["<<__func__<<","<<my_rank<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+
+  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  for(int i=0;i<colonne_teo;i++){
+    sim.updateNodeState(i,0,live,0);
+    sim.updateNodeState(i,9,live,0);
+  }
+  for(int i=1;i<9;i++){
+    sim.updateNodeState(3,i,live,0);
+    sim.updateNodeState(13,i,live,0);
+  }
+
+  if (my_rank == 0) {
+  //  sim.printMap();
+    gettimeofday(&start, NULL);
+  }
+
+  sim.simulate_turn_inv_2();
+  //if (my_rank == 0) 
+   // sim.printMap();
+  sim.simulate_turn_inv_2();
+  if (my_rank == 0) {
+  gettimeofday(&end, NULL);
+   // sim.printMap();
+  printf("[%s,%d]velocità di esecuzione di 3 turni usando 2 nodi  millisec %0.6f\n",__func__,my_rank,tdiff(&start, &end));
+  }
+}
 void test_spawn_nodes_p(){
   int my_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
@@ -987,11 +1022,12 @@ void debug_calcActualNodesNextTurn(){
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);
   //  test_rules_next_turn_2(); 
-    test_multiple_rounds(); 
+  //  test_multiple_rounds(); 
   //  test_spawn_nodes_p();
-  // test_br();
-   //debug_calcSpawnNodesP();
-  //debug_calcActualNodesNextTurn();
+  //  test_br();
+  //  debug_calcSpawnNodesP();
+  //  debug_calcActualNodesNextTurn();
+  test_big_sim2();
      MPI_Finalize();
   
 }

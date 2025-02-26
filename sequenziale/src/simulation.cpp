@@ -83,7 +83,7 @@ void Simulation::printMap(int p) const {
       if (map[i][j][time] == live) {
         std::cout << YELLOW_TEXT("O"); 
       } else {
-        std::cout << " ";  // Nodo morto (spazio vuoto)
+        std::cout << "X";  // Nodo morto (spazio vuoto)
       }
     }
     std::cout << std::endl;
@@ -190,7 +190,7 @@ std::vector<Nodo> Simulation::getNeighbours(int x,int y,int time)const{
   if(y==MAX_COLS-1 && (x>0 && x<MAX_ROWS-1)){
 
     //caso dell'ultima colonna
-    std::cout << "sono nel caso ultima colonna";
+   // std::cout << "sono nel caso ultima colonna";
 
     std::vector<Nodo> neighbours_r;
 

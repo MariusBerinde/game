@@ -914,6 +914,112 @@ void test_random_sim(){
   
 
 }
+void test_big_sim(){
+  int righe_teo =25,colonne_teo = 25,turni_teo = 10,max_nodi_teo = 20;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< max_nodi_teo<<" e "<<turni_teo <<"max turni\n";
+  //Simulation sim = make_random_sim(righe_teo,colonne_teo,turni_teo,max_nodi_teo);
+
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  cout<<"["<<__func__<<"] creazione nodi attivi random ...\n";
+  auto position_list = gen_random_pos(max_nodi_teo,righe_teo);
+  for(auto &[x,y]:position_list){
+    sim.updateNodeState(x,y, live, 0);
+  }
+  sim.printMap();
+  sim.simulate_turn();
+  sim.printMap();
+}
+
+void test_big_sim2(){
+  int righe_teo =17,colonne_teo = 17,turni_teo = 10;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  for(int i=0;i<colonne_teo;i++){
+    sim.updateNodeState(i,0,live,0);
+    sim.updateNodeState(i,9,live,0);
+  }
+  for(int i=1;i<9;i++){
+    sim.updateNodeState(3,i,live,0);
+    sim.updateNodeState(13,i,live,0);
+  }
+
+  struct timeval start,end;
+
+  sim.printMap();
+  gettimeofday(&start, NULL);
+  sim.simulate_turn();
+  //sim.printMap();
+  sim.simulate_turn();
+  gettimeofday(&end, NULL);
+  sim.printMap();
+  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+}
+void simula_bordo(){
+  int righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  for(int i=0;i<colonne_teo;i++){
+    sim.updateNodeState(i,0,live,0);
+    sim.updateNodeState(i,colonne_teo-1,live,0);
+  }
+  
+  for(int i=1;i<righe_teo;i++){
+    sim.updateNodeState(0,i,live,0);
+    sim.updateNodeState(righe_teo-1,i,live,0);
+  }
+  
+
+  struct timeval start,end;
+
+  gettimeofday(&start, NULL);
+  for(int i=0;i<turni_teo-1;i++){
+    sim.printMap();
+    sim.simulate_turn();
+  }
+  gettimeofday(&end, NULL);
+  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+  /*
+  gettimeofday(&start, NULL);
+    sim.simulate_turn();
+  //sim.printMap();
+  sim.simulate_turn();
+  gettimeofday(&end, NULL);
+  sim.printMap();
+  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+  */
+}
+void simula_croce(){
+
+  int righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  for(int i=0;i<colonne_teo;i++){
+    sim.updateNodeState(i,0,live,0);
+    sim.updateNodeState(i,4,live,0);
+    sim.updateNodeState(i,9,live,0);
+    sim.updateNodeState(i,14,live,0);
+    sim.updateNodeState(i,colonne_teo-1,live,0);
+  }
+  
+  for(int i=1;i<righe_teo;i++){
+    sim.updateNodeState(0,i,live,0);
+    sim.updateNodeState(4,i,live,0);
+    sim.updateNodeState(9,i,live,0);
+    sim.updateNodeState(14,i,live,0);
+    sim.updateNodeState(righe_teo-1,i,live,0);
+  }
+  
+
+  struct timeval start,end;
+
+  gettimeofday(&start, NULL);
+  for(int i=0;i<turni_teo-1;i++){
+    sim.printMap();
+    sim.simulate_turn();
+  }
+  gettimeofday(&end, NULL);
+  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+}
 int main() {
 //  test_creation();
 //  test_get_vicini();
@@ -922,13 +1028,17 @@ int main() {
 //  test_pair();
 //  test_simulation();
 //  test_read();
-// test_config_from_file();
+//  test_config_from_file();
 //  seq();
 //  test_eu_dist();
-// test_mh_dist();
-// test_order_node_vector();
+//  test_mh_dist();
+//  test_order_node_vector();
 //  test_gen_random_pos();
-  test_random_sim();
+//  test_random_sim();
+//  test_big_sim();
+//test_big_sim2();
+//simula_bordo();
+simula_croce();
   return 0;
 }
 
