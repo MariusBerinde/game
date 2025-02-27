@@ -42,3 +42,5 @@ per lo sviluppo avrò bisogno di :
 
 velocità di esecuzione senza parallizzazione  millisec 0.000080 (senza)
 velocità di esecuzione senza parallizzazione  millisec 0.000020 (con)
+
+gg
