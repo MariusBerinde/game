@@ -1018,7 +1018,74 @@ void debug_calcActualNodesNextTurn(){
   */
 
 }
+void simula_bordo(){
+  int my_rank,righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  for(int i=0;i<colonne_teo;i++){
+    sim.updateNodeState(i,0,live,0);
+    sim.updateNodeState(i,colonne_teo-1,live,0);
+  }
+  
+  for(int i=1;i<righe_teo;i++){
+    sim.updateNodeState(0,i,live,0);
+    sim.updateNodeState(righe_teo-1,i,live,0);
+  }
+  
 
+  struct timeval start,end;
+
+  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  if(my_rank==0)
+    gettimeofday(&start, NULL);
+  for(int i=0;i<3;i++){
+    if(my_rank==0)
+      sim.printMap();
+    sim.simulate_turn_inv_2();
+  }
+  if(my_rank==0){
+    gettimeofday(&end, NULL);
+    printf("[%s]velocità di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
+  }
+}
+void simula_croce(){
+
+  int my_rank=-1,righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  for(int i=0;i<colonne_teo;i++){
+    sim.updateNodeState(i,0,live,0);
+    sim.updateNodeState(i,4,live,0);
+    sim.updateNodeState(i,9,live,0);
+    sim.updateNodeState(i,14,live,0);
+    sim.updateNodeState(i,colonne_teo-1,live,0);
+  }
+  
+  for(int i=1;i<righe_teo;i++){
+    sim.updateNodeState(0,i,live,0);
+    sim.updateNodeState(4,i,live,0);
+    sim.updateNodeState(9,i,live,0);
+    sim.updateNodeState(14,i,live,0);
+    sim.updateNodeState(righe_teo-1,i,live,0);
+  }
+  
+
+  struct timeval start,end;
+  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+  gettimeofday(&start, NULL);
+  for(int i=0;i<2;i++){
+    if(my_rank==0)
+      sim.printMap();
+    sim.simulate_turn_inv_2();
+  }
+  if(my_rank==0){
+    gettimeofday(&end, NULL);
+    printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+  }
+}
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);
   //  test_rules_next_turn_2(); 
@@ -1027,7 +1094,9 @@ int main(int argc,char *argv[]){
   //  test_br();
   //  debug_calcSpawnNodesP();
   //  debug_calcActualNodesNextTurn();
-  test_big_sim2();
+//  test_big_sim2();
+//  simula_bordo();
+  simula_croce();
      MPI_Finalize();
   
 }

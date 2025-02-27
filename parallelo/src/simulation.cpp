@@ -76,10 +76,12 @@ void Simulation::printActiveNodes() const {
 
 // Funzione per stampare la mappa
 void Simulation::printMap(int p) const {
+
   if (p> -1)
     std::cout <<"Processo["<<p<< "] mappa al tempo " << actual_time << ":\n";
   else
     std::cout <<"Mappa al tempo " << actual_time << ":\n";
+
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
       if (map[i][j][actual_time] == live) {
@@ -192,7 +194,7 @@ std::vector<Nodo> Simulation::getNeighbours(int x,int y,int time)const{
   if(y==MAX_COLS-1 && (x>0 && x<MAX_ROWS-1)){
 
     //caso dell'ultima colonna
-    std::cout << "sono nel caso ultima colonna";
+    //std::cout << "sono nel caso ultima colonna";
 
     std::vector<Nodo> neighbours_r;
 
