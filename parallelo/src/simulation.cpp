@@ -859,7 +859,7 @@ void Simulation::calcActualNodesNextTurn(){
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   std::vector<Nodo> activeNodesNow = getActiveNodes();
-  sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
+ // sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
   if(my_rank==0){
     int chunk_size = activeNodesNow.size() / (size - 1);
     for (int i = 1; i < size; ++i) {
@@ -973,7 +973,7 @@ void Simulation::calcSpawnNodesP(){
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   std::vector<Nodo> activeNodesNow = getActiveNodes();
-  std::sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
+//  std::sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
   if (my_rank == 0 ) {
      // cout<<"["<<nameFun<<","<<my_rank<<"] numero nodi attivi= "<<activeNodesNow.size()<<" al tempo= "<<actual_time<<"\n";
 
@@ -1022,23 +1022,23 @@ void Simulation::calcSpawnNodesP(){
     int start,end;
     MPI_Recv(&start, 2, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(&end, 2, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    
-   // if(my_rank==2)
+
+    // if(my_rank==2)
     //  cout<<"["<<nameFun<<","<<actual_time<<"]estremi ricevuti("<<start<<","<<end<<") da "<<my_rank<<"\n";
     std::map<Point,int> map_l;
     for(int i=start;i<=end;i++){
 
-    //if(actual_time>0)
-     //cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<"\n";
+      //if(actual_time>0)
+      //cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<"\n";
       auto neighbours = getNeighbours(activeNodesNow[i].x,activeNodesNow[i].y);
       for(auto vicino:neighbours){
 
-     //cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<" VICINO CONSIDERATO("<<(vicino.x)<<","<<(vicino.y)<<")\n";
+        //cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<" VICINO CONSIDERATO("<<(vicino.x)<<","<<(vicino.y)<<")\n";
 
         if(*vicino.stato == dead){
           Point tmp_pos={vicino.x,vicino.y};
           //if(my_rank==2)
-           // cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<" VICINO CONSIDERATO("<<(vicino.x)<<","<<(vicino.y)<<")\n";
+          // cout<<"["<<nameFun<<","<<my_rank<<"] NODO ATTIVIO CONSIDERATO ("<<activeNodesNow[i].x<<","<<activeNodesNow[i].y<<") at time ="<<actual_time<<" VICINO CONSIDERATO("<<(vicino.x)<<","<<(vicino.y)<<")\n";
           if(map_l.count(tmp_pos)==1)
             map_l[tmp_pos]++;
           else 
@@ -1049,10 +1049,12 @@ void Simulation::calcSpawnNodesP(){
     // invia map a master
     std::vector<int> buffer;
     for (const auto& e : map_l) {
-            //cout<<"["<<nameFun<<","<<my_rank<<"]("<<e.first.x<<","<<e.first.y<<")="<<e.second<<" at time ="<<actual_time<<"\n";
-      buffer.push_back(e.first.x);
-      buffer.push_back(e.first.y);
-      buffer.push_back(e.second);
+      //cout<<"["<<nameFun<<","<<my_rank<<"]("<<e.first.x<<","<<e.first.y<<")="<<e.second<<" at time ="<<actual_time<<"\n";
+      if(e.second<=3){
+        buffer.push_back(e.first.x);
+        buffer.push_back(e.first.y);
+        buffer.push_back(e.second);
+      }
     }
     // Invio del numero di elementi (dimensione del buffer)
     int buffer_size = buffer.size();

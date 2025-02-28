@@ -1019,7 +1019,7 @@ void debug_calcActualNodesNextTurn(){
 
 }
 void simula_bordo(){
-  int my_rank,righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  int my_rank,righe_teo =20,colonne_teo = 20,turni_teo = 1000;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -1039,9 +1039,9 @@ void simula_bordo(){
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   if(my_rank==0)
     gettimeofday(&start, NULL);
-  for(int i=0;i<3;i++){
-    if(my_rank==0)
-      sim.printMap();
+  for(int i=0;i<turni_teo-1;i++){
+   // if(my_rank==0)
+   //   sim.printMap();
     sim.simulate_turn_inv_2();
   }
   if(my_rank==0){
@@ -1051,7 +1051,7 @@ void simula_bordo(){
 }
 void simula_croce(){
 
-  int my_rank=-1,righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  int my_rank=-1,righe_teo =10,colonne_teo = 10,turni_teo = 20,nr_proc=-1;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -1074,29 +1074,30 @@ void simula_croce(){
   struct timeval start,end;
   MPI_Barrier(MPI_COMM_WORLD);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nr_proc);
 
   gettimeofday(&start, NULL);
-  for(int i=0;i<2;i++){
+  for(int i=0;i<3;i++){
     if(my_rank==0)
       sim.printMap();
     sim.simulate_turn_inv_2();
   }
   if(my_rank==0){
     gettimeofday(&end, NULL);
-    printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+    printf("[%s]velocità di esecuzione di 2 turni  millisec %0.6f con %d processi\n",__func__,tdiff(&start, &end),nr_proc);
   }
 }
 int main(int argc,char *argv[]){
   MPI_Init(&argc, &argv);
-  //  test_rules_next_turn_2(); 
-  //  test_multiple_rounds(); 
-  //  test_spawn_nodes_p();
-  //  test_br();
-  //  debug_calcSpawnNodesP();
-  //  debug_calcActualNodesNextTurn();
-//  test_big_sim2();
-//  simula_bordo();
-  simula_croce();
+//    test_rules_next_turn_2(); 
+//    test_multiple_rounds(); 
+//    test_spawn_nodes_p();
+//    test_br();
+//    debug_calcSpawnNodesP();
+//    debug_calcActualNodesNextTurn();
+//    test_big_sim2();
+    simula_bordo();
+//    simula_croce();
      MPI_Finalize();
   
 }

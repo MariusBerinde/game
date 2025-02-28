@@ -326,7 +326,6 @@ void Simulation::simulate_turn(){ //crea la lista nodi attivi del prossimo turno
     auto nodes_spawned = calcSpawnNodes2();
 
     for(size_t i=0;i<nodes_spawned.size();i++){
-
       updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
     }
 

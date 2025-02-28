@@ -29,4 +29,4 @@ test:compila_test
 	./$(OUT)/test_config $(U)
 
 clean:
-	rm -v $(OUT)/test
+	rm -v $(OUT)/
