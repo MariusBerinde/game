@@ -4,12 +4,11 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-0	Session.vim	/^normal! 0$/;"	m
-064|	Session.vim	/^normal! 064|$/;"	m
 CompareTuples	include/simulation.h	/^struct CompareTuples {$/;"	s
 Config	include/simulation.h	/^struct Config{$/;"	s
-ESC	include/simulation.h	22;"	d
-FLAGS	Makefile	/^FLAGS=-Wall -g -fopenmp -I  $/;"	m
+Custom_range	test/distr.cpp	/^struct Custom_range {$/;"	s	file:
+ESC	include/simulation.h	27;"	d
+FLAGS	Makefile	/^FLAGS= -Wall -O2  -g -fopenmp -I  #-O2$/;"	m
 INCLUDE	Makefile	/^INCLUDE = include$/;"	m
 MAX_COLS	include/simulation.h	/^    int MAX_COLS;      \/\/ Numero massimo di colonne$/;"	m	class:Simulation
 MAX_ROWS	include/simulation.h	/^    int MAX_ROWS;      \/\/ Numero massimo di righe$/;"	m	class:Simulation
@@ -19,32 +18,44 @@ Nodo	include/Nodo.h	/^class Nodo{$/;"	c
 Nodo	include/simulation.h	/^struct Nodo {$/;"	s
 Nodo	test/matrix.cpp	/^struct Nodo {$/;"	s	file:
 OUT	Makefile	/^OUT = out$/;"	m
+Point	include/simulation.h	/^struct Point{$/;"	s
 Pos	include/simulation.h	/^struct Pos {$/;"	s
-RESET	include/simulation.h	24;"	d
+Pos	test/hash.cpp	/^struct Pos{$/;"	s	file:
+RESET	include/simulation.h	29;"	d
 SIMULATION_H	include/simulation.h	2;"	d
 SRC	Makefile	/^SRC = src$/;"	m
-SessionLoad	Session.vim	/^let SessionLoad = 1$/;"	v
 Simulation	include/simulation.h	/^class Simulation {$/;"	c
 Simulation	src/simulation.cpp	/^Simulation::Simulation(int rows, int cols, int time)$/;"	f	class:Simulation
 Stato	include/Nodo.h	/^enum Stato {live,dead};$/;"	g
 Stato	include/simulation.h	/^enum Stato { live, dead };$/;"	g
 Stato	test/matrix.cpp	/^enum Stato { live, dead };$/;"	g	file:
-TAN	include/simulation.h	26;"	d
+TAN	include/simulation.h	31;"	d
 TEST	Makefile	/^TEST= test$/;"	m
-TSN	include/simulation.h	27;"	d
-YELLOW_TEXT	include/simulation.h	25;"	d
-YELLOW_TXT	include/simulation.h	23;"	d
+TSN	include/simulation.h	32;"	d
+U	Makefile	/^U ?= 0$/;"	m
+YELLOW_TEXT	include/simulation.h	30;"	d
+YELLOW_TXT	include/simulation.h	28;"	d
 activeNodes	include/simulation.h	/^    std::vector<std::vector<Nodo>> activeNodes;  \/\/ Nodi attivi per ogni tempo$/;"	m	class:Simulation
 actual_time	include/simulation.h	/^    int actual_time;         \/\/ Tempo corrente della simulazione$/;"	m	class:Simulation
 addVicino	include/Nodo.h	/^		void addVicino(const std::shared_ptr<Nodo>& vicino){$/;"	f	class:Nodo
 advanceTime	src/simulation.cpp	/^void Simulation::advanceTime() {$/;"	f	class:Simulation
+base	test/hash.cpp	/^void base(){$/;"	f
+broadcastActiveNodes	src/simulation.cpp	/^void Simulation::broadcastActiveNodes(){$/;"	f	class:Simulation
+build_intervals	test/distr.cpp	/^std::vector<std::pair<int,int>> Simulation::build_intervals(int nr_active_nodes){$/;"	f	class:Simulation
+calcActualNodesNextTurn	test/send.cpp	/^void Simulation::calcActualNodesNextTurn(){$/;"	f	class:Simulation
 calcSpawnNodes	src/simulation.cpp	/^std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){$/;"	f	class:Simulation
+calcSpawnNodes2	src/simulation.cpp	/^std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){$/;"	f	class:Simulation
+calcSpawnNodesP	test/send.cpp	/^void Simulation::calcSpawnNodesP(){$/;"	f	class:Simulation
 colonne	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
+comportamento_2	test/hash.cpp	/^void comportamento_2(){$/;"	f
+crea_range	test/distr.cpp	/^vector<Custom_range> crea_range(vector<Point> *buffer,int np,int nb=3){$/;"	f
 customCompare	include/simulation.h	/^static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }$/;"	f	class:Simulation
 customCompare_l	src/main.cpp	/^bool customCompare_l(Nodo a, Nodo b) {$/;"	f
 dead	include/Nodo.h	/^enum Stato {live,dead};$/;"	e	enum:Stato
 dead	include/simulation.h	/^enum Stato { live, dead };$/;"	e	enum:Stato
 dead	test/matrix.cpp	/^enum Stato { live, dead };$/;"	e	enum:Stato	file:
+debug_calcActualNodesNextTurn	test/send.cpp	/^void debug_calcActualNodesNextTurn(){$/;"	f
+debug_calcSpawnNodesP	test/send.cpp	/^void debug_calcSpawnNodesP(){$/;"	f
 eu_distance_node	src/simulation.cpp	/^double Simulation::eu_distance_node(Nodo a,Nodo b){$/;"	f	class:Simulation
 gen_random_pos	src/main.cpp	/^vector<pair<int,int>> gen_random_pos(int nr,int max){$/;"	f
 getActiveNodes	src/simulation.cpp	/^std::vector<Nodo> Simulation::getActiveNodes()const{$/;"	f	class:Simulation
@@ -56,84 +67,108 @@ getMaxCols	src/simulation.cpp	/^int Simulation::getMaxCols(){return MAX_COLS;}$/
 getMaxRows	src/simulation.cpp	/^int Simulation::getMaxRows(){return MAX_ROWS;}$/;"	f	class:Simulation
 getMaxTime	src/simulation.cpp	/^int Simulation::getMaxTime(){return MAX_TIME;}$/;"	f	class:Simulation
 getNeighbours	src/simulation.cpp	/^std::vector<Nodo> Simulation::getNeighbours(int x,int y,int time)const{$/;"	f	class:Simulation
+get_Pos	test/hash.cpp	/^vector<Pos> get_Pos(){$/;"	f
+init	test/distr.cpp	/^vector<Point>  init(){$/;"	f
 initStato	test/matrix.cpp	/^Stato* initStato(Stato value) {$/;"	f
 live	include/Nodo.h	/^enum Stato {live,dead};$/;"	e	enum:Stato
 live	include/simulation.h	/^enum Stato { live, dead };$/;"	e	enum:Stato
 live	test/matrix.cpp	/^enum Stato { live, dead };$/;"	e	enum:Stato	file:
 load_config	src/simulation.cpp	/^bool Simulation::load_config(const std::string& filename){$/;"	f	class:Simulation
 main	src/main.cpp	/^int main() {$/;"	f
+main	src/test_config.cpp	/^int main(int argc,char *argv[]) {$/;"	f
+main	test/distr.cpp	/^int main(int argc,char *argv[]) {$/;"	f
+main	test/hash.cpp	/^int main(int argc,char** argv){$/;"	f
 main	test/matrix.cpp	/^int main(int argc, char** argv) {$/;"	f
+main	test/sched.cpp	/^int main(int argc,char *argv[]){$/;"	f
 main	test/send.cpp	/^int main(int argc,char *argv[]){$/;"	f
 make_random_sim	src/main.cpp	/^Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){$/;"	f
 map	include/simulation.h	/^    Stato ***map;            \/\/ Mappa tridimensionale Stato[MAX_ROWS][MAX_COLS][MAX_TIME]$/;"	m	class:Simulation
-mh_distance_node	src/simulation.cpp	/^  int Simulation::mh_distance_node(Nodo a,Nodo b){$/;"	f	class:Simulation
+mh_distance_node	src/simulation.cpp	/^int Simulation::mh_distance_node(Nodo a,Nodo b){$/;"	f	class:Simulation
 nodi	include/simulation.h	/^  std::vector<Pos> nodi;$/;"	m	struct:Config
 nome	include/simulation.h	/^  std::string nome;$/;"	m	struct:Pos
-operator ()	include/simulation.h	/^    bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {$/;"	f	struct:CompareTuples
+operator ()	include/simulation.h	/^  bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {$/;"	f	struct:CompareTuples
+operator <	include/simulation.h	/^  bool operator<(const Point& a) const {$/;"	f	struct:Point
+operator <	test/hash.cpp	/^  bool operator<(const Pos& a) const {$/;"	f	struct:Pos
+operator ==	test/hash.cpp	/^  bool operator==(const Pos& a) const {$/;"	f	struct:Pos
+pid	test/distr.cpp	/^  int pid;$/;"	m	struct:Custom_range	file:
 printActiveNodes	src/simulation.cpp	/^void Simulation::printActiveNodes() const {$/;"	f	class:Simulation
 printMap	src/simulation.cpp	/^void Simulation::printMap(int p) const {$/;"	f	class:Simulation
+range	test/distr.cpp	/^  pair<int,int> range; \/\/including extrems$/;"	m	struct:Custom_range	file:
 read_file	src/simulation.cpp	/^Config Simulation::read_file(const std::string& filename){$/;"	f	class:Simulation
 righe	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
 rmSpace	src/simulation.cpp	/^std::string rmSpace(std::string val){$/;"	f
-s:l	Session.vim	/^let s:l = 232 - ((16 * winheight(0) + 16) \/ 33)$/;"	v
-s:l	Session.vim	/^let s:l = 39 - ((0 * winheight(0) + 7) \/ 15)$/;"	v
-s:save_splitbelow	Session.vim	/^let s:save_splitbelow = &splitbelow$/;"	v
-s:save_splitright	Session.vim	/^let s:save_splitright = &splitright$/;"	v
-s:save_winminheight	Session.vim	/^let s:save_winminheight = &winminheight$/;"	v
-s:save_winminwidth	Session.vim	/^let s:save_winminwidth = &winminwidth$/;"	v
-s:shortmess_save	Session.vim	/^let s:shortmess_save = &shortmess$/;"	v
-s:so_save	Session.vim	/^let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-1 siso=-1$/;"	v
-s:sx	Session.vim	/^let s:sx = expand("<sfile>:p:r")."x.vim"$/;"	v
-s:wipebuf	Session.vim	/^  let s:wipebuf = bufnr('%')$/;"	v
-send_matrix	test/send.cpp	/^void send_matrix() {$/;"	f
+send_matrix	test/sched.cpp	/^void send_matrix() {$/;"	f
 seq	src/main.cpp	/^void seq(){ $/;"	f
+simula_bordo	test/send.cpp	/^void simula_bordo(){$/;"	f
+simula_croce	test/send.cpp	/^void simula_croce(){$/;"	f
 simulate_n_turns	src/simulation.cpp	/^void Simulation::simulate_n_turns(int n){ $/;"	f	class:Simulation
 simulate_turn	src/simulation.cpp	/^void Simulation::simulate_turn(){$/;"	f	class:Simulation
-simulate_turn_p	test/send.cpp	/^void Simulation::simulate_turn_p() {$/;"	f	class:Simulation
+simulate_turn_inv	test/send.cpp	/^void Simulation::simulate_turn_inv(){$/;"	f	class:Simulation
+simulate_turn_inv_2	test/send.cpp	/^void Simulation::simulate_turn_inv_2(){$/;"	f	class:Simulation
+simulate_turn_p	test/sched.cpp	/^void Simulation::simulate_turn_p() {$/;"	f	class:Simulation
 stampaInfo	include/Nodo.h	/^		void stampaInfo() const {$/;"	f	class:Nodo
 stampaVicini	include/Nodo.h	/^void stampaVicini() const {$/;"	f	class:Nodo
 stateNextTurn	src/simulation.cpp	/^Stato Simulation::stateNextTurn(int x,int y) {$/;"	f	class:Simulation
 stato	include/Nodo.h	/^		Stato stato;$/;"	m	class:Nodo
-stato	include/simulation.h	/^    Stato* stato;       \/\/ Puntatore allo stato della cella$/;"	m	struct:Nodo
+stato	include/simulation.h	/^  Stato* stato;       \/\/ Puntatore allo stato della cella$/;"	m	struct:Nodo
 stato	test/matrix.cpp	/^    Stato *stato;       \/\/ Puntatore allo stato della cella$/;"	m	struct:Nodo	file:
 svegliaNodo	include/Nodo.h	/^		void svegliaNodo(){$/;"	f	class:Nodo
 tdiff	src/main.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
+tdiff	src/test_config.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
+tdiff	test/distr.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
+tdiff	test/sched.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
 tdiff	test/send.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
 tempo	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
+test_2	test/distr.cpp	/^void test_2(){$/;"	f
+test_4	test/distr.cpp	/^void test_4(){$/;"	f
+test_big_sim2	test/send.cpp	/^void test_big_sim2(){$/;"	f
+test_br	test/send.cpp	/^void test_br(){$/;"	f
+test_casi_banali	test/distr.cpp	/^void test_casi_banali(){$/;"	f
+test_config_1	src/test_config.cpp	/^void test_config_1(int show_sim=0){$/;"	f
+test_config_2	src/test_config.cpp	/^void test_config_2(int show_sim=0){$/;"	f
 test_config_from_file	src/main.cpp	/^void test_config_from_file(){$/;"	f
 test_creation	src/main.cpp	/^void test_creation(){$/;"	f
 test_creation_spawn_nodes	src/main.cpp	/^void test_creation_spawn_nodes(){$/;"	f
 test_eu_dist	src/main.cpp	/^void test_eu_dist(){$/;"	f
 test_gen_random_pos	src/main.cpp	/^void test_gen_random_pos(){$/;"	f
 test_get_vicini	src/main.cpp	/^void test_get_vicini(){$/;"	f
+test_intervalli	test/hash.cpp	/^void test_intervalli(){$/;"	f
 test_mh_dist	src/main.cpp	/^void test_mh_dist(){$/;"	f
+test_multiple_rounds	test/sched.cpp	/^void test_multiple_rounds(){$/;"	f
+test_multiple_rounds	test/send.cpp	/^void test_multiple_rounds(){$/;"	f
 test_order_node_vector	src/main.cpp	/^void test_order_node_vector(){$/;"	f
 test_pair	src/main.cpp	/^void test_pair(){$/;"	f
 test_random_sim	src/main.cpp	/^void test_random_sim(){$/;"	f
 test_read	src/main.cpp	/^void test_read(){$/;"	f
+test_rm	test/distr.cpp	/^void test_rm(vector<int> *v){$/;"	f
 test_rules_next_turn	src/main.cpp	/^void test_rules_next_turn(){$/;"	f
-test_rules_next_turn	test/send.cpp	/^void test_rules_next_turn(){$/;"	f
-test_rules_next_turn_2	test/send.cpp	/^void test_rules_next_turn_2() {$/;"	f
-test_scheduler	test/send.cpp	/^void test_scheduler() {$/;"	f
-test_scheduler_b	test/send.cpp	/^void test_scheduler_b() {$/;"	f
-test_scheduler_b_2	test/send.cpp	/^void test_scheduler_b_2() {$/;"	f
-test_send	test/send.cpp	/^void test_send(){$/;"	f
-test_share	test/send.cpp	/^void test_share(){$/;"	f
+test_rules_next_turn	test/sched.cpp	/^void test_rules_next_turn(){$/;"	f
+test_rules_next_turn_2	test/sched.cpp	/^void test_rules_next_turn_2() {$/;"	f
+test_scheduler	test/sched.cpp	/^void test_scheduler() {$/;"	f
+test_scheduler_b	test/sched.cpp	/^void test_scheduler_b() {$/;"	f
+test_scheduler_b_2	test/sched.cpp	/^void test_scheduler_b_2() {$/;"	f
+test_send	test/sched.cpp	/^void test_send(){$/;"	f
+test_share	test/sched.cpp	/^void test_share(){$/;"	f
 test_simulation	src/main.cpp	/^void test_simulation(){$/;"	f
+test_spawn_nodes_p	test/send.cpp	/^void test_spawn_nodes_p(){$/;"	f
 toString	src/simulation.cpp	/^std::string Nodo::toString() const {$/;"	f	class:Nodo
 toString	test/matrix.cpp	/^    std::string toString() const {$/;"	f	struct:Nodo
 uccidiNodo	include/Nodo.h	/^		void uccidiNodo(){$/;"	f	class:Nodo
 updateNodeState	src/simulation.cpp	/^void Simulation::updateNodeState(int x, int y, Stato nuovoStato, int t) {$/;"	f	class:Simulation
+uso_erase	test/distr.cpp	/^void uso_erase(){$/;"	f
+vettore	test/hash.cpp	/^void vettore(){$/;"	f
 vicini	include/Nodo.h	/^		std::vector<std::shared_ptr<Nodo>> vicini;  \/\/ Vector di shared_ptr$/;"	m	class:Nodo
+write_actual_sim	src/simulation.cpp	/^void Simulation::write_actual_sim(const std::string& filename){$/;"	f	class:Simulation
 x	include/Nodo.h	/^		int x;$/;"	m	class:Nodo
-x	include/simulation.h	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo
+x	include/simulation.h	/^  int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo
+x	include/simulation.h	/^  int x,y;$/;"	m	struct:Point
 x	include/simulation.h	/^  int x,y;$/;"	m	struct:Pos
+x	test/hash.cpp	/^  int x,y;$/;"	m	struct:Pos	file:
 x	test/matrix.cpp	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo	file:
 y	include/Nodo.h	/^		int y;$/;"	m	class:Nodo
-y	include/simulation.h	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo
+y	include/simulation.h	/^  int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo
+y	include/simulation.h	/^  int x,y;$/;"	m	struct:Point
 y	include/simulation.h	/^  int x,y;$/;"	m	struct:Pos
+y	test/hash.cpp	/^  int x,y;$/;"	m	struct:Pos	file:
 y	test/matrix.cpp	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo	file:
-zc	Session.vim	/^normal! zc$/;"	m
-zo	Session.vim	/^normal! zo$/;"	m
-zt	Session.vim	/^normal! zt$/;"	m
 ~Simulation	src/simulation.cpp	/^Simulation::~Simulation() {$/;"	f	class:Simulation
