@@ -3,6 +3,13 @@
 #include <thread>
 #include <chrono>
 using namespace std;
+
+struct Custom_range {
+  int pid;
+  pair<int,int> range; //including extrems
+};
+
+
 float tdiff(struct timeval *start,struct timeval *end){
   return (end->tv_sec-start->tv_sec) + 1e-6 * (end->tv_usec-start->tv_usec);
 }
@@ -278,6 +285,32 @@ void test_rules_next_turn_2() {
 }
 */
 
+vector<Custom_range> crea_range(const int nr_nodi_attivi,const int e_size,const int mpi_size){
+  vector<Custom_range> ris;
+  int last_s=0,last_e=0;
+  for(int  i=1; last_e<(int) nr_nodi_attivi && i<=mpi_size  ;i++){
+   if(i==1){
+      last_s=0; last_e=e_size-1;
+    }
+    else{
+      
+      last_s+=e_size;
+      last_e = last_s+e_size-1;
+      if(last_e >= nr_nodi_attivi)
+        break;
+    }
+      ris.push_back({i,{last_s,last_e}});
+  }
+  ris[ris.size()-1].range.second = nr_nodi_attivi-1;
+  return ris;
+}
+/**
+ * brief : verifica se il range r1 è uguale al range r2
+*/
+bool cmp_custom_range(Custom_range r1,Custom_range r2){
+  return (r1.pid == r2.pid) && (r1.range.first==r2.range.first) && (r1.range.second == r2.range.second);
+}
+
 void Simulation::calcActualNodesNextTurn(){
   int my_rank, size;
   std::string nameFun="calcActualNodesNextTurn";
@@ -288,10 +321,12 @@ void Simulation::calcActualNodesNextTurn(){
  // sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
   if(my_rank==0){
     int chunk_size = activeNodesNow.size() / (size - 1);
+    vector<Custom_range> ranges=crea_range(activeNodesNow.size(),chunk_size,size);
     cout<<"["<<__func__<<",0] numero di nodi attivi "<<activeNodesNow.size()<<" al turno "<<getActualTime()<<" \n";
-    for (int i = 1; i < size; ++i) {
-      int start = (i - 1) * chunk_size;
-      int end = (i == size - 1) ? activeNodesNow.size() - 1 : start + chunk_size - 1;
+    for (int i = 1; i <size ;  ++i) {
+      //int start = (i - 1) * chunk_size;
+      //int end = (i == size - 1) ? activeNodesNow.size() - 1 : start + chunk_size - 1;
+      int start = ranges[i-1].range.first, end = ranges[i-1].range.second;
       // Inviare gli intervalli a ogni processo
       MPI_Send(&start, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       MPI_Send(&end, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
@@ -402,12 +437,16 @@ void Simulation::calcSpawnNodesP(){
   if (my_rank == 0 ) {
      // cout<<"["<<nameFun<<","<<my_rank<<"] numero nodi attivi= "<<activeNodesNow.size()<<" al tempo= "<<actual_time<<"\n";
 
+    int chunk_size = activeNodesNow.size() / (size - 1);
+    std::vector<Custom_range> ranges=crea_range(activeNodesNow.size(),chunk_size,size);
     //std::vector<std::pair<int, int>> result;
     std::map<Point,int> map;
     for (int i = 1; i < size; i++) { // val originale di i=1
-      int total_elements = activeNodesNow.size();
-      int start = (i==1)?0:(total_elements / 2);
-      int end =(i==1)?((total_elements / 2) - 1):(total_elements-1);
+      //int total_elements = activeNodesNow.size();
+      //int start = (i==1)?0:(total_elements / 2);
+      //int end =(i==1)?((total_elements / 2) - 1):(total_elements-1);
+
+      int start = ranges[i-1].range.first, end = ranges[i-1].range.second;
       MPI_Send(&start, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       MPI_Send(&end, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       //if(actual_time>1)
@@ -815,7 +854,7 @@ void simula_bordo(){
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   if(my_rank==0)
     gettimeofday(&start, NULL);
-  for(int i=0;i<5;i++){
+  for(int i=0;i<turni_teo-1;i++){
    // if(my_rank==0)
    //   sim.printMap();
     sim.simulate_turn_inv_2();
@@ -827,7 +866,7 @@ void simula_bordo(){
 }
 void simula_croce(){
 
-  int my_rank=-1,righe_teo =20,colonne_teo = 20,turni_teo = 1000,nr_proc=-1;
+  int my_rank=-1,righe_teo =100,colonne_teo = 100,turni_teo = 1000,nr_proc=-1;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){

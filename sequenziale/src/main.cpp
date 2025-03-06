@@ -955,7 +955,8 @@ void test_big_sim2(){
   printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
 }
 void simula_bordo(){
-  int righe_teo =20,colonne_teo = 20,turni_teo = 1000;
+
+  int righe_teo =100,colonne_teo = 100,turni_teo = 1000;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -981,7 +982,7 @@ void simula_bordo(){
 }
 void simula_croce(){
 
-  int righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  int righe_teo =20,colonne_teo = 20,turni_teo = 1000;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -1005,11 +1006,11 @@ void simula_croce(){
 
   gettimeofday(&start, NULL);
   for(int i=0;i<2;i++){
-    sim.printMap();
+   // sim.printMap();
     sim.simulate_turn();
   }
   gettimeofday(&end, NULL);
-  printf("[%s]velocità di esecuzione di 2 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
 }
 int main() {
 //  test_creation();

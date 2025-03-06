@@ -7,7 +7,7 @@
 CompareTuples	include/simulation.h	/^struct CompareTuples {$/;"	s
 Config	include/simulation.h	/^struct Config{$/;"	s
 Custom_range	test/distr.cpp	/^struct Custom_range {$/;"	s	file:
-ESC	include/simulation.h	27;"	d
+ESC	include/simulation.h	26;"	d
 FLAGS	Makefile	/^FLAGS= -Wall -O2  -g -fopenmp -I  #-O2$/;"	m
 INCLUDE	Makefile	/^INCLUDE = include$/;"	m
 MAX_COLS	include/simulation.h	/^    int MAX_COLS;      \/\/ Numero massimo di colonne$/;"	m	class:Simulation
@@ -21,7 +21,7 @@ OUT	Makefile	/^OUT = out$/;"	m
 Point	include/simulation.h	/^struct Point{$/;"	s
 Pos	include/simulation.h	/^struct Pos {$/;"	s
 Pos	test/hash.cpp	/^struct Pos{$/;"	s	file:
-RESET	include/simulation.h	29;"	d
+RESET	include/simulation.h	28;"	d
 SIMULATION_H	include/simulation.h	2;"	d
 SRC	Makefile	/^SRC = src$/;"	m
 Simulation	include/simulation.h	/^class Simulation {$/;"	c
@@ -29,12 +29,12 @@ Simulation	src/simulation.cpp	/^Simulation::Simulation(int rows, int cols, int t
 Stato	include/Nodo.h	/^enum Stato {live,dead};$/;"	g
 Stato	include/simulation.h	/^enum Stato { live, dead };$/;"	g
 Stato	test/matrix.cpp	/^enum Stato { live, dead };$/;"	g	file:
-TAN	include/simulation.h	31;"	d
+TAN	include/simulation.h	30;"	d
 TEST	Makefile	/^TEST= test$/;"	m
-TSN	include/simulation.h	32;"	d
+TSN	include/simulation.h	31;"	d
 U	Makefile	/^U ?= 0$/;"	m
-YELLOW_TEXT	include/simulation.h	30;"	d
-YELLOW_TXT	include/simulation.h	28;"	d
+YELLOW_TEXT	include/simulation.h	29;"	d
+YELLOW_TXT	include/simulation.h	27;"	d
 activeNodes	include/simulation.h	/^    std::vector<std::vector<Nodo>> activeNodes;  \/\/ Nodi attivi per ogni tempo$/;"	m	class:Simulation
 actual_time	include/simulation.h	/^    int actual_time;         \/\/ Tempo corrente della simulazione$/;"	m	class:Simulation
 addVicino	include/Nodo.h	/^		void addVicino(const std::shared_ptr<Nodo>& vicino){$/;"	f	class:Nodo
@@ -46,9 +46,11 @@ calcActualNodesNextTurn	test/send.cpp	/^void Simulation::calcActualNodesNextTurn
 calcSpawnNodes	src/simulation.cpp	/^std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){$/;"	f	class:Simulation
 calcSpawnNodes2	src/simulation.cpp	/^std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){$/;"	f	class:Simulation
 calcSpawnNodesP	test/send.cpp	/^void Simulation::calcSpawnNodesP(){$/;"	f	class:Simulation
+cmp_custom_range	test/distr.cpp	/^bool cmp_custom_range(Custom_range r1,Custom_range r2){$/;"	f
 colonne	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
 comportamento_2	test/hash.cpp	/^void comportamento_2(){$/;"	f
 crea_range	test/distr.cpp	/^vector<Custom_range> crea_range(vector<Point> *buffer,int np,int nb=3){$/;"	f
+crea_range2	test/distr.cpp	/^vector<Custom_range> crea_range2(const int nr_nodi_attivi,const int e_size,const int mpi_size){$/;"	f
 customCompare	include/simulation.h	/^static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }$/;"	f	class:Simulation
 customCompare_l	src/main.cpp	/^bool customCompare_l(Nodo a, Nodo b) {$/;"	f
 dead	include/Nodo.h	/^enum Stato {live,dead};$/;"	e	enum:Stato
@@ -119,6 +121,7 @@ tdiff	test/distr.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/
 tdiff	test/sched.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
 tdiff	test/send.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
 tempo	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
+test_1	test/distr.cpp	/^void test_1(){$/;"	f
 test_2	test/distr.cpp	/^void test_2(){$/;"	f
 test_4	test/distr.cpp	/^void test_4(){$/;"	f
 test_big_sim2	test/send.cpp	/^void test_big_sim2(){$/;"	f

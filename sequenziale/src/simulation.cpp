@@ -316,6 +316,8 @@ void Simulation::simulate_turn(){ //crea la lista nodi attivi del prossimo turno
     int next_time = actual_time+1;
   //  printf("SIMULATE TURN: next time =%d\n",next_time);
     auto activeNodesNow = getActiveNodes();
+
+//    std::cout<<"["<<__func__<<"] numero di nodi attivi "<<activeNodesNow.size()<<" al turno "<<getActualTime()<<" \n";
     //create the active node list of the next turn
     for(size_t i=0;i<activeNodesNow.size();i++){
       auto node = activeNodesNow[i];

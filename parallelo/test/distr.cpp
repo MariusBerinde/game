@@ -1,4 +1,5 @@
 #include "../include/simulation.h"
+
 using namespace std;
 struct Custom_range {
   int pid;
@@ -332,13 +333,150 @@ void uso_erase(){
    std::cout << nameFun<<"v["<<i<<"]="<<v[i]<<"\n"; 
   }
 }
+vector<Custom_range> crea_range2(const int nr_nodi_attivi,const int e_size,const int mpi_size){
+  vector<Custom_range> ris;
+  int last_s=0,last_e=0;
+  for(int  i=1; last_e<(int) nr_nodi_attivi && i<=mpi_size  ;i++){
+   if(i==1){
+      last_s=0; last_e=e_size-1;
+    }
+    else{
+      
+      last_s+=e_size;
+      last_e = last_s+e_size-1;
+      if(last_e >= nr_nodi_attivi)
+        break;
+    }
+      ris.push_back({i,{last_s,last_e}});
+  }
+  ris[ris.size()-1].range.second = nr_nodi_attivi-1;
+  return ris;
+}
+/**
+ * brief : verifica se il range r1 è uguale al range r2
+*/
+bool cmp_custom_range(Custom_range r1,Custom_range r2){
+  return (r1.pid == r2.pid) && (r1.range.first==r2.range.first) && (r1.range.second == r2.range.second);
+}
+
+void test_1(){
+  vector<int> vals;
+  const int SIZE=100;
+  for(int i=0;i<SIZE;vals.push_back(i),i++);
+  vector<Custom_range> r1_teo;
+  vector<Custom_range> r2_teo;
+  vector<Custom_range> r3_teo;
+  r1_teo.push_back({1,{0,9}});
+  r1_teo.push_back({2,{10,19}});
+  r1_teo.push_back({3,{20,29}});
+  r1_teo.push_back({4,{30,99}});
+  vector<Custom_range> r1_es=crea_range2(SIZE,10,4);
+  if(r1_es.size()==r1_teo.size()){
+    if(cmp_custom_range(r1_es[0],r1_teo[0]))
+      cout<<"["<<__func__<<"] Test 1: range 1 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 1: range 1 errato , valori ritornati{"<<r1_es[0].pid<<",{"<< r1_es[0].range.first<<","<<r1_es[0].range.second<<"}}\tvalori teorici{"<< r1_teo[0].pid<<",{"<< r1_teo[0].range.first<<","<<r1_teo[0].range.second<<"}}\n";
+
+    if(cmp_custom_range(r1_es[1],r1_teo[1]))
+      cout<<"["<<__func__<<"] Test 1: range 2 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 1: range 2 errato , valori ritornati{"<<r1_es[1].pid<<",{"<< r1_es[1].range.first<<","<<r1_es[1].range.second<<"}}\tvalori teorici{"<< r1_teo[1].pid<<",{"<< r1_teo[1].range.first<<","<<r1_teo[1].range.second<<"}}\n";
+
+    if(cmp_custom_range(r1_es[2],r1_teo[2]))
+      cout<<"["<<__func__<<"] Test 1: range 3 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 1: range 3 errato , valori ritornati{"<<r1_es[2].pid<<",{"<< r1_es[2].range.first<<","<<r1_es[2].range.second<<"}}\tvalori teorici{"<< r1_teo[2].pid<<",{"<< r1_teo[2].range.first<<","<<r1_teo[2].range.second<<"}}\n";
+
+    if(cmp_custom_range(r1_es[3],r1_teo[3]))
+      cout<<"["<<__func__<<"] Test 1: range 4 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 1: range 4 errato , valori ritornati{"<<r1_es[3].pid<<",{"<< r1_es[3].range.first<<","<<r1_es[3].range.second<<"}}\tvalori teorici{"<< r1_teo[3].pid<<",{"<< r1_teo[3].range.first<<","<<r1_teo[3].range.second<<"}}\n";
+
+  }else{
+    cout<<"["<<__func__<<"] Test 1: numero di casi errato numero di casi trovavi:"<< r1_es.size()<<"\n";
+  }
+
+  vector<Custom_range> r2_es=crea_range2(SIZE,25,4);
+  r2_teo.push_back({1,{0,24}});
+  r2_teo.push_back({2,{25,49}});
+  r2_teo.push_back({3,{50,74}});
+  r2_teo.push_back({4,{75,99}});
+
+  if(r2_es.size()==r2_teo.size()){
+    if(cmp_custom_range(r2_es[0],r2_teo[0]))
+      cout<<"["<<__func__<<"] Test 2: range 1 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 2: range 1 errato , valori ritornati{"<<r2_es[0].pid<<",{"<< r2_es[0].range.first<<","<<r2_es[0].range.second<<"}}\tvalori teorici{"<< r2_teo[0].pid<<",{"<< r2_teo[0].range.first<<","<<r2_teo[0].range.second<<"}}\n";
+
+    if(cmp_custom_range(r2_es[1],r2_teo[1]))
+      cout<<"["<<__func__<<"] Test 2: range 2 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 2: range 2 errato , valori ritornati{"<<r2_es[1].pid<<",{"<< r2_es[1].range.first<<","<<r2_es[1].range.second<<"}}\tvalori teorici{"<< r2_teo[1].pid<<",{"<< r2_teo[1].range.first<<","<<r2_teo[1].range.second<<"}}\n";
+
+    if(cmp_custom_range(r2_es[2],r2_teo[2]))
+      cout<<"["<<__func__<<"] Test 2: range 3 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 2: range 3 errato , valori ritornati{"<<r2_es[2].pid<<",{"<< r2_es[2].range.first<<","<<r2_es[2].range.second<<"}}\tvalori teorici{"<< r2_teo[2].pid<<",{"<< r2_teo[2].range.first<<","<<r2_teo[2].range.second<<"}}\n";
+
+    if(cmp_custom_range(r2_es[3],r2_teo[3]))
+      cout<<"["<<__func__<<"] Test 2: range 4 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 2: range 4 errato , valori ritornati{"<<r2_es[3].pid<<",{"<< r2_es[3].range.first<<","<<r2_es[3].range.second<<"}}\tvalori teorici{"<< r2_teo[3].pid<<",{"<< r2_teo[3].range.first<<","<<r2_teo[3].range.second<<"}}\n";
+
+  }else{
+    cout<<"["<<__func__<<"] Test 2: numero di casi errato "<< r2_es.size()<<"\n";
+  }
+
+// ---
+  vector<Custom_range> r3_es=crea_range2(SIZE,20,6);
+  r3_teo.push_back({1,{0,19}});
+  r3_teo.push_back({2,{20,39}});
+  r3_teo.push_back({3,{40,59}});
+  r3_teo.push_back({4,{60,79}});
+  r3_teo.push_back({5,{80,99}});
+
+  if(r3_es.size()==r3_teo.size()){
+    if(cmp_custom_range(r3_es[0],r3_teo[0]))
+      cout<<"["<<__func__<<"] Test 3: range 1 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 3: range 1 errato , valori ritornati{"<<r3_es[0].pid<<",{"<< r3_es[0].range.first<<","<<r3_es[0].range.second<<"}}\tvalori teorici{"<< r3_teo[0].pid<<",{"<< r3_teo[0].range.first<<","<<r3_teo[0].range.second<<"}}\n";
+
+    if(cmp_custom_range(r3_es[1],r3_teo[1]))
+      cout<<"["<<__func__<<"] Test 3: range 2 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 3: range 2 errato , valori ritornati{"<<r3_es[1].pid<<",{"<< r3_es[1].range.first<<","<<r3_es[1].range.second<<"}}\tvalori teorici{"<< r3_teo[1].pid<<",{"<< r3_teo[1].range.first<<","<<r3_teo[1].range.second<<"}}\n";
+
+    if(cmp_custom_range(r3_es[2],r3_teo[2]))
+      cout<<"["<<__func__<<"] Test 3: range 3 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 3: range 3 errato , valori ritornati{"<<r3_es[2].pid<<",{"<< r3_es[2].range.first<<","<<r3_es[2].range.second<<"}}\tvalori teorici{"<< r3_teo[2].pid<<",{"<< r3_teo[2].range.first<<","<<r3_teo[2].range.second<<"}}\n";
+
+    if(cmp_custom_range(r3_es[3],r3_teo[3]))
+      cout<<"["<<__func__<<"] Test 3: range 4 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 3: range 4 errato , valori ritornati{"<<r3_es[3].pid<<",{"<< r3_es[3].range.first<<","<<r3_es[3].range.second<<"}}\tvalori teorici{"<< r3_teo[3].pid<<",{"<< r3_teo[3].range.first<<","<<r3_teo[3].range.second<<"}}\n";
+
+    if(cmp_custom_range(r3_es[4],r3_teo[4]))
+      cout<<"["<<__func__<<"] Test 3: range 5 ok\n";
+    else 
+      cout<<"["<<__func__<<"] Test 3: range 5 errato , valori ritornati{"<<r3_es[4].pid<<",{"<< r3_es[4].range.first<<","<<r3_es[4].range.second<<"}}\tvalori teorici{"<< r3_teo[4].pid<<",{"<< r3_teo[4].range.first<<","<<r3_teo[4].range.second<<"}}\n";
+
+  }else{
+    cout<<"["<<__func__<<"] Test 3: numero di casi errato numero di nodi restituiti "<< r3_es.size()<<"\n";
+    for(auto [pid,e]:r3_es){
+      cout<<"["<<__func__<<"] pid="<<pid<<" ,f= "<<e.first<<" ,l= "<<e.second<<" \n";
+    }
+
+  }
+
+}
 int main(int argc,char *argv[]) {
 //  uso_erase();
 
-	//	test_casi_banali();
-  //test_2();
-  test_4();
-    
+//	test_casi_banali();
+//  test_2();
+//  test_4();
+  test_1();    
   return 0;
 }
 

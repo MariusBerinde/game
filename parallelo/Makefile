@@ -31,7 +31,7 @@ compila_test:
 	g++ $(FLAGS) ./$(INCLUDE) $(SRC)/test_config.cpp $(SRC)/simulation.cpp -o $(OUT)/test_config 
 
 complila_distr:$(TEST)/distr.cpp
-	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/distr.cpp $(SRC)/simulation.cpp -o $(OUT)/distr
+	mpic++ $(FLAGS) ./$(INCLUDE) $(TEST)/distr.cpp $(SRC)/simulation.cpp -o $(OUT)/distr
 U ?= 0
 test:compila_test 
 	./$(OUT)/test_config $(U)
@@ -40,7 +40,7 @@ esegui:compila
 	./$(OUT)/main 
 
 distr:complila_distr
-	./$(OUT)/distr 
+	mpirun -np 1 ./$(OUT)/distr 
 
 esegui_p:compila_p
 	mpirun -np 3 ./$(OUT)/main 
@@ -59,7 +59,7 @@ hash:compila_hash
 	mpirun -np 3 $(OUT)/hash	
 
 send:compila_send 
-	mpirun -np 3 $(OUT)/send	
+	mpirun -np 10 $(OUT)/send	
 #	./$(OUT)/main 
 
 clean:
