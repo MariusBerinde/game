@@ -592,10 +592,10 @@ void Simulation::simulate_turn(){
     int my_rank, size;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    int next_time = actual_time+1;
-//    std::cout << "["<<__func__<<",0] esecuzione indipendente processo "<<my_rank<<" a tempo"<<actual_time<<"\n";
+//    std::cout << "["<<__func__<<",0] esecuzione indipendente processo "<<my_rank<<" a tempo "<<actual_time<<"\n";
     if(my_rank==0){
 
+      int next_time = actual_time+1;
       auto activeNodesNow = getActiveNodes();
       //create the active node list of the next turn
       for ( size_t i=0;i<activeNodesNow.size();i++){
@@ -607,7 +607,7 @@ void Simulation::simulate_turn(){
 
       auto nodes_spawned = calcSpawnNodes2();
       for ( size_t i=0;i<nodes_spawned.size();i++){
-        if(i==0)
+    //    if(i==0)
           updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
       }
 

@@ -11,7 +11,6 @@
 #include <set>
 #include <tuple>
 #include <string>
-#include <mpi.h>
 #include <unordered_map>
 #include <map>
 #include <omp.h>
@@ -19,7 +18,7 @@
 #include <sys/time.h>
 #include <algorithm>
 #include <random>
-//#include <mpi.h>
+#include <mpi.h>
 #include <bits/stdc++.h>
 
 //using namespace std;

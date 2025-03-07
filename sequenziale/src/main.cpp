@@ -978,7 +978,7 @@ void simula_bordo(){
     sim.simulate_turn();
   }
   gettimeofday(&end, NULL);
-  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+  printf("[%s]velocità di esecuzione di 1000 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
 }
 void simula_croce(){
 

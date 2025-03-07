@@ -322,20 +322,25 @@ void Simulation::calcActualNodesNextTurn(){
   if(my_rank==0){
     int chunk_size = activeNodesNow.size() / (size - 1);
     vector<Custom_range> ranges=crea_range(activeNodesNow.size(),chunk_size,size);
-    cout<<"["<<__func__<<",0] numero di nodi attivi "<<activeNodesNow.size()<<" al turno "<<getActualTime()<<" \n";
-    for (int i = 1; i <size ;  ++i) {
-      //int start = (i - 1) * chunk_size;
-      //int end = (i == size - 1) ? activeNodesNow.size() - 1 : start + chunk_size - 1;
-      int start = ranges[i-1].range.first, end = ranges[i-1].range.second;
+    //cout<<"["<<__func__<<",0] tempo="<<actual_time<<" dimensione chunk "<<chunk_size<<" nr nodi mpi= "<< (size-1)<<" nr di ranges "<< ranges.size()<<" \n";
+    for (int i=1,k=0; i <size ;  ++i,k++) {
+
+//      cout<<"["<<__func__<<",0] tempo="<<actual_time<<" i= "<<i<< " k= " << k  <<" \n";
+//      int start = (i - 1) * chunk_size;
+//     int end = (i == size - 1) ? activeNodesNow.size() - 1 : start + chunk_size - 1;
+      int start = ranges[k].range.first, end = ranges[k].range.second;
       // Inviare gli intervalli a ogni processo
       MPI_Send(&start, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       MPI_Send(&end, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       // Inviare i dati dei nodi dell'intervallo
+     /* 
       for (int j = start; j <= end; ++j) {
         Nodo& node = activeNodesNow[j];
         MPI_Send(&node.x, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
         MPI_Send(&node.y, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
       }
+      */
+      
     }
     // Raccogliere gli aggiornamenti dagli altri processi
     std::vector<Point> updates; // cambiare a tipo pos e non inviare stato
@@ -385,16 +390,16 @@ void Simulation::calcActualNodesNextTurn(){
     int start,end;
     MPI_Recv(&start, 1, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(&end, 1, MPI_INT, 0, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    if(my_rank==1){
+   // if(my_rank==1){
 
 //    for (int i = 0; i <= 3; ++i) {
 //      Nodo node = activeNodesNow[i];
 //      cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] nodo in esame con intervallo esplicito: "<< node.x<<","<<node.y<<"\n";
 //      }
 
-    }
+    //}
 
-   // cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] intervalli di lavoro:"<< start<<","<<end<<"\n";
+    //cout<<"["<<__func__<<","<<my_rank<<","<<actual_time<<"] intervalli di lavoro:"<< start<<","<<end<<"\n";
     std::vector<Point> local_updates;
     for (int i = start; i <= end; ++i) {
       Nodo node = activeNodesNow[i];
@@ -441,12 +446,9 @@ void Simulation::calcSpawnNodesP(){
     std::vector<Custom_range> ranges=crea_range(activeNodesNow.size(),chunk_size,size);
     //std::vector<std::pair<int, int>> result;
     std::map<Point,int> map;
-    for (int i = 1; i < size; i++) { // val originale di i=1
-      //int total_elements = activeNodesNow.size();
-      //int start = (i==1)?0:(total_elements / 2);
-      //int end =(i==1)?((total_elements / 2) - 1):(total_elements-1);
+    for (int i = 1,k=0; i < size; i++,k++) { // val originale di i=1
 
-      int start = ranges[i-1].range.first, end = ranges[i-1].range.second;
+      int start = ranges[k].range.first, end = ranges[k].range.second;
       MPI_Send(&start, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       MPI_Send(&end, 1, MPI_INT, i, actual_time, MPI_COMM_WORLD);
       //if(actual_time>1)
@@ -533,12 +535,16 @@ void Simulation::simulate_turn_inv_2(){
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   
-//TODO: provo a inserire l'invocazione condizionale se ci sono pochi nodi 
+//TODO: provo a inserire l'invocazione condizionale se ci sono pochi nodi  
+  //disabilitato attivazione sequenziale
+  
  if( getActiveNodes().size()<TSN){
-      simulate_turn();
+    simulate_turn();
     MPI_Barrier(MPI_COMM_WORLD);
   }else{ 
   
+ // if(my_rank==0)
+ //   cout<<"["<<__func__<<"] tempo="<<actual_time<<" numero di nodi attivi "<<getActiveNodes().size()<<" \n";
   calcActualNodesNextTurn();
   MPI_Barrier(MPI_COMM_WORLD);
   calcSpawnNodesP();
@@ -553,7 +559,7 @@ void Simulation::simulate_turn_inv_2(){
 void test_multiple_rounds(){
   int my_rank;
   Simulation sim(10, 10, 10);
-  sim.load_config("src/config5.txt");
+  sim.load_config("src/config2.txt");
   MPI_Barrier(MPI_COMM_WORLD);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   if (my_rank == 0) {
@@ -834,7 +840,8 @@ void debug_calcActualNodesNextTurn(){
 
 }
 void simula_bordo(){
-  int my_rank,righe_teo =20,colonne_teo = 20,turni_teo = 1000;
+
+  int my_rank,righe_teo =100,colonne_teo = 100,turni_teo = 1000;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -855,18 +862,19 @@ void simula_bordo(){
   if(my_rank==0)
     gettimeofday(&start, NULL);
   for(int i=0;i<turni_teo-1;i++){
-   // if(my_rank==0)
-   //   sim.printMap();
+//    if(my_rank==0)
+//      sim.printMap();
     sim.simulate_turn_inv_2();
   }
   if(my_rank==0){
     gettimeofday(&end, NULL);
-    printf("[%s]velocitÃ  di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
+    printf("[%s]velocit… di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
   }
 }
 void simula_croce(){
 
   int my_rank=-1,righe_teo =100,colonne_teo = 100,turni_teo = 1000,nr_proc=-1;
+  //int my_rank=-1,righe_teo =10,colonne_teo = 10,turni_teo = 10,nr_proc=-1;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -892,7 +900,7 @@ void simula_croce(){
   MPI_Comm_size(MPI_COMM_WORLD, &nr_proc);
 
   gettimeofday(&start, NULL);
-  for(int i=0;i<5;i++){
+  for(int i=0;i<turni_teo-1;i++){
 /*
     if(my_rank==0)
       sim.printMap();
@@ -913,7 +921,7 @@ int main(int argc,char *argv[]){
 //    debug_calcSpawnNodesP();
 //    debug_calcActualNodesNextTurn();
 //    test_big_sim2();
-    simula_bordo();
+      simula_bordo();
 //    simula_croce();
      MPI_Finalize();
   
