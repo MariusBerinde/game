@@ -189,12 +189,12 @@ public:
   /**
    * @brief calc the euclidean distance between a and b
    * */
-  double eu_distance_node(Nodo a,Nodo b);
+double eu_distance_node(Nodo a,Nodo b);
 
   /**
    * @brief calc the manhattan distance between a and b
    * */
-  int mh_distance_node(Nodo a,Nodo b);
+int mh_distance_node(Nodo a,Nodo b);
 
   /**
   * @brief the position the active nodes in filename

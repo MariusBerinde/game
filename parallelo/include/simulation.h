@@ -20,6 +20,7 @@
 #include <random>
 #include <mpi.h>
 #include <bits/stdc++.h>
+#include <unordered_set>
 
 //using namespace std;
 // Definizioni per il colore giallo e il reset dei colori nel terminale
@@ -32,6 +33,11 @@
 // Enum per lo stato delle celle
 
 enum Stato { live, dead };
+struct hash_pair {
+    size_t operator()(const std::pair<int, int>& p) const {
+        return std::hash<int>()(p.first) ^ std::hash<int>()(p.second);
+    }
+};
 
 // Struttura Nodo
 struct Nodo {
@@ -100,9 +106,9 @@ public:
     int getMaxTime();
 
     Stato*** getMap();
-
     // Funzione per aggiornare lo stato di un Nodo
-    void updateNodeState(int x, int y, Stato nuovoStato, int t);
+    void updateNodeState(const int& x, const int& y, const Stato& nuovoStato,const int& t);
+    //void updateNodeState(const int x, const int y, const Stato nuovoStato,const int t);
 
     // Funzione per avanzare il tempo della simulazione
     void advanceTime();
@@ -131,7 +137,7 @@ public:
    * 
    * @return a std::vector<Nodo>
    */
-  std::vector<Nodo> getActiveNodes() const;
+  const std::vector<Nodo>& getActiveNodes() const;
 
   std::vector<std::vector<Nodo>> getActiveNodesOfAnyTime() const;
 

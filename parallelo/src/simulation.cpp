@@ -37,12 +37,13 @@ Simulation::~Simulation() {
 }
 
 // Funzione per aggiornare lo stato di un Nodo
-void Simulation::updateNodeState(int x, int y, Stato nuovoStato, int t) {
+void Simulation::updateNodeState(const int& x, const int& y, const Stato& nuovoStato,const int& t) {
+
+//void Simulation::updateNodeState(const int x, const int y, const Stato nuovoStato,const int t){
   if (t < MAX_TIME && x < MAX_ROWS && y < MAX_COLS) {
     map[x][y][t] = nuovoStato;
     Nodo nodo = {x, y, &map[x][y][t]};
     activeNodes[t].push_back(nodo);
-
   } else {
     std::cerr << "Errore: Indici fuori limite o tempo non valido!" << std::endl;
   }
@@ -54,7 +55,7 @@ int Simulation::getMaxTime(){return MAX_TIME;}
 // Funzione per avanzare il tempo della simulazione
 void Simulation::advanceTime() {
   if (actual_time + 1 < MAX_TIME) {
-    ++actual_time;
+    actual_time++;
   } else {
     std::cerr << "Errore: Tempo massimo raggiunto!" << std::endl;
   }
@@ -76,12 +77,10 @@ void Simulation::printActiveNodes() const {
 
 // Funzione per stampare la mappa
 void Simulation::printMap(int p) const {
-
   if (p> -1)
     std::cout <<"Processo["<<p<< "] mappa al tempo " << actual_time << ":\n";
   else
     std::cout <<"Mappa al tempo " << actual_time << ":\n";
-
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
       if (map[i][j][actual_time] == live) {
@@ -90,7 +89,7 @@ void Simulation::printMap(int p) const {
         std::cout << "X";  // Nodo morto (spazio vuoto)
       }
     }
-    std::cout << std::endl;
+    std::cout <<"\n";
   }
 }
 
@@ -217,7 +216,7 @@ std::vector<Nodo> Simulation::getActiveNodesAtTime(int time) const {
   return activeNodes[time];
 }
 
-std::vector<Nodo> Simulation::getActiveNodes()const{
+const std::vector<Nodo>& Simulation::getActiveNodes()const{
   return activeNodes[actual_time];
 }
 
@@ -240,7 +239,7 @@ Stato Simulation::stateNextTurn(int x,int y) {
 
 
 std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){
-  std::vector<std::pair<int, int>> result;
+  std::vector<std::pair<int, int>> result(10);
   auto lActiveNodes = activeNodes[actual_time];
   std::set<std::tuple<int,int,int>,CompareTuples> candidates;
   auto add_or_update_candidate = [&](int x, int y) {
@@ -815,17 +814,20 @@ void Simulation::write_actual_sim(const std::string& filename){
 
 void Simulation::broadcastActiveNodes(){
   int my_rank, size;
-  std::string nameFun="broadcastActiveNodes";
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+ const std::vector<Nodo> nodi_attivi=getActiveNodes();
   if(my_rank==0){
 //    std::cout<<"["<<__func__<<"]ATTIVAZIONE\n";
-    auto nodi_attivi=getActiveNodes();
 
-    std::vector<int> buffer;
-    for(Nodo n:nodi_attivi){
-      buffer.push_back(n.x);
-      buffer.push_back(n.y);
+    std::vector<int> buffer(nodi_attivi.size()*2);
+    //buffer.reserve(nodi_attivi.size()*2);
+    for(const Nodo& n:nodi_attivi){
+      // buffer.push_back(n.x);
+      // buffer.push_back(n.y);
+       buffer.emplace_back(n.x);
+       buffer.emplace_back(n.y);
     }
 
     int buffer_size = buffer.size();
@@ -833,12 +835,29 @@ void Simulation::broadcastActiveNodes(){
     MPI_Bcast(buffer.data(), buffer_size, MPI_INT, 0, MPI_COMM_WORLD);
 
   }else {
-    auto nodi_attivi=getActiveNodes();
+
+    //const auto& nodi_attivi=getActiveNodes();
     int buffer_size; 
     MPI_Bcast(&buffer_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
     std::vector<int> buffer(buffer_size);
     MPI_Bcast(buffer.data(), buffer_size, MPI_INT, 0, MPI_COMM_WORLD);
-    for(int i=0;i<buffer_size;i=i+2){
+    
+    std::unordered_set<std::pair<int, int>, hash_pair> nodi_set;
+        for (const auto& nodo : nodi_attivi) {
+            nodi_set.emplace(nodo.x, nodo.y);
+        }
+    for(int i=0;i<buffer_size;i+=2){
+      int target_x = buffer[i];
+      int target_y = buffer[i+1];
+      if(nodi_set.find({target_x,target_y})==nodi_set.end()){
+        updateNodeState(target_x,target_y,live,actual_time);
+      }
+
+    }
+    
+/*
+
+    for(int i=0;i<buffer_size;i+=2){
       int target_x = buffer[i];
       int target_y = buffer[i+1];
 
@@ -847,13 +866,13 @@ void Simulation::broadcastActiveNodes(){
                                return nodo.x == target_x && nodo.y == target_y;
                            });
       if(it == nodi_attivi.end()){
-  //      cout<<"["<<nameFun<<","<<my_rank<<"] nodo inviato non trovato tra gli attivi lo inserisco tra i nodi attivi\n";
+  //      cout<<"["<<__func__<<","<<my_rank<<"] nodo inviato non trovato tra gli attivi lo inserisco tra i nodi attivi\n";
         //nodo non trovato inserisco nodo attivo
         updateNodeState(target_x,target_y,live,actual_time);
       }
-
-
     }
+    */
+    
 
     }
     

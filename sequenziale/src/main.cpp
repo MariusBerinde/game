@@ -957,6 +957,8 @@ void test_big_sim2(){
 void simula_bordo(){
 
   int righe_teo =100,colonne_teo = 100,turni_teo = 1000;
+  // int turni=turni_teo-1;
+  int turni=2;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -973,7 +975,7 @@ void simula_bordo(){
   struct timeval start,end;
 
   gettimeofday(&start, NULL);
-  for(int i=0;i<turni_teo-1;i++){
+  for(int i=0;i<turni;i++){
    // sim.printMap();
     sim.simulate_turn();
   }
