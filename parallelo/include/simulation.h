@@ -33,11 +33,6 @@
 // Enum per lo stato delle celle
 
 enum Stato { live, dead };
-struct hash_pair {
-    size_t operator()(const std::pair<int, int>& p) const {
-        return std::hash<int>()(p.first) ^ std::hash<int>()(p.second);
-    }
-};
 
 // Struttura Nodo
 struct Nodo {

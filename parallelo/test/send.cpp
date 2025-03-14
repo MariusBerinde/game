@@ -337,22 +337,7 @@ void Simulation::calcActualNodesNextTurn(){
       
     }
     // Raccogliere gli aggiornamenti dagli altri processi
-    std::vector<Point> updates; // cambiare a tipo pos e non inviare stato
-    //TODO: inizio gruppo pre
-    
-//    for (int i = 1; i < size; ++i) {
-//      int num_updates;
-//      MPI_Recv(&num_updates, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-//      for (int j = 0; j < num_updates; ++j) { // deserializzare nodo ricevuto e inserirlo una sola volta in update 
-//        int x, y;
-//        Stato updated_state;
-//        MPI_Recv(&x, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-//        MPI_Recv(&y, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-//        MPI_Recv(&updated_state, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-//        updates.push_back(x, y, updated_state);
-//      }
-//    }
-    //todo: fine gruppo pre
+    //std::vector<Point> updates; // cambiare a tipo pos e non inviare stato
     
 
     for (int i = 1; i < size; ++i) {
@@ -361,8 +346,9 @@ void Simulation::calcActualNodesNextTurn(){
       std::vector<int> buffer(buf_size);
       MPI_Recv(buffer.data(), buf_size, MPI_INT, i, actual_time, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       for(int  i=0;i<buf_size;i+=2){
-        Point p={buffer[i],buffer[i+1]};
-        updates.push_back(p);
+      //  Point p={buffer[i],buffer[i+1]};
+      //  updates.push_back(p);
+      updateNodeState(buffer[i],buffer[i+1], live, next_time);
       }
     }
 
@@ -371,10 +357,12 @@ void Simulation::calcActualNodesNextTurn(){
     
     // Applicare gli aggiornamenti localmente
 
+    /*
     for(Point p:updates){
     //  cout<<"["<<nameFun<<","<<my_rank<<"] al tempo "<<actual_time<<"nodo attivo nel prossimo turno("<<p.x<<","<<p.y<<")\n"; // di debug
       updateNodeState(p.x, p.y, live, next_time);
     }
+    */
 
 
   //  sort(activeNodesNow.begin(), activeNodesNow.end(), Simulation::customCompare);
@@ -399,13 +387,13 @@ void Simulation::calcActualNodesNextTurn(){
      // cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] nodo in esame "<< node.x<<","<<node.y<<"\n";
       if (stateNextTurn(node.x, node.y) == live) {
         //cout<<"["<<nameFun<<","<<my_rank<<","<<actual_time<<"] nodo attivo prossimo turno "<< node.x<<","<<node.y<<"\n";
-       // updateNodeState(node.x, node.y, live, next_time);
         local_updates.push_back({node.x,node.y});
       }
     }
 
     // Inviare gli aggiornamenti al processo principale
     std::vector<int> buffer;
+    buffer.reserve(local_updates.size());
     for(Point p:local_updates){
       buffer.push_back(p.x);
       buffer.push_back(p.y);
@@ -415,11 +403,6 @@ void Simulation::calcActualNodesNextTurn(){
     MPI_Send(&buffer_size, 1, MPI_INT, 0, actual_time, MPI_COMM_WORLD);
     MPI_Send(buffer.data(), buffer_size, MPI_INT, 0, actual_time, MPI_COMM_WORLD);
     
-//    for (const auto& [x, y, updated_state] : local_updates) { //serializzare invio risultati 
-//      MPI_Send(&x, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-//      MPI_Send(&y, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-//      MPI_Send(&updated_state, 1, MPI_INT, -1, 0, MPI_COMM_WORLD);
-//    }
     
   }
 }
@@ -467,7 +450,7 @@ void Simulation::calcSpawnNodesP(){
          // cout<<"["<<nameFun<<","<<actual_time <<"]Pos("<<pos.x<<","<<pos.y<<")="<<value<<"\tmap="<<map.at(pos)<<"\n";
       }
     }
-    for(auto e:map){
+    for(const auto& e:map){
       //std::cout<<"calcSpawnNodes2Unione["<<actual_time<<"]=("<<e.first.x<<","<<e.first.y<<")="<<e.second<<"\n";
       if(e.second==3 ){
         std::pair<int, int> sup (e.first.x,e.first.y);
@@ -507,6 +490,7 @@ void Simulation::calcSpawnNodesP(){
     }
     // invia map a master
     std::vector<int> buffer;
+    buffer.reserve(map_l.size());
     for (const auto& e : map_l) {
       //cout<<"["<<nameFun<<","<<my_rank<<"]("<<e.first.x<<","<<e.first.y<<")="<<e.second<<" at time ="<<actual_time<<"\n";
       if(e.second<=3){
@@ -831,7 +815,7 @@ void simula_bordo(){
 
   int my_rank,righe_teo =100,colonne_teo = 100,turni_teo = 1000;
   // int turni=turni_teo-1;
-  int turni=2;
+  int turni=3;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -853,13 +837,13 @@ void simula_bordo(){
     gettimeofday(&start, NULL);
   for(int i=0;i<turni;i++){
 
-   //  if(my_rank==0)
-   //    sim.printMap();
+    // if(my_rank==0)
+    //   sim.printMap();
     sim.simulate_turn_inv_2();
   }
   if(my_rank==0){
     gettimeofday(&end, NULL);
-    printf("[%s]velocit… di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
+    printf("[%s]velocià di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
   }
 }
 void simula_croce(){

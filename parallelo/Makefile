@@ -2,7 +2,7 @@ OUT = out
 SRC = src
 INCLUDE = include
 TEST= test
-FLAGS= -Wall -O2  -g -fopenmp -I  #-O2
+FLAGS= -Wall -O3  -g  -I  #-O2 -fopenmp
 
 compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo
@@ -59,7 +59,7 @@ hash:compila_hash
 	mpirun -np 3 $(OUT)/hash	
 
 send:compila_send 
-	mpirun -np 10 $(OUT)/send	
+	mpirun -np 4 $(OUT)/send	
 #	./$(OUT)/main 
 
 clean:

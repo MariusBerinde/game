@@ -821,8 +821,8 @@ void Simulation::broadcastActiveNodes(){
   if(my_rank==0){
 //    std::cout<<"["<<__func__<<"]ATTIVAZIONE\n";
 
-    std::vector<int> buffer(nodi_attivi.size()*2);
-    //buffer.reserve(nodi_attivi.size()*2);
+    std::vector<int> buffer;
+    buffer.reserve(nodi_attivi.size()*2);
     for(const Nodo& n:nodi_attivi){
       // buffer.push_back(n.x);
       // buffer.push_back(n.y);
@@ -839,23 +839,11 @@ void Simulation::broadcastActiveNodes(){
     //const auto& nodi_attivi=getActiveNodes();
     int buffer_size; 
     MPI_Bcast(&buffer_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    std::vector<int> buffer(buffer_size);
+    std::vector<int> buffer;
+    buffer.reserve(buffer_size);
     MPI_Bcast(buffer.data(), buffer_size, MPI_INT, 0, MPI_COMM_WORLD);
     
-    std::unordered_set<std::pair<int, int>, hash_pair> nodi_set;
-        for (const auto& nodo : nodi_attivi) {
-            nodi_set.emplace(nodo.x, nodo.y);
-        }
-    for(int i=0;i<buffer_size;i+=2){
-      int target_x = buffer[i];
-      int target_y = buffer[i+1];
-      if(nodi_set.find({target_x,target_y})==nodi_set.end()){
-        updateNodeState(target_x,target_y,live,actual_time);
-      }
 
-    }
-    
-/*
 
     for(int i=0;i<buffer_size;i+=2){
       int target_x = buffer[i];
@@ -871,7 +859,7 @@ void Simulation::broadcastActiveNodes(){
         updateNodeState(target_x,target_y,live,actual_time);
       }
     }
-    */
+    
     
 
     }
