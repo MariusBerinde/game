@@ -11,7 +11,6 @@
 #include <set>
 #include <tuple>
 #include <string>
-//#include <mpi.h>
 #include <unordered_map>
 #include <map>
 #include <omp.h>

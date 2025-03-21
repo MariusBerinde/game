@@ -64,14 +64,16 @@ struct Config{
 
 struct Point{
   int x,y;
-
   bool operator<(const Point& a) const {
     if (this->x == a.x)
       return this->y < a.y;
     return this->x < a.x;      // Confronta x
   }
+};
 
-
+struct Custom_range {
+  int pid;
+  std::pair<int,int> range; //including extrems
 };
 
 
@@ -238,9 +240,12 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
 
 std::vector<std::pair<int,int>> build_intervals(int nr_active_nodes);
 
+std::vector<Custom_range> crea_range(const int nr_nodi_attivi,const int e_size,const int mpi_size);
+
+bool cmp_custom_range(Custom_range r1,Custom_range r2);
+
+
 };
-
-
 
 #endif // SIMULATION_H
  

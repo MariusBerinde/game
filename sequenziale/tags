@@ -1,0 +1,191 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CompareTuples	include/simulation.h	/^struct CompareTuples {$/;"	s
+Config	include/simulation.h	/^struct Config{$/;"	s
+Config	test/read_file.cpp	/^struct Config{$/;"	s	file:
+ESC	include/simulation.h	23;"	d
+ESC	test/sim.cpp	4;"	d	file:
+FLAGS	Makefile	/^FLAGS= -Wall -g -I #O2$/;"	m
+INCLUDE	Makefile	/^INCLUDE = include$/;"	m
+MAX_COL	test/ns.cpp	/^const int MAX_COL=5;$/;"	v
+MAX_COLS	include/simulation.h	/^    int MAX_COLS;      \/\/ Numero massimo di colonne$/;"	m	class:Simulation
+MAX_COLS	test/sim.cpp	/^    const int MAX_COLS;      \/\/ Numero massimo di colonne (costante, una volta settata)$/;"	m	class:Simulation	file:
+MAX_ROW	test/ns.cpp	/^const int MAX_ROW=5;$/;"	v
+MAX_ROWS	include/simulation.h	/^    int MAX_ROWS;      \/\/ Numero massimo di righe$/;"	m	class:Simulation
+MAX_ROWS	test/sim.cpp	/^    const int MAX_ROWS;      \/\/ Numero massimo di righe (costante, una volta settata)$/;"	m	class:Simulation	file:
+MAX_TIME	include/simulation.h	/^    int MAX_TIME;      \/\/ Numero massimo di tempi$/;"	m	class:Simulation
+MAX_TIME	test/ns.cpp	/^const int MAX_TIME=5;$/;"	v
+MAX_TIME	test/sim.cpp	/^    const int MAX_TIME;      \/\/ Numero massimo di tempi (costante, una volta settata)$/;"	m	class:Simulation	file:
+Nodo	include/Nodo.h	/^		Nodo(int xP,int yP,Stato statoIniziale = Stato::dead):$/;"	f	class:Nodo
+Nodo	include/Nodo.h	/^class Nodo{$/;"	c
+Nodo	include/simulation.h	/^struct Nodo {$/;"	s
+Nodo	test/Nodo.cpp	/^		Nodo(int xP,int yP,Stato statoIniziale = Stato::dead):$/;"	f	class:Nodo
+Nodo	test/Nodo.cpp	/^class Nodo{$/;"	c	file:
+Nodo	test/ns.cpp	/^struct Nodo {$/;"	s	file:
+Nodo	test/sim.cpp	/^struct Nodo {$/;"	s	file:
+OUT	Makefile	/^OUT = out$/;"	m
+Point	include/simulation.h	/^struct Point{$/;"	s
+Pos	include/simulation.h	/^struct Pos {$/;"	s
+Pos	test/read_file.cpp	/^struct Pos {$/;"	s	file:
+RESET	include/simulation.h	25;"	d
+RESET	test/sim.cpp	6;"	d	file:
+SIMULATION_H	include/simulation.h	2;"	d
+SRC	Makefile	/^SRC = src$/;"	m
+Simulation	include/simulation.h	/^class Simulation {$/;"	c
+Simulation	src/simulation.cpp	/^Simulation::Simulation( const int rows, const int cols, const int time)$/;"	f	class:Simulation
+Simulation	test/sim.cpp	/^    Simulation(int rows, int cols, int time)$/;"	f	class:Simulation
+Simulation	test/sim.cpp	/^class Simulation {$/;"	c	file:
+Stato	include/Nodo.h	/^enum Stato {live,dead};$/;"	g
+Stato	include/simulation.h	/^enum Stato { live, dead };$/;"	g
+Stato	test/Nodo.cpp	/^enum Stato {live,dead};$/;"	g	file:
+Stato	test/ns.cpp	/^enum Stato {live,dead};$/;"	g	file:
+Stato	test/sim.cpp	/^enum Stato { live, dead };$/;"	g	file:
+TAN	include/simulation.h	27;"	d
+TEST	Makefile	/^TEST= test$/;"	m
+TSN	include/simulation.h	28;"	d
+YELLOW_TEXT	include/simulation.h	26;"	d
+YELLOW_TEXT	test/sim.cpp	7;"	d	file:
+YELLOW_TXT	include/simulation.h	24;"	d
+YELLOW_TXT	test/sim.cpp	5;"	d	file:
+activeNodes	include/simulation.h	/^    std::vector<std::vector<Nodo>> activeNodes;  \/\/ Nodi attivi per ogni tempo$/;"	m	class:Simulation
+activeNodes	test/sim.cpp	/^    std::vector<std::vector<Nodo>> activeNodes;  \/\/ Nodi attivi per ogni tempo$/;"	m	class:Simulation	file:
+actual_time	include/simulation.h	/^    int actual_time;         \/\/ Tempo corrente della simulazione$/;"	m	class:Simulation
+actual_time	test/sim.cpp	/^    int actual_time;         \/\/ Tempo corrente della simulazione$/;"	m	class:Simulation	file:
+addVicino	include/Nodo.h	/^		void addVicino(const std::shared_ptr<Nodo>& vicino){$/;"	f	class:Nodo
+addVicino	test/Nodo.cpp	/^		void addVicino(const std::shared_ptr<Nodo>& vicino){$/;"	f	class:Nodo
+advanceTime	src/simulation.cpp	/^void Simulation::advanceTime() {$/;"	f	class:Simulation
+advanceTime	test/sim.cpp	/^    void advanceTime() {$/;"	f	class:Simulation
+calcSpawnNodes	src/simulation.cpp	/^std::vector<std::pair<int, int>> Simulation::calcSpawnNodes(){$/;"	f	class:Simulation
+calcSpawnNodes2	src/simulation.cpp	/^std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){$/;"	f	class:Simulation
+colonne	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
+colonne	test/read_file.cpp	/^  int righe,colonne,tempo;$/;"	m	struct:Config	file:
+customCompare	src/simulation.cpp	/^bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }$/;"	f
+customCompare_l	src/main.cpp	/^bool customCompare_l(Nodo a, Nodo b) {$/;"	f
+dead	include/Nodo.h	/^enum Stato {live,dead};$/;"	e	enum:Stato
+dead	include/simulation.h	/^enum Stato { live, dead };$/;"	e	enum:Stato
+dead	test/Nodo.cpp	/^enum Stato {live,dead};$/;"	e	enum:Stato	file:
+dead	test/ns.cpp	/^enum Stato {live,dead};$/;"	e	enum:Stato	file:
+dead	test/sim.cpp	/^enum Stato { live, dead };$/;"	e	enum:Stato	file:
+eu_distance_node	src/simulation.cpp	/^double Simulation::eu_distance_node(Nodo a,Nodo b){$/;"	f	class:Simulation
+gen_random_pos	src/main.cpp	/^vector<pair<int,int>> gen_random_pos(int nr,int max){$/;"	f
+getActiveNodes	src/simulation.cpp	/^std::vector<Nodo> Simulation::getActiveNodes()const{$/;"	f	class:Simulation
+getActiveNodesAtTime	src/simulation.cpp	/^std::vector<Nodo> Simulation::getActiveNodesAtTime(int time) const {$/;"	f	class:Simulation
+getActiveNodesOfAnyTime	src/simulation.cpp	/^std::vector<std::vector<Nodo>> Simulation::getActiveNodesOfAnyTime() const{ return activeNodes;}$/;"	f	class:Simulation
+getActualTime	src/simulation.cpp	/^int Simulation::getActualTime() const {$/;"	f	class:Simulation
+getActualTime	test/sim.cpp	/^    int getActualTime() const {$/;"	f	class:Simulation
+getMap	src/simulation.cpp	/^    Stato*** Simulation::getMap(){return map;}$/;"	f	class:Simulation
+getMaxCols	src/simulation.cpp	/^int Simulation::getMaxCols(){return MAX_COLS;}$/;"	f	class:Simulation
+getMaxRows	src/simulation.cpp	/^int Simulation::getMaxRows(){return MAX_ROWS;}$/;"	f	class:Simulation
+getMaxTime	src/simulation.cpp	/^int Simulation::getMaxTime(){return MAX_TIME;}$/;"	f	class:Simulation
+getNeighbours	src/simulation.cpp	/^std::vector<Nodo> Simulation::getNeighbours(int x,int y,int time)const{$/;"	f	class:Simulation
+getVicini	test/Nodo.cpp	/^		std::vector<std::shared_ptr<Nodo>>& getVicini(){	return vicini;}$/;"	f	class:Nodo
+getX	test/Nodo.cpp	/^		int getX(){return x;}$/;"	f	class:Nodo
+getY	test/Nodo.cpp	/^		int getY(){return y;}$/;"	f	class:Nodo
+live	include/Nodo.h	/^enum Stato {live,dead};$/;"	e	enum:Stato
+live	include/simulation.h	/^enum Stato { live, dead };$/;"	e	enum:Stato
+live	test/Nodo.cpp	/^enum Stato {live,dead};$/;"	e	enum:Stato	file:
+live	test/ns.cpp	/^enum Stato {live,dead};$/;"	e	enum:Stato	file:
+live	test/sim.cpp	/^enum Stato { live, dead };$/;"	e	enum:Stato	file:
+load_config	src/simulation.cpp	/^bool Simulation::load_config(const std::string& filename){$/;"	f	class:Simulation
+main	src/main.cpp	/^int main() {$/;"	f
+main	src/test_config.cpp	/^int main(int argc,char *argv[]) {$/;"	f
+main	test/Nodo.cpp	/^int main(){$/;"	f
+main	test/ns.cpp	/^int main () {$/;"	f
+main	test/read_file.cpp	/^int main(){$/;"	f
+main	test/sim.cpp	/^int main() {$/;"	f
+main	test/test_config.cpp	/^int main(int argc,char *argv[]) {$/;"	f
+make_random_sim	src/main.cpp	/^Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){$/;"	f
+map	include/simulation.h	/^    Stato ***map;            \/\/ Mappa tridimensionale Stato[MAX_ROWS][MAX_COLS][MAX_TIME]$/;"	m	class:Simulation
+map	test/sim.cpp	/^    Stato ***map;            \/\/ Mappa tridimensionale Stato[MAX_ROWS][MAX_COLS][MAX_TIME]$/;"	m	class:Simulation	file:
+mh_distance_node	src/simulation.cpp	/^int Simulation::mh_distance_node(Nodo a,Nodo b){$/;"	f	class:Simulation
+nodi	include/simulation.h	/^  std::vector<Pos> nodi;$/;"	m	struct:Config
+nodi	test/read_file.cpp	/^  vector<Pos> nodi;$/;"	m	struct:Config	file:
+nome	include/simulation.h	/^  std::string nome;$/;"	m	struct:Pos
+nome	test/read_file.cpp	/^  string nome;$/;"	m	struct:Pos	file:
+operator ()	include/simulation.h	/^    bool operator()(const std::tuple<int, int, int>& lhs, const std::tuple<int, int, int>& rhs) const {$/;"	f	struct:CompareTuples
+operator <	include/simulation.h	/^  bool operator<(const Point& a) const {$/;"	f	struct:Point
+printActiveNodes	src/simulation.cpp	/^void Simulation::printActiveNodes() const {$/;"	f	class:Simulation
+printActiveNodes	test/sim.cpp	/^    void printActiveNodes() const {$/;"	f	class:Simulation
+printMap	src/simulation.cpp	/^void Simulation::printMap(int p) const {$/;"	f	class:Simulation
+printMap	test/sim.cpp	/^    void printMap() const {$/;"	f	class:Simulation
+read_file	src/simulation.cpp	/^Config Simulation::read_file(const std::string& filename){$/;"	f	class:Simulation
+read_file	test/read_file.cpp	/^Config read_file(){$/;"	f
+righe	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
+righe	test/read_file.cpp	/^  int righe,colonne,tempo;$/;"	m	struct:Config	file:
+rmSpace	src/simulation.cpp	/^std::string rmSpace(std::string val){$/;"	f
+rmSpace	test/read_file.cpp	/^string rmSpace(string val){$/;"	f
+seq	src/main.cpp	/^void seq(){ $/;"	f
+simula_bordo	src/main.cpp	/^void simula_bordo(){$/;"	f
+simula_croce	src/main.cpp	/^void simula_croce(){$/;"	f
+simulate_n_turns	src/simulation.cpp	/^void Simulation::simulate_n_turns(int n){ $/;"	f	class:Simulation
+simulate_turn	src/simulation.cpp	/^void Simulation::simulate_turn(){ \/\/crea la lista nodi attivi del prossimo turno viene fatta in 2 passaggi $/;"	f	class:Simulation
+stampaInfo	include/Nodo.h	/^		void stampaInfo() const {$/;"	f	class:Nodo
+stampaInfo	test/Nodo.cpp	/^		void stampaInfo() const {$/;"	f	class:Nodo
+stampaVicini	include/Nodo.h	/^void stampaVicini() const {$/;"	f	class:Nodo
+stampaVicini	test/Nodo.cpp	/^		void stampaVicini() const {$/;"	f	class:Nodo
+stateNextTurn	src/simulation.cpp	/^Stato Simulation::stateNextTurn(const int x,int y) {$/;"	f	class:Simulation
+stato	include/Nodo.h	/^		Stato stato;$/;"	m	class:Nodo
+stato	include/simulation.h	/^    Stato* stato;       \/\/ Puntatore allo stato della cella$/;"	m	struct:Nodo
+stato	test/Nodo.cpp	/^		Stato stato;$/;"	m	class:Nodo	file:
+stato	test/ns.cpp	/^    Stato* stato;       \/\/ Puntatore allo stato della cella$/;"	m	struct:Nodo	file:
+stato	test/sim.cpp	/^    Stato* stato;       \/\/ Puntatore allo stato della cella$/;"	m	struct:Nodo	file:
+svegliaNodo	include/Nodo.h	/^		void svegliaNodo(){$/;"	f	class:Nodo
+svegliaNodo	test/Nodo.cpp	/^		void svegliaNodo(){$/;"	f	class:Nodo
+tdiff	src/main.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
+tdiff	src/test_config.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
+tdiff	test/test_config.cpp	/^float tdiff(struct timeval *start,struct timeval *end){$/;"	f
+tempo	include/simulation.h	/^  int righe,colonne,tempo;$/;"	m	struct:Config
+tempo	test/read_file.cpp	/^  int righe,colonne,tempo;$/;"	m	struct:Config	file:
+test_big_sim	src/main.cpp	/^void test_big_sim(){$/;"	f
+test_big_sim2	src/main.cpp	/^void test_big_sim2(){$/;"	f
+test_config_1	src/test_config.cpp	/^void test_config_1(int show_sim=0){$/;"	f
+test_config_1	test/test_config.cpp	/^void test_config_1(int show_sim=0){$/;"	f
+test_config_2	src/test_config.cpp	/^void test_config_2(int show_sim=0){$/;"	f
+test_config_2	test/test_config.cpp	/^void test_config_2(int show_sim=0){$/;"	f
+test_config_from_file	src/main.cpp	/^void test_config_from_file(){$/;"	f
+test_creation	src/main.cpp	/^void test_creation(){$/;"	f
+test_creation_spawn_nodes	src/main.cpp	/^void test_creation_spawn_nodes(){$/;"	f
+test_eu_dist	src/main.cpp	/^void test_eu_dist(){$/;"	f
+test_find	test/read_file.cpp	/^void test_find(){$/;"	f
+test_gen_random_pos	src/main.cpp	/^void test_gen_random_pos(){$/;"	f
+test_get_vicini	src/main.cpp	/^void test_get_vicini(){$/;"	f
+test_mh_dist	src/main.cpp	/^void test_mh_dist(){$/;"	f
+test_order_node_vector	src/main.cpp	/^void test_order_node_vector(){$/;"	f
+test_pair	src/main.cpp	/^void test_pair(){$/;"	f
+test_random_sim	src/main.cpp	/^void test_random_sim(){$/;"	f
+test_read	src/main.cpp	/^void test_read(){$/;"	f
+test_read	test/read_file.cpp	/^void test_read(){$/;"	f
+test_rules_next_turn	src/main.cpp	/^void test_rules_next_turn(){$/;"	f
+test_simulation	src/main.cpp	/^void test_simulation(){$/;"	f
+toString	src/simulation.cpp	/^std::string Nodo::toString() const {$/;"	f	class:Nodo
+toString	test/ns.cpp	/^    std::string toString() const {$/;"	f	struct:Nodo
+toString	test/sim.cpp	/^    std::string toString() const {$/;"	f	struct:Nodo
+uccidiNodo	include/Nodo.h	/^		void uccidiNodo(){$/;"	f	class:Nodo
+uccidiNodo	test/Nodo.cpp	/^		void uccidiNodo(){$/;"	f	class:Nodo
+updateNodeState	src/simulation.cpp	/^void Simulation::updateNodeState(const int x, const int y,const Stato nuovoStato,const int t){$/;"	f	class:Simulation
+updateNodeState	test/sim.cpp	/^    void updateNodeState(int x, int y, Stato nuovoStato, int t) {$/;"	f	class:Simulation
+vicini	include/Nodo.h	/^		std::vector<std::shared_ptr<Nodo>> vicini;  \/\/ Vector di shared_ptr$/;"	m	class:Nodo
+vicini	test/Nodo.cpp	/^		std::vector<std::shared_ptr<Nodo>> vicini;  \/\/ Vector di shared_ptr$/;"	m	class:Nodo	file:
+write_actual_sim	src/simulation.cpp	/^void Simulation::write_actual_sim(const std::string& filename){$/;"	f	class:Simulation
+x	include/Nodo.h	/^		int x;$/;"	m	class:Nodo
+x	include/simulation.h	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo
+x	include/simulation.h	/^  int x,y;$/;"	m	struct:Point
+x	include/simulation.h	/^  int x,y;$/;"	m	struct:Pos
+x	test/Nodo.cpp	/^		int x;$/;"	m	class:Nodo	file:
+x	test/ns.cpp	/^    int x, y;           \/\/ Coordinate (i, j)$/;"	m	struct:Nodo	file:
+x	test/read_file.cpp	/^  int x,y;$/;"	m	struct:Pos	file:
+x	test/sim.cpp	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo	file:
+y	include/Nodo.h	/^		int y;$/;"	m	class:Nodo
+y	include/simulation.h	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo
+y	include/simulation.h	/^  int x,y;$/;"	m	struct:Point
+y	include/simulation.h	/^  int x,y;$/;"	m	struct:Pos
+y	test/Nodo.cpp	/^		int y;$/;"	m	class:Nodo	file:
+y	test/ns.cpp	/^    int x, y;           \/\/ Coordinate (i, j)$/;"	m	struct:Nodo	file:
+y	test/read_file.cpp	/^  int x,y;$/;"	m	struct:Pos	file:
+y	test/sim.cpp	/^    int x, y;           \/\/ Coordinate (x, y)$/;"	m	struct:Nodo	file:
+~Simulation	src/simulation.cpp	/^Simulation::~Simulation() {$/;"	f	class:Simulation
+~Simulation	test/sim.cpp	/^    ~Simulation() {$/;"	f	class:Simulation

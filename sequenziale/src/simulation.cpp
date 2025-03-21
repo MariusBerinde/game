@@ -222,7 +222,7 @@ std::vector<std::vector<Nodo>> Simulation::getActiveNodesOfAnyTime() const{ retu
 
 
 Stato Simulation::stateNextTurn(const int x,int y) {
-  auto neighbours_nodes= getNeighbours(x, y);
+  std::vector<Nodo> neighbours_nodes= getNeighbours(x, y);
   Stato ris = dead;
   int nr_live_nodes=0;
   for (size_t i=0;i<neighbours_nodes.size();i++){
@@ -287,8 +287,8 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
     std::map<Point,int> map;
     auto lActiveNodes = activeNodes[actual_time];
     for(auto nodo:lActiveNodes){
-      auto neighbours = getNeighbours(nodo.x,nodo.y);
-      for(auto vicino:neighbours){
+      std::vector<Nodo> neighbours = getNeighbours(nodo.x,nodo.y);
+      for(const auto& vicino:neighbours){
         if(*vicino.stato == dead){
           Point tmp_pos={vicino.x,vicino.y};
           if(map.count(tmp_pos)==1)
@@ -348,8 +348,7 @@ std::string rmSpace(std::string val){
   int non_space_count = 0;
   // Traverse a val and if it is non space character then, place it at index non_space_count
   for (int i = 0; val[i] != '\0'; i++)
-    if (val[i] != ' ')
-    {
+    if (val[i] != ' ') {
       val[non_space_count] = val[i];
       non_space_count++; // non_space_count incremented
     }    
