@@ -808,7 +808,7 @@ void debug_calcActualNodesNextTurn(){
 }
 void simula_bordo(){
 
-  int my_rank,righe_teo =100,colonne_teo = 100,turni_teo = 1000;
+  int my_rank,righe_teo =50,colonne_teo = 80,turni_teo = 10;
   // int turni=turni_teo-1;
   int turni=turni_teo-1;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
@@ -835,7 +835,13 @@ void simula_bordo(){
   }
   if(my_rank==0){
     gettimeofday(&end, NULL);
-    printf("[%s]veloci� di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
+    printf("[%s]velocità di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
+
+  for(int i=0;i<turni;i++) {
+      cout << "\033[2J\033[H";
+      sim.printMap(-1,i);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500*3));
+  }
   }
 }
 void simula_croce(){

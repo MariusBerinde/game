@@ -76,14 +76,16 @@ void Simulation::printActiveNodes() const {
 }
 
 // Funzione per stampare la mappa
-void Simulation::printMap(int p) const {
+void Simulation::printMap(int p,int t)  const{
   if (p> -1)
     std::cout <<"Processo["<<p<< "] mappa al tempo " << actual_time << ":\n";
   else
     std::cout <<"Mappa al tempo " << actual_time << ":\n";
+  if(t<0 || t>=MAX_TIME)
+    t=actual_time;
   for (int i = 0; i < MAX_ROWS; ++i) {
     for (int j = 0; j < MAX_COLS; ++j) {
-      if (map[i][j][actual_time] == live) {
+      if (map[i][j][t] == live) {
         std::cout << YELLOW_TEXT("O"); 
       } else {
         std::cout << "X";  // Nodo morto (spazio vuoto)

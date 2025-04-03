@@ -117,7 +117,7 @@ public:
     void printActiveNodes() const;
 
     // Funzione per stampare la mappa p indica il processo 
-    void printMap(int p=-1) const;
+    void printMap(int p=-1,int t=-1) const;
 
 
   /**

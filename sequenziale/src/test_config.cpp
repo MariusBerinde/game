@@ -152,14 +152,48 @@ void test_config_2(int show_sim=0){
   sim.write_actual_sim();
 }
 
+void print_map_alt(){
 
+  int righe_teo =20,colonne_teo = 80,turni_teo = 10;
+  // int turni=turni_teo-1;
+  int turni=turni_teo;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  for(int i=0;i<righe_teo;i++){
+    sim.updateNodeState(i,0,live,0);
+    sim.updateNodeState(i,colonne_teo-1,live,0);
+  }
+  
+  for(int i=1;i<colonne_teo;i++){
+    sim.updateNodeState(0,i,live,0);
+    sim.updateNodeState(righe_teo-1,i,live,0);
+  }
+  
+
+  struct timeval start,end;
+
+  gettimeofday(&start, NULL);
+  for(int i=0;i<turni;i++){
+   // sim.printMap();
+    sim.simulate_turn();
+  }
+  gettimeofday(&end, NULL);
+  printf("[%s]velocità di esecuzione di %d turni  millisec %0.6f\n",__func__,turni,tdiff(&start, &end));
+  for(int i=0;i<turni;i++) {
+      cout << "\033[2J\033[H";
+      sim.printMap(i);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500*3));
+  }
+}
 
 int main(int argc,char *argv[]) {
+  /*
  	if(argc > 1){
 	//	test_config_1((int)*argv[1]-48);
 		test_config_2((int)*argv[1]-48);
 	}else
 		test_config_1();
-    
+   */
+  print_map_alt();
   return 0;
 }
