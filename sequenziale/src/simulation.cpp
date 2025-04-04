@@ -222,7 +222,7 @@ std::vector<std::vector<Nodo>> Simulation::getActiveNodesOfAnyTime() const{ retu
 
 
 Stato Simulation::stateNextTurn(const int x,int y) {
-  auto neighbours_nodes= getNeighbours(x, y);
+  std::vector<Nodo> neighbours_nodes= getNeighbours(x, y);
   Stato ris = dead;
   int nr_live_nodes=0;
   for (size_t i=0;i<neighbours_nodes.size();i++){
@@ -287,8 +287,8 @@ std::vector<std::pair<int, int>> Simulation::calcSpawnNodes2(){
     std::map<Point,int> map;
     auto lActiveNodes = activeNodes[actual_time];
     for(auto nodo:lActiveNodes){
-      auto neighbours = getNeighbours(nodo.x,nodo.y);
-      for(auto vicino:neighbours){
+      std::vector<Nodo> neighbours = getNeighbours(nodo.x,nodo.y);
+      for(const auto& vicino:neighbours){
         if(*vicino.stato == dead){
           Point tmp_pos={vicino.x,vicino.y};
           if(map.count(tmp_pos)==1)
@@ -316,6 +316,8 @@ void Simulation::simulate_turn(){ //crea la lista nodi attivi del prossimo turno
     int next_time = actual_time+1;
   //  printf("SIMULATE TURN: next time =%d\n",next_time);
     auto activeNodesNow = getActiveNodes();
+
+//    std::cout<<"["<<__func__<<"] numero di nodi attivi "<<activeNodesNow.size()<<" al turno "<<getActualTime()<<" \n";
     //create the active node list of the next turn
     for(size_t i=0;i<activeNodesNow.size();i++){
       auto node = activeNodesNow[i];
@@ -326,7 +328,6 @@ void Simulation::simulate_turn(){ //crea la lista nodi attivi del prossimo turno
     auto nodes_spawned = calcSpawnNodes2();
 
     for(size_t i=0;i<nodes_spawned.size();i++){
-
       updateNodeState(nodes_spawned[i].first, nodes_spawned[i].second, live, next_time);
     }
 
@@ -347,8 +348,7 @@ std::string rmSpace(std::string val){
   int non_space_count = 0;
   // Traverse a val and if it is non space character then, place it at index non_space_count
   for (int i = 0; val[i] != '\0'; i++)
-    if (val[i] != ' ')
-    {
+    if (val[i] != ' ') {
       val[non_space_count] = val[i];
       non_space_count++; // non_space_count incremented
     }    

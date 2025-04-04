@@ -955,7 +955,10 @@ void test_big_sim2(){
   printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
 }
 void simula_bordo(){
-  int righe_teo =20,colonne_teo = 20,turni_teo = 20;
+
+  int righe_teo =100,colonne_teo = 100,turni_teo = 1000;
+  // int turni=turni_teo-1;
+  int turni=turni_teo-1;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -972,25 +975,16 @@ void simula_bordo(){
   struct timeval start,end;
 
   gettimeofday(&start, NULL);
-  for(int i=0;i<turni_teo-1;i++){
-    sim.printMap();
+  for(int i=0;i<turni;i++){
+   // sim.printMap();
     sim.simulate_turn();
   }
   gettimeofday(&end, NULL);
-  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
-  /*
-  gettimeofday(&start, NULL);
-    sim.simulate_turn();
-  //sim.printMap();
-  sim.simulate_turn();
-  gettimeofday(&end, NULL);
-  sim.printMap();
-  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
-  */
+  printf("[%s]velocità di esecuzione di 1000 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
 }
 void simula_croce(){
 
-  int righe_teo =20,colonne_teo = 20,turni_teo = 20;
+  int righe_teo =20,colonne_teo = 20,turni_teo = 1000;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -1013,8 +1007,8 @@ void simula_croce(){
   struct timeval start,end;
 
   gettimeofday(&start, NULL);
-  for(int i=0;i<turni_teo-1;i++){
-    sim.printMap();
+  for(int i=0;i<2;i++){
+   // sim.printMap();
     sim.simulate_turn();
   }
   gettimeofday(&end, NULL);
@@ -1036,9 +1030,9 @@ int main() {
 //  test_gen_random_pos();
 //  test_random_sim();
 //  test_big_sim();
-//test_big_sim2();
-//simula_bordo();
-simula_croce();
+//  test_big_sim2();
+  simula_bordo();
+//  simula_croce();
   return 0;
 }
 

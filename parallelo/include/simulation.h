@@ -11,7 +11,6 @@
 #include <set>
 #include <tuple>
 #include <string>
-#include <mpi.h>
 #include <unordered_map>
 #include <map>
 #include <omp.h>
@@ -19,8 +18,9 @@
 #include <sys/time.h>
 #include <algorithm>
 #include <random>
-
+#include <mpi.h>
 #include <bits/stdc++.h>
+#include <unordered_set>
 
 //using namespace std;
 // Definizioni per il colore giallo e il reset dei colori nel terminale
@@ -29,7 +29,7 @@
 #define RESET ESC << "0m"  // Reset del colore
 #define YELLOW_TEXT(ARG) ESC << YELLOW_TXT << "m" << ARG << RESET
 #define TAN 2 // threshold active nodes nodi attivi nella simulazione 
-#define TSN 10 // threshold system nodes (soglia minima di nodi in MPI per l'attivazione della parallelizzazione)
+#define TSN 100 // threshold system nodes (soglia minima di nodi in MPI per l'attivazione della parallelizzazione)
 // Enum per lo stato delle celle
 
 enum Stato { live, dead };
@@ -64,14 +64,16 @@ struct Config{
 
 struct Point{
   int x,y;
-
   bool operator<(const Point& a) const {
     if (this->x == a.x)
       return this->y < a.y;
     return this->x < a.x;      // Confronta x
   }
+};
 
-
+struct Custom_range {
+  int pid;
+  std::pair<int,int> range; //including extrems
 };
 
 
@@ -101,9 +103,9 @@ public:
     int getMaxTime();
 
     Stato*** getMap();
-
     // Funzione per aggiornare lo stato di un Nodo
-    void updateNodeState(int x, int y, Stato nuovoStato, int t);
+    void updateNodeState(const int& x, const int& y, const Stato& nuovoStato,const int& t);
+    //void updateNodeState(const int x, const int y, const Stato nuovoStato,const int t);
 
     // Funzione per avanzare il tempo della simulazione
     void advanceTime();
@@ -115,7 +117,7 @@ public:
     void printActiveNodes() const;
 
     // Funzione per stampare la mappa p indica il processo 
-    void printMap(int p=-1) const;
+    void printMap(int p=-1,int t=-1) const;
 
 
   /**
@@ -132,7 +134,7 @@ public:
    * 
    * @return a std::vector<Nodo>
    */
-  std::vector<Nodo> getActiveNodes() const;
+  const std::vector<Nodo>& getActiveNodes() const;
 
   std::vector<std::vector<Nodo>> getActiveNodesOfAnyTime() const;
 
@@ -238,9 +240,12 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
 
 std::vector<std::pair<int,int>> build_intervals(int nr_active_nodes);
 
+std::vector<Custom_range> crea_range(const int nr_nodi_attivi,const int e_size,const int mpi_size);
+
+bool cmp_custom_range(Custom_range r1,Custom_range r2);
+
+
 };
-
-
 
 #endif // SIMULATION_H
  

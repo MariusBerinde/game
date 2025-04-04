@@ -11,7 +11,6 @@
 #include <set>
 #include <tuple>
 #include <string>
-//#include <mpi.h>
 #include <unordered_map>
 #include <map>
 #include <omp.h>
@@ -189,12 +188,12 @@ public:
   /**
    * @brief calc the euclidean distance between a and b
    * */
-  double eu_distance_node(Nodo a,Nodo b);
+double eu_distance_node(Nodo a,Nodo b);
 
   /**
    * @brief calc the manhattan distance between a and b
    * */
-  int mh_distance_node(Nodo a,Nodo b);
+int mh_distance_node(Nodo a,Nodo b);
 
   /**
   * @brief the position the active nodes in filename

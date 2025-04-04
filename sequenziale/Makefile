@@ -2,7 +2,7 @@ OUT = out
 SRC = src
 INCLUDE = include
 TEST= test
-FLAGS=-O2 -Wall -g -I #O2
+FLAGS= -Wall -g -I #O2
 
 compila_test_nodo:
 	g++$(FLAGS) $(TEST)/test_nodo.cpp -o $(OUT)/test_nodo
@@ -29,4 +29,4 @@ test:compila_test
 	./$(OUT)/test_config $(U)
 
 clean:
-	rm -v $(OUT)/test
+	rm -v $(OUT)/
