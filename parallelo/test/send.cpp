@@ -806,11 +806,37 @@ void debug_calcActualNodesNextTurn(){
   */
 
 }
+
+void write_performace_sim(const std::string& filename,Simulation& sim,float var,int MPI_SIZE=0){
+
+  std::ofstream out_file;
+  //std::cout << "Apertura file "<<filename<<"\n";
+  std::string intestazione="***Simulazione Game of life in data:"+std::string(__DATE__)+" e ora "+std::string(__TIME__)+" ***\n";
+  std::string map_size="dimensione mappa: " + to_string(sim.getMaxRows()) + " x " + to_string( sim.getMaxCols())+"\n";
+  std::string nr_turn="numero di turni:"+to_string(sim.getActualTime())+"\n";
+  std::string start_active_time="numero di nodi inizial attivi:"+to_string(sim.getActiveNodesAtTime(0).size())+"\n";
+  std::string performace="tempo di esecuzione:"+to_string(var)+"\n";
+  std::string nr_mpi="nr nodi mpi:"+to_string(MPI_SIZE)+"\n";
+  //std::string file= intestazione+map_size+nr_turn+start_active_time+performace+nr_mpi;
+  std::string file= intestazione+map_size+nr_turn+start_active_time+nr_mpi;
+  std::cout << "Debug "<<__func__<<"valore da inserire nel file\n"<<file;
+  
+  out_file.open(filename);
+  //std::cout<<tag<< "Apertura file "<<filename<<"\n";
+  //std::string intestazione="***Simulazione Game of life in ***\n";
+
+  out_file<<intestazione<<map_size<<nr_turn<<start_active_time<<performace<<nr_mpi;
+  //out_file.close();
+  
+  //std::cout<<tag
+}
 void simula_bordo(){
 
-  int my_rank,righe_teo =50,colonne_teo = 80,turni_teo = 10;
+  //int my_rank,righe_teo =50,colonne_teo = 80,turni_teo = 10;
+  int my_rank,righe_teo =100,colonne_teo = 100,turni_teo = 1000;
   // int turni=turni_teo-1;
   int turni=turni_teo-1;
+
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -837,11 +863,16 @@ void simula_bordo(){
     gettimeofday(&end, NULL);
     printf("[%s]velocità di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
 
+    int nr_nodi_attivi;
+  MPI_Comm_size(MPI_COMM_WORLD, &nr_nodi_attivi);
+  write_performace_sim("out/prestazioni.txt",sim,tdiff(&start, &end),nr_nodi_attivi);
+    /*
   for(int i=0;i<turni;i++) {
       cout << "\033[2J\033[H";
       sim.printMap(-1,i);
       std::this_thread::sleep_for(std::chrono::milliseconds(500*3));
   }
+  */
   }
 }
 void simula_croce(){
