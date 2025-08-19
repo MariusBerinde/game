@@ -1,10 +1,16 @@
 #include "../include/simulation.h"
+#include <chrono>
+#include <thread>
 using namespace std;
 
+/** restituisce la differenza tra i tempi di esecuzione con precisione di 10e^-6*/
 float tdiff(struct timeval *start,struct timeval *end){
   return (end->tv_sec-start->tv_sec) + 1e-6 * (end->tv_usec-start->tv_usec);
 }
 
+/**
+ * funzione usata assicurarsi che la mappa da gioco è creata correttamente  
+ */
 void test_creation(){
 
   // Creazione di un'istanza di Simulation con 5 righe, 5 colonne e 10 unità di tempo
@@ -60,6 +66,9 @@ void test_creation(){
 */
 }
 
+/*
+ * funzione usata per testare funzionamento di sim.getNeighboursgetNeighbours con diverse configurazioni 
+ */
 void test_get_vicini(){
 
   Simulation sim(6, 6, 10);
@@ -457,6 +466,10 @@ void test_get_vicini(){
   }
 }
 
+
+/**
+ * funzione usata  per testare stateNextTurn 
+ */
 void test_rules_next_turn(){
   Simulation sim(6, 6, 10);
   sim.updateNodeState(0, 0, live, 0); //A
@@ -523,8 +536,11 @@ void test_rules_next_turn(){
     std::cout<<"Stato nodo H problema\tnumero vicini="<<neighBoursH.size()<<"\n";
   }
 
-
 }
+
+/**
+ * funzione usata per verificare che la funzione usata per lo spawn dei nodi funzioni correttamente.
+ */
 void test_creation_spawn_nodes(){
 
   std::cout<<"TEST SPAWN NODES\n";
@@ -589,6 +605,9 @@ void test_pair(){
 
 }
 
+/**
+ * funzione in cui si utilizza la funzine simulate turn per la prima volta
+ */
 void test_simulation(){
   std::cout<<"TEST SIMULATION NODES\n";
 
@@ -616,6 +635,9 @@ void test_simulation(){
 
 }
 
+/**
+ * funzione di test della lettura del file di configurazione
+ */
 void test_read(){
   int righe_teo = 5;
   int col_teo = 5;
@@ -675,6 +697,9 @@ void test_read(){
 
 }
 
+/**
+ * funzione di test della lettura del file di configurazione e integrazione con simulazione turno.
+ */
 void test_config_from_file(){
   int righe_teo = 5;
   int col_teo = 5;
@@ -747,6 +772,9 @@ void test_config_from_file(){
 
 }
 
+/*
+ * simualzione basilare con 3 nodi attivi
+ */
 void seq(){ 
   int my_rank = 0;
   Simulation sim(6, 6, 2);
@@ -762,15 +790,16 @@ void seq(){
   sim.printMap();
 }
 
+/**
+ * test della fun che calcola la distanza di eulero tra due punti .
+ */
 void test_eu_dist(){
-
   Simulation sim(6, 6, 2);
   sim.updateNodeState(0, 0, live, 0); // A
   sim.updateNodeState(0, 1, live, 0); // B
   sim.updateNodeState(1, 0, live, 0); // G
   sim.updateNodeState(4, 0, live, 0); 
   auto nodi_attivi = sim.getActiveNodes();
-
   std::cout<<"TEST DISTANZA EUCLIDEA\n";
   sim.printMap();
   Nodo b = {5, 5, NULL};
@@ -781,6 +810,9 @@ void test_eu_dist(){
 
 }
 
+/**
+ * verfica di correttezza della distanza di MANHATTAN tra due punti.
+ */
 void test_mh_dist(){
   Simulation sim(6, 6, 2);
   sim.updateNodeState(0, 0, live, 0); // A
@@ -857,14 +889,12 @@ vector<pair<int,int>> gen_random_pos(int nr,int max){
   }
   
   return ris;
-
-}
-void test_gen_random_pos(){
-//  Simulation sim(6, 6, 2);
-  int number_pos=10;
-  auto position_list = gen_random_pos(number_pos,5);
 }
 
+
+/**
+ * crea una simulazione con punti a caso usando come parametri la dimesione della mappa e il numero di nodi
+ */
 Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){
   Simulation sim(righe,colonne,turni);
   auto position_list = gen_random_pos(numero_nodi,righe);
@@ -874,6 +904,9 @@ Simulation make_random_sim(int righe,int colonne,int turni,int numero_nodi){
   return sim;
 }
 
+/**
+ * verifica della correttezza di make_random_sim
+ */
 void test_random_sim(){
   int righe_teo =10,colonne_teo = 10,turni_teo = 5,max_nodi_teo = 13;
   Simulation sim = make_random_sim(righe_teo,colonne_teo,turni_teo,max_nodi_teo);
@@ -914,6 +947,11 @@ void test_random_sim(){
   
 
 }
+
+
+/**
+ * simulaizone con una matrice 25x25 e 20 turni simulati 
+ */
 void test_big_sim(){
   int righe_teo =25,colonne_teo = 25,turni_teo = 10,max_nodi_teo = 20;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< max_nodi_teo<<" e "<<turni_teo <<"max turni\n";
@@ -930,6 +968,9 @@ void test_big_sim(){
   sim.printMap();
 }
 
+/**
+ * simulaizone con una matrice 17 x 17 e 10  turni simulati 
+ */
 void test_big_sim2(){
   int righe_teo =17,colonne_teo = 17,turni_teo = 10;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
@@ -955,6 +996,9 @@ void test_big_sim2(){
   printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
 }
 
+/**
+ * funzione usata per scrivere le prestazioni di una simulazione sul file filename, sim è la simualzione, var è il tempo.
+ */
 void write_performace_sim(const std::string& filename,Simulation& sim,float var,int MPI_SIZE=0){
 
   std::ofstream out_file;
@@ -979,11 +1023,15 @@ void write_performace_sim(const std::string& filename,Simulation& sim,float var,
   //std::cout<<tag
 }
 
+/**
+ * simulazione in cui la figura iniziale è il bordo della scacchiera.
+ */
 void simula_bordo(){
 
-  int righe_teo =100,colonne_teo = 100,turni_teo = 1000;
-  // int turni=turni_teo-1;
-  int turni=turni_teo-1;
+  //int righe_teo =40,colonne_teo = 40,turni_teo = 100;
+  int righe_teo =40,colonne_teo = 40,turni_teo = 10;
+  //int righe_teo =20,colonne_teo = 20,turni_teo = 10;
+  int turni=turni_teo;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -1007,10 +1055,24 @@ void simula_bordo(){
   gettimeofday(&end, NULL);
   printf("[%s]velocità di esecuzione di 1000 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
   write_performace_sim("out/prestazioni.txt",sim,tdiff(&start, &end));
+
+  
+  for(int i=0;i<turni;i++){
+    cout << "\032[2J\033[H";
+    sim.printMap(i);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500*2));
+  }
+  
 }
+/**
+ * simulazionein cui la figura iniziale è  una croce.
+ */
 void simula_croce(){
 
-  int righe_teo =20,colonne_teo = 20,turni_teo = 1000;
+  int righe_teo =40,colonne_teo = 40,turni_teo = 100;
+  //int righe_teo =20,colonne_teo = 20,turni_teo = 10;//old_turni_teo=1000;
+
+  int turni=turni_teo;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -1033,14 +1095,62 @@ void simula_croce(){
   struct timeval start,end;
 
   gettimeofday(&start, NULL);
-  for(int i=0;i<2;i++){
+  for(int i=0;i<turni;i++){
    // sim.printMap();
     sim.simulate_turn();
   }
   gettimeofday(&end, NULL);
-  printf("[%s]velocità di esecuzione di 3 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
-}
 
+  /*
+  for(int i=0;i<turni;i++){
+    cout << "\033[2J\033[H";
+    sim.printMap(i);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500*2));
+  }
+  */
+
+  printf("[%s]velocità di esecuzione di 10 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+
+  write_performace_sim("out/prestazioni_croce.txt",sim,tdiff(&start, &end));
+}
+/**
+* funzione dove simulo una scacchiera per 10 turni in cui la mappa è un quadrato 7x7
+*/
+void simula_scacchiara(){
+
+
+  //int righe_teo =30,colonne_teo = 30,turni_teo = 45;
+  int righe_teo =7,colonne_teo = 7,turni_teo = 10;
+  int turni=turni_teo;
+  cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
+  Simulation sim(righe_teo, colonne_teo, turni_teo);
+  for(int i=0;i<colonne_teo;i++){
+    for(int j=0;j<righe_teo;j++){
+      if((j%2==0) ){
+        sim.updateNodeState(j,i,live,0);
+      }
+    }
+  }
+  
+  
+
+  struct timeval start,end;
+
+  gettimeofday(&start, NULL);
+  for(int i=0;i<turni;i++){
+   // sim.printMap();
+    sim.simulate_turn();
+  }
+  gettimeofday(&end, NULL);
+  printf("[%s]velocità di esecuzione di 1000 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+  //write_performace_sim("out/prestazioni.txt",sim,tdiff(&start, &end));
+
+  for(int i=0;i<turni;i++){
+    //cout << "\033[2J\033[H";
+    sim.printMap(i);
+    //std::this_thread::sleep_for(std::chrono::milliseconds(500*3));
+  }
+}
 int main() {
 //  test_creation();
 //  test_get_vicini();
@@ -1060,6 +1170,7 @@ int main() {
 //  test_big_sim2();
   simula_bordo();
 //  simula_croce();
+//  simula_scacchiara();
   return 0;
 }
 

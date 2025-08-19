@@ -175,14 +175,15 @@ void print_after_sim(){
   }
   gettimeofday(&end, NULL);
   printf("[%s]velocità di esecuzione di %d turni  millisec %0.6f\n",__func__,tuni,tdiff(&start, &end));
-  /*
+  
   for(int i=0;i<turni;i++){
-    //cout << "\033[2J\033[H";
+    cout << "\033[2J\033[H";
     sim.printMap(i);
-    //std::this_thread::sleep_for(std::chrono::milliseconds(500*2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500*2));
 
   }
-  */
+  
+
 }
 int main(int argc,char *argv[]) {
   /*

@@ -203,7 +203,5 @@ int mh_distance_node(Nodo a,Nodo b);
 
   };
 
- 
-
 #endif // SIMULATION_H
  

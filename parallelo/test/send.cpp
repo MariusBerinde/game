@@ -832,10 +832,11 @@ void write_performace_sim(const std::string& filename,Simulation& sim,float var,
 }
 void simula_bordo(){
 
-  //int my_rank,righe_teo =50,colonne_teo = 80,turni_teo = 10;
-  int my_rank,righe_teo =100,colonne_teo = 100,turni_teo = 1000;
+  //int my_rank,righe_teo =20,colonne_teo = 20,turni_teo = 10;
+  int my_rank,righe_teo =40,colonne_teo = 40,turni_teo = 10;
+  //int my_rank,righe_teo =100,colonne_teo = 100,turni_teo = 1000;
   // int turni=turni_teo-1;
-  int turni=turni_teo-1;
+  int turni=turni_teo;
 
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
@@ -861,24 +862,28 @@ void simula_bordo(){
   }
   if(my_rank==0){
     gettimeofday(&end, NULL);
-    printf("[%s]velocità di esecuzione di %d turni  millisec %0.6f\n",__func__,turni_teo,tdiff(&start, &end));
 
     int nr_nodi_attivi;
   MPI_Comm_size(MPI_COMM_WORLD, &nr_nodi_attivi);
-  write_performace_sim("out/prestazioni.txt",sim,tdiff(&start, &end),nr_nodi_attivi);
-    /*
+  write_performace_sim("out/prestazioni_din.txt",sim,tdiff(&start, &end),nr_nodi_attivi);
+    
+    
   for(int i=0;i<turni;i++) {
       cout << "\033[2J\033[H";
       sim.printMap(-1,i);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500*3));
+      std::this_thread::sleep_for(std::chrono::milliseconds(500*4));
   }
-  */
+  
+  
+    printf("[%s]velocità di esecuzione di %d turni  millisec %0.6f con la versione dinamica\n",__func__,turni_teo,tdiff(&start, &end));
   }
 }
 void simula_croce(){
 
-  int my_rank=-1,righe_teo =100,colonne_teo = 100,turni_teo = 1000,nr_proc=-1;
-  //int my_rank=-1,righe_teo =10,colonne_teo = 10,turni_teo = 10,nr_proc=-1;
+  //int my_rank=-1,righe_teo =100,colonne_teo = 100,turni_teo = 1000,nr_proc=-1;
+  int my_rank=-1,righe_teo =100,colonne_teo = 100,turni_teo = 10,nr_proc=-1;
+
+  int turni=turni_teo;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<" max turni\n";
   Simulation sim(righe_teo, colonne_teo, turni_teo);
   for(int i=0;i<colonne_teo;i++){
@@ -913,7 +918,17 @@ void simula_croce(){
   }
   if(my_rank==0){
     gettimeofday(&end, NULL);
-    printf("[%s]velocità di esecuzione di 2 turni  millisec %0.6f con %d processi\n",__func__,tdiff(&start, &end),nr_proc);
+
+    /*
+  for(int i=0;i<turni;i++) {
+      cout << "\033[2J\033[H";
+      sim.printMap(-1,i);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500*4));
+  }
+    */
+
+    write_performace_sim("out/prestazioni_croce.txt",sim,tdiff(&start, &end));
+    printf("[%s]velocità di esecuzione di 10 turni  millisec %0.6f con %d processi\n",__func__,tdiff(&start, &end),nr_proc);
   }
 }
 int main(int argc,char *argv[]){
@@ -926,7 +941,7 @@ int main(int argc,char *argv[]){
 //    debug_calcActualNodesNextTurn();
 //    test_big_sim2();
       simula_bordo();
-//    simula_croce();
+ //   simula_croce();
      MPI_Finalize();
   
 }

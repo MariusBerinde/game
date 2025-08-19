@@ -175,6 +175,7 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
    * */
   void calcActualNodesNextTurn();
 
+ void calcActualNodesNextTurn_v2();
   /*
    
    * @brief Parallel version of calcSpawnNodes2
@@ -241,6 +242,7 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
 std::vector<std::pair<int,int>> build_intervals(int nr_active_nodes);
 
 std::vector<Custom_range> crea_range(const int nr_nodi_attivi,const int e_size,const int mpi_size);
+
 
 bool cmp_custom_range(Custom_range r1,Custom_range r2);
 

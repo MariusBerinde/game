@@ -1,0 +1,6 @@
+***Simulazione Game of life in data:Aug 19 2025 e ora 13:22:58 ***
+dimensione mappa: 40 x 40
+numero di turni:9
+numero di nodi inizial attivi:158
+tempo di esecuzione:0.004815
+nr nodi mpi:0

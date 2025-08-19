@@ -59,7 +59,7 @@ hash:compila_hash
 	mpirun -np 3 $(OUT)/hash	
 
 send:compila_send 
-	mpirun -np 4 $(OUT)/send	
+	mpirun -np 10 $(OUT)/send	
 #	./$(OUT)/main 
 
 clean:
