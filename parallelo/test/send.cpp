@@ -833,7 +833,8 @@ void write_performace_sim(const std::string& filename,Simulation& sim,float var,
 void simula_bordo(){
 
   //int my_rank,righe_teo =20,colonne_teo = 20,turni_teo = 10;
-  int my_rank,righe_teo =40,colonne_teo = 40,turni_teo = 10;
+  int my_rank,righe_teo =40,colonne_teo = 40,turni_teo = 100;
+
   //int my_rank,righe_teo =100,colonne_teo = 100,turni_teo = 1000;
   // int turni=turni_teo-1;
   int turni=turni_teo;

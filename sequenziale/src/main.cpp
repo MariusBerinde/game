@@ -1029,7 +1029,7 @@ void write_performace_sim(const std::string& filename,Simulation& sim,float var,
 void simula_bordo(){
 
   //int righe_teo =40,colonne_teo = 40,turni_teo = 100;
-  int righe_teo =40,colonne_teo = 40,turni_teo = 10;
+  int righe_teo =40,colonne_teo = 40,turni_teo = 100;
   //int righe_teo =20,colonne_teo = 20,turni_teo = 10;
   int turni=turni_teo;
   cout<<"["<<__func__<<"]creazione di una simulazione con "<<righe_teo<<",righe\t "<< colonne_teo<<" colonne "<< " e "<<turni_teo <<"max turni\n";
@@ -1053,8 +1053,8 @@ void simula_bordo(){
     sim.simulate_turn();
   }
   gettimeofday(&end, NULL);
-  printf("[%s]velocità di esecuzione di 1000 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
-  write_performace_sim("out/prestazioni.txt",sim,tdiff(&start, &end));
+  printf("[%s]velocità di esecuzione di 100 turni  millisec %0.6f\n",__func__,tdiff(&start, &end));
+  write_performace_sim("out/prestazioni_bordo_opt.txt",sim,tdiff(&start, &end));
 
   
   for(int i=0;i<turni;i++){

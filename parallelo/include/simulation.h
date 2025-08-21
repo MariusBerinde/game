@@ -181,6 +181,10 @@ static bool customCompare(Nodo a, Nodo b) { return (a.x<b.x) && (a.y<b.y); }
    * @brief Parallel version of calcSpawnNodes2
    * */
   void calcSpawnNodesP();
+	/**
+	 * optimized version of calcSpawnNodesP that use scatter and gatter intstead of send and recv
+	 */
+  void calcSpawnNodesP_v2();
 
 
 /**

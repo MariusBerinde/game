@@ -799,6 +799,8 @@ void Simulation::calcSpawnNodesP(){
 }
 
 
+
+
 void Simulation::calcActualNodesNextTurn_v2() {
     int my_rank, size;
     int next_time = actual_time + 1;
@@ -806,7 +808,7 @@ void Simulation::calcActualNodesNextTurn_v2() {
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
     std::vector<int> sendcounts, displs;
-    std::vector<int> activeBuffer; // conterr… (x,y,x,y,...)
+    std::vector<int> activeBuffer; 
 
     if (my_rank == 0) {
         // Converto i nodi attivi in buffer di interi
@@ -841,7 +843,7 @@ void Simulation::calcActualNodesNextTurn_v2() {
                 &local_count_ints, 1, MPI_INT,
                 0, MPI_COMM_WORLD);
 
-    // Ricevo i dati locali (x,y,...)
+
     std::vector<int> local_buffer(local_count_ints);
     MPI_Scatterv(activeBuffer.data(), sendcounts.data(), displs.data(), MPI_INT,
                  local_buffer.data(), local_count_ints, MPI_INT,
@@ -898,6 +900,117 @@ void Simulation::calcActualNodesNextTurn_v2() {
 
 
 
+void Simulation::calcSpawnNodesP_v2(){
+  int my_rank, size;
+  int next_time = actual_time + 1;
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+  std::vector<int> sendcounts, displs;
+  std::vector<int> activeBuffer; // (x,y) di nodi attivi
+
+  if (my_rank == 0) {
+    std::vector<Nodo> activeNodesNow = getActiveNodes();
+    activeBuffer.reserve(activeNodesNow.size() * 2);
+
+    for (auto &n : activeNodesNow) {
+      activeBuffer.push_back(n.x);
+      activeBuffer.push_back(n.y);
+    }
+
+    int n = activeNodesNow.size();
+    sendcounts.resize(size);
+    displs.resize(size);
+
+    // Divisione bilanciata
+    int base = n / size;
+    int rem = n % size;
+    int offset = 0;
+    for (int i = 0; i < size; i++) {
+      int countPoints = base + (i < rem ? 1 : 0);
+      sendcounts[i] = countPoints * 2; // 2 interi per nodo
+      displs[i] = offset * 2;
+      offset += countPoints;
+    }
+  }
+
+  // Ogni processo riceve i suoi nodi attivi
+  int local_count_ints;
+  MPI_Scatter(sendcounts.data(), 1, MPI_INT,
+              &local_count_ints, 1, MPI_INT,
+              0, MPI_COMM_WORLD);
+
+  std::vector<int> local_buffer(local_count_ints);
+  MPI_Scatterv(activeBuffer.data(), sendcounts.data(), displs.data(), MPI_INT,
+               local_buffer.data(), local_count_ints, MPI_INT,
+               0, MPI_COMM_WORLD);
+
+  // === Calcolo locale ===
+  std::map<Point,int> local_map;
+
+  for (int i = 0; i < local_count_ints; i += 2) {
+    int x = local_buffer[i];
+    int y = local_buffer[i+1];
+
+    auto neighbours = getNeighbours(x, y);
+    for (auto vicino : neighbours) {
+      if (*vicino.stato == dead) {
+        Point p{vicino.x, vicino.y};
+        local_map[p]++;
+      }
+    }
+  }
+
+  // Prepara buffer (x,y,count) solo per count <= 3
+  std::vector<int> local_updates_buf;
+  for (auto &e : local_map) {
+    if (e.second <= 3) {
+      local_updates_buf.push_back(e.first.x);
+      local_updates_buf.push_back(e.first.y);
+      local_updates_buf.push_back(e.second);
+    }
+  }
+
+  int local_size_ints = local_updates_buf.size();
+  std::vector<int> recvcounts(size), displs2(size);
+
+  MPI_Gather(&local_size_ints, 1, MPI_INT,
+             recvcounts.data(), 1, MPI_INT,
+             0, MPI_COMM_WORLD);
+
+  std::vector<int> all_updates_buf;
+  if (my_rank == 0) {
+    int total_ints = std::accumulate(recvcounts.begin(), recvcounts.end(), 0);
+    all_updates_buf.resize(total_ints);
+
+    displs2[0] = 0;
+    for (int i = 1; i < size; i++) {
+      displs2[i] = displs2[i-1] + recvcounts[i-1];
+    }
+  }
+
+  // Raccolgo tutti i risultati
+  MPI_Gatherv(local_updates_buf.data(), local_size_ints, MPI_INT,
+              all_updates_buf.data(), recvcounts.data(), displs2.data(),
+              MPI_INT, 0, MPI_COMM_WORLD);
+
+  // === Master unisce i risultati e aggiorna ===
+  if (my_rank == 0) {
+    std::map<Point,int> global_map;
+    for (size_t i = 0; i < all_updates_buf.size(); i += 3) {
+      Point p{all_updates_buf[i], all_updates_buf[i+1]};
+      int count = all_updates_buf[i+2];
+      global_map[p] += count;
+    }
+
+    for (auto &e : global_map) {
+      if (e.second == 3) {
+        updateNodeState(e.first.x, e.first.y, live, next_time);
+      }
+    }
+  }
+
+}
 
 void Simulation::simulate_turn_inv_2(){
   int my_rank, size;
@@ -914,7 +1027,8 @@ void Simulation::simulate_turn_inv_2(){
   //calcActualNodesNextTurn();
     calcActualNodesNextTurn_v2();
  // MPI_Barrier(MPI_COMM_WORLD);
-  calcSpawnNodesP();
+  //calcSpawnNodesP();
+  calcSpawnNodesP_v2();
   MPI_Barrier(MPI_COMM_WORLD);
   advanceTime();
 //  MPI_Barrier(MPI_COMM_WORLD);
