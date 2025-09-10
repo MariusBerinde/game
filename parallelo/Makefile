@@ -59,8 +59,15 @@ hash:compila_hash
 	mpirun -np 3 $(OUT)/hash	
 
 send:compila_send 
-	mpirun -np 10 $(OUT)/send	
+	mpirun -np 5 $(OUT)/send	
 #	./$(OUT)/main 
 
+
+compila_bord:
+	mpic++ $(FLAGS) ./$(INCLUDE) $(TEST)/bord.cpp  -o $(OUT)/bord
+#	g++ $(FLAGS) ./$(INCLUDE) $(TEST)/send.cpp $(SRC)/simulation.cpp -o $(OUT)/send
+
+bord:compila_bord
+	mpirun -np 5 $(OUT)/bord	
 clean:
 	rm -v $(OUT)/*
